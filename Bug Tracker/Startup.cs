@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace Bug_Tracker
 {
@@ -42,6 +45,22 @@ namespace Bug_Tracker
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // API - Ticket Tracking Module
+            services.AddMvc();
+            //MvcOptions.EnableEndpointRouting = false;
+
+            // 1. Add Authentication Services
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = "https://wussubininja.au.auth0.com/";
+                options.Audience = "https://ticket-tracking-module/";
+            });
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -57,27 +76,27 @@ namespace Bug_Tracker
             })
             .AddCookie()
             .AddOpenIdConnect("Auth0", options => {
-        // Set the authority to your Auth0 domain
-        options.Authority = $"https://{Configuration["Auth0:Domain"]}";
+                // Set the authority to your Auth0 domain
+                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
 
-        // Configure the Auth0 Client ID and Client Secret
-        options.ClientId = Configuration["Auth0:ClientId"];
-                options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                // Configure the Auth0 Client ID and Client Secret
+                options.ClientId = Configuration["Auth0:ClientId"];
+                        options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
-        // Set response type to code
-        options.ResponseType = OpenIdConnectResponseType.Code;
+                // Set response type to code
+                options.ResponseType = OpenIdConnectResponseType.Code;
 
-        // Configure the scope
-        options.Scope.Add("openid");
+                // Configure the scope
+                options.Scope.Add("openid");
         
-        // USER PROFILE
-        options.Scope.Add("profile");
-        options.Scope.Add("email");
-        // Set the correct name claim type
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            NameClaimType = "name"
-        };
+                // USER PROFILE
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+                // Set the correct name claim type
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name"
+                };
 
 
 
@@ -85,14 +104,25 @@ namespace Bug_Tracker
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
                 options.CallbackPath = new PathString("/callback");
 
-        // Configure the Claims Issuer to be Auth0
-        options.ClaimsIssuer = "Auth0";
+                // Configure the Claims Issuer to be Auth0
+                options.ClaimsIssuer = "Auth0";
 
                 options.Events = new OpenIdConnectEvents
                 {
+
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        context.ProtocolMessage.SetParameter("audience", "https://ticket-tracking-module/");
+
+                        return Task.FromResult(0);
+                    },
+
+
                     // handle the logout redirection
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
+
+
                         var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
 
                         var postLogoutUri = context.Properties.RedirectUri;
@@ -134,11 +164,9 @@ namespace Bug_Tracker
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
+              app.UseCookiePolicy();
 
-            
+            app.UseStaticFiles();      
             app.UseRouting();
 
             app.UseAuthentication();
