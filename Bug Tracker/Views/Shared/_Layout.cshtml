@@ -45,7 +45,7 @@
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
 
-                @*@if (User.Identity.IsAuthenticated)
+                @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a>
@@ -59,7 +59,7 @@
                     <li class="nav-item">
                         <a id="qsLoginBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
                     </li>
-                }*@
+                }
 
 
                 <!-- Notifications Dropdown Menu -->
@@ -73,11 +73,11 @@
                         <i class="fas fa-cog"></i>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="https://wussubininja.au.auth0.com/authorize?scope=profile&audience=appointments:api&response_type=code&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&redirect_uri=https://localhost:5001/callback">
+                @*<li class="nav-item">
+                    <a href="https://wussubininja.au.auth0.com/authorize?scope=profile&response_type=code&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&redirect_uri=https://localhost:5001/callback">
                         Sign In
                     </a>
-                </li>
+                </li>*@
 
 
 

@@ -95,7 +95,8 @@ namespace Bug_Tracker
                 // Set the correct name claim type
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = "name"
+                    NameClaimType = "name",
+                    RoleClaimType = "https://schemas.wussubininja.com"
                 };
 
 
@@ -106,6 +107,9 @@ namespace Bug_Tracker
 
                 // Configure the Claims Issuer to be Auth0
                 options.ClaimsIssuer = "Auth0";
+
+                // Saving Access Tokens 
+                options.SaveTokens = true;
 
                 options.Events = new OpenIdConnectEvents
                 {

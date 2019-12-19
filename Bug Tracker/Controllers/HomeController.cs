@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Bug_Tracker.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bug_Tracker.Controllers
 {
@@ -37,6 +38,14 @@ namespace Bug_Tracker.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        // Controllers/HomeController.cs
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Admin()
+        {
+            return View();
         }
     }
 }
