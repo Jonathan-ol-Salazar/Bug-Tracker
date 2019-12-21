@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace Bug_Tracker.Controllers
 {
@@ -15,6 +17,8 @@ namespace Bug_Tracker.Controllers
         public async Task Login(string returnUrl = "/")
         {
             await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
+           
+          
         }
 
         [Authorize]
@@ -41,6 +45,12 @@ namespace Bug_Tracker.Controllers
                 EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
                 ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
             });
+        }
+
+        [Authorize]
+        public IActionResult Claims()
+        {
+            return View();
         }
     }
 }
