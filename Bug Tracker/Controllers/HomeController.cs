@@ -38,7 +38,7 @@ namespace Bug_Tracker.Controllers
                     DateTimeStyles.RoundtripKind);
 
                 string idToken = await HttpContext.GetTokenAsync("id_token");
-                Debug.WriteLine("asdfasdf");
+                
                 // Now you can use them. For more info on when and how to use the
                 // Access Token and ID Token, see https://auth0.com/docs/tokens
             }

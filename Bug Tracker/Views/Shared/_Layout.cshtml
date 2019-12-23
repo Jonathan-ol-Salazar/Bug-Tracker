@@ -51,8 +51,11 @@
                         <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a>
                     </li>
                     <li class="nav-item">
-                        <a id="qsLogoutBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Claims">Logout</a>
+                        <a id="qsLogoutBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
                     </li>
+                    @*<li class="nav-item">
+                <a id="qsLogoutBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Claims">Logout</a>
+            </li>*@
                 }
                 else
                 {
@@ -74,10 +77,10 @@
                     </a>
                 </li>
                 @*<li class="nav-item">
-                    <a href="https://wussubininja.au.auth0.com/authorize?scope=profile&response_type=code&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&redirect_uri=https://localhost:5001/callback">
-                        Sign In
-                    </a>
-                </li>*@
+            <a href="https://wussubininja.au.auth0.com/authorize?scope=profile&response_type=code&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&redirect_uri=https://localhost:5001/callback">
+                Sign In
+            </a>
+        </li>*@
 
 
 
