@@ -8,7 +8,7 @@ namespace BugTrackerDataAccess.Models
     {
         [BsonId]
         public ObjectId Id { get; set; }
-        
+
         [BsonElement]
         [Required]
         public int UserID { get; set; }

@@ -25,8 +25,7 @@ namespace Bug_Tracker
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = Configuration.GetConnectionString("InventoryDatabase");
-            services.AddDbContext<InventoryContext>(options => options.UseSqlServer(connection));
+
 
             services.AddControllersWithViews();
         }
