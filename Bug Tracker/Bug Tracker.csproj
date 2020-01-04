@@ -24,4 +24,8 @@
     <Folder Include="wwwroot\theme\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BugTrackerDataAccess\BugTrackerDataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

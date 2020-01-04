@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BugTrackerDataAccess;
+using BugTrackerDataAccess.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Bug_Tracker.Models;
 
 namespace Bug_Tracker
 {
@@ -25,7 +20,15 @@ namespace Bug_Tracker
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
+            services.Configure<Settings>(options =>
+            {
+                options.ConnectionString = Configuration.GetSection("MongoDB:ConnectionString").Value;
+                options.Database = Configuration.GetSection("MongoDB:Database").Value;
+            });
 
+            services.AddTransient<IUserContext, UserContext>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddControllersWithViews();
         }
@@ -55,7 +58,7 @@ namespace Bug_Tracker
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Products}/{action=Index}/{id?}");
+                    pattern: "{controller=User}/{action=Index}/{id?}");
             });
         }
     }
