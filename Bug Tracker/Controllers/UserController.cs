@@ -37,19 +37,19 @@ namespace Bug_Tracker.Controllers
         }
 
         [HttpGet]
-        public ActionResult Insert()
+        public ActionResult Create()
         {
-            return View("Insert", new User());
+            return View("Create", new User());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Insert([Bind(include: "UserID, Name, Price, Category, Author")] User user)
+        public async Task<ActionResult> Create([Bind(include: "UserID, UserName, Email, Role")] User user)
         {
             if (ModelState.IsValid)
             {
                 await _userRepository.Create(user);
-                TempData["Message"] = "User Inserted Successfully";
+                TempData["Message"] = "User Createed Successfully";
             }
             return RedirectToAction("Index");
         }
@@ -64,7 +64,7 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "UserID, Name, Price, Category, Author")] User user)
+        public async Task<ActionResult> Update([Bind(include: "UserID, UserName, Email, Role")] User user)
         {
             if (ModelState.IsValid)
             {
