@@ -8,6 +8,8 @@ using Bug_Tracker.Models;
 
 namespace Bug_Tracker.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
@@ -25,7 +27,7 @@ namespace Bug_Tracker.Controllers
         }
 
         [HttpGet]
-        [ActionName("Get")]
+        //[ActionName("Get")]
         public async Task<ActionResult> GetUserById(int id)
         {
             var user = await _userRepository.GetUser(id);
@@ -33,7 +35,7 @@ namespace Bug_Tracker.Controllers
             {
                 return new NotFoundResult();
             }
-            return View("GetUser", user);
+            return View("GetUserById", user);
         }
 
         [HttpGet]

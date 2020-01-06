@@ -11,7 +11,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Blank Pagee</h1>
+                    <h1>User Database</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -32,10 +32,10 @@
             <thead>
                 <tr>
                     <th>
-                        UserID
+                        User ID
                     </th>
                     <th>
-                        UserName
+                        User Name
                     </th>
                     <th>
                         Email
@@ -64,7 +64,7 @@
                         <td>
                             @Html.ActionLink("Update", "Update", new { id = item.UserID })
                             @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-
+                            @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
                         </td>
                     </tr>
                 }
