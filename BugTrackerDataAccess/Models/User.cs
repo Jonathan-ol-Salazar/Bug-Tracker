@@ -24,5 +24,7 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         [Required]
         public string Role { get; set; }
+
+        public string ProfileImage { get; set; }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using BugTrackerDataAccess.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -46,5 +49,19 @@ namespace Bug_Tracker.Controllers
             });
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
+
+
+        [Authorize]
+        public IActionResult Profile()
+        {
+            return View(new User()
+            {
+                UserName = User.Identity.Name,
+                Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+            });
+        }
+
+
     }
 }
