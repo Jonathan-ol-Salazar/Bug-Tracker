@@ -4,7 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using BugTrackerDataAccess.Models;
 using BugTrackerDataAccess.Repositories;
 using Bug_Tracker.Models;
-
+using Microsoft.AspNetCore.Authentication;
+using System;
+using System.Globalization;
+using RestSharp;
+using System.IdentityModel.Tokens.Jwt;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Bug_Tracker.Controllers
 {
@@ -21,6 +27,66 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            
+            if (User.Identity.IsAuthenticated)
+            {
+                string accessToken = await HttpContext.GetTokenAsync("access_token");
+
+                // if you need to check the Access Token expiration time, use this value
+                // provided on the authorization response and stored.
+                // do not attempt to inspect/decode the access token
+                DateTime accessTokenExpiresAt = DateTime.Parse(
+                    await HttpContext.GetTokenAsync("expires_at"),
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.RoundtripKind);
+
+                string idToken = await HttpContext.GetTokenAsync("id_token");
+
+                // Now you can use them. For more info on when and how to use the
+                // Access Token and ID Token, see https://auth0.com/docs/tokens
+
+                var handler = new JwtSecurityTokenHandler();
+                var token = handler.ReadJwtToken(idToken);
+                string user_ID = token.Payload.Sub;
+
+
+                // Getting Access Token for Auth0 Management API
+                //var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+                //var request = new RestRequest(Method.POST);
+                //request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                //request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+                //IRestResponse response = client.Execute(request);
+
+                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/json");
+                request.AddParameter("application/json", "{\"client_id\":\"LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk\",\"client_secret\":\"6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ\",\"audience\":\"https://wussubininja.au.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}", ParameterType.RequestBody);
+                IRestResponse response = client.Execute(request);
+
+                var response2dict = JObject.Parse(response.Content);
+                //var access = response2dict.SelectToken("access_token");
+                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+
+
+                // Getting roles assigned to user 
+
+                //https://wussubininja.au.auth0.com/api/v2/users/USER_ID/roles
+
+
+                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user_ID + "/roles";
+                string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                client = new RestClient(baseURL);
+                request = new RestRequest(Method.GET);
+                request.AddHeader("authorization", authorizationValue);
+                response = client.Execute(request);
+
+
+
+                Console.WriteLine("asdf");
+
+            }
+
+
             var model = await _userRepository.GetAllUsers();
             return View(model);
         }
