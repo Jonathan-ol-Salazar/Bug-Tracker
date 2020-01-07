@@ -9,7 +9,6 @@ using System;
 using System.Globalization;
 using RestSharp;
 using System.IdentityModel.Tokens.Jwt;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Bug_Tracker.Controllers
@@ -45,44 +44,46 @@ namespace Bug_Tracker.Controllers
                 // Now you can use them. For more info on when and how to use the
                 // Access Token and ID Token, see https://auth0.com/docs/tokens
 
+                // Reading JWT idToken
                 var handler = new JwtSecurityTokenHandler();
                 var token = handler.ReadJwtToken(idToken);
                 string user_ID = token.Payload.Sub;
 
 
-                // Getting Access Token for Auth0 Management API
-                //var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-                //var request = new RestRequest(Method.POST);
-                //request.AddHeader("content-type", "application/x-www-form-urlencoded");
-                //request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-                //IRestResponse response = client.Execute(request);
+                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
 
                 var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
                 var request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", "{\"client_id\":\"LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk\",\"client_secret\":\"6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ\",\"audience\":\"https://wussubininja.au.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}", ParameterType.RequestBody);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
                 IRestResponse response = client.Execute(request);
 
+                // Parsing into JSON 
                 var response2dict = JObject.Parse(response.Content);
-                //var access = response2dict.SelectToken("access_token");
+                // Retrieving Access Token
                 var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
 
 
-                // Getting roles assigned to user 
+                // GETTING ROLES ASSIGNED TO USER FROM AUTH0
 
-                //https://wussubininja.au.auth0.com/api/v2/users/USER_ID/roles
+                // Format: https://wussubininja.au.auth0.com/api/v2/users/USER_ID/roles
 
 
                 string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user_ID + "/roles";
                 string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                // Endpoint to get user role
                 client = new RestClient(baseURL);
                 request = new RestRequest(Method.GET);
+                // Add Auth0 Management API Access Token 
                 request.AddHeader("authorization", authorizationValue);
                 response = client.Execute(request);
+                
+                // Remove the '[' and ']' from response string so it can be converted into JSON
+                response2dict = JObject.Parse(response.Content.TrimStart('[').TrimEnd(']'));
+                // Retrieving role assigned through Auth0
+                var role = response2dict.SelectToken("name").ToString();
 
 
-
-                Console.WriteLine("asdf");
 
             }
 
@@ -103,12 +104,14 @@ namespace Bug_Tracker.Controllers
             return View("GetUserById", user);
         }
 
+        
         [HttpGet]
         public ActionResult Create()
         {
             return View("Create", new User());
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(include: "UserID, UserName, Email, Role")] User user)
@@ -117,6 +120,7 @@ namespace Bug_Tracker.Controllers
             {
                 await _userRepository.Create(user);
                 TempData["Message"] = "User Createed Successfully";
+
             }
             return RedirectToAction("Index");
         }
@@ -162,7 +166,9 @@ namespace Bug_Tracker.Controllers
             var user = await _userRepository.GetUser(id);
             if (user == null)
             {
+                Console.WriteLine("OMFL");
                 return new NotFoundResult();
+
             }
             var result = await _userRepository.Delete(user.UserID);
             if (result)

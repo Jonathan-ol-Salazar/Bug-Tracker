@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BugTrackerDataAccess.Models;
@@ -8,12 +6,24 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestSharp;
 
 namespace Bug_Tracker.Controllers
 {
     public class AccountController : Controller
     {
+        //private readonly RoleManager<IdentityRole> _roleManager;
+        //public AccountController(RoleManager<IdentityRole> roleManager)
+        //{
+        //    _roleManager = roleManager;
+        //}
+
+        //[HttpGet]
+        //public IActionResult CreateRole()
+        //{
+        //    return View();
+        //}
+
+
         public async Task Login(string returnUrl = "/")
         {
             
@@ -43,7 +53,7 @@ namespace Bug_Tracker.Controllers
             {
                 UserName = User.Identity.Name,
                 Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
-                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+                //ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
             });
         }
 

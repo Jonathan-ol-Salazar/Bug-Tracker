@@ -25,6 +25,6 @@ namespace BugTrackerDataAccess.Models
         [Required]
         public string Role { get; set; }
 
-        public string ProfileImage { get; set; }
+        //public string ProfileImage { get; set; }
     }
 }
