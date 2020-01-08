@@ -5,23 +5,24 @@ using BugTrackerDataAccess.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bug_Tracker.Controllers
 {
     public class AccountController : Controller
     {
-        //private readonly RoleManager<IdentityRole> _roleManager;
-        //public AccountController(RoleManager<IdentityRole> roleManager)
-        //{
-        //    _roleManager = roleManager;
-        //}
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
+        public AccountController(RoleManager<IdentityRole<int>> roleManager)
+        {
+            _roleManager = roleManager;
+        }
 
-        //[HttpGet]
-        //public IActionResult CreateRole()
-        //{
-        //    return View();
-        //}
+        [HttpGet]
+        public IActionResult CreateRole()
+        {
+            return View();
+        }
 
 
         public async Task Login(string returnUrl = "/")
