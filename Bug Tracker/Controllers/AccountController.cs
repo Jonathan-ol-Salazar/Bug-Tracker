@@ -12,17 +12,17 @@ namespace Bug_Tracker.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
-        public AccountController(RoleManager<IdentityRole<int>> roleManager)
-        {
-            _roleManager = roleManager;
-        }
+        //private readonly RoleManager<IdentityRole<int>> _roleManager;
+        //public AccountController(RoleManager<IdentityRole<int>> roleManager)
+        //{
+        //    _roleManager = roleManager;
+        //}
 
-        [HttpGet]
-        public IActionResult CreateRole()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult CreateRole()
+        //{
+        //    return View();
+        //}
 
 
         public async Task Login(string returnUrl = "/")
@@ -46,8 +46,8 @@ namespace Bug_Tracker.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-
-        [Authorize]
+        [Authorize(Roles = "admin")]
+        //[Authorize]
         public IActionResult Profile()
         {
             return View(new User()

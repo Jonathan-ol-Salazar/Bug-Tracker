@@ -68,13 +68,14 @@ namespace Bug_Tracker
 
                 // Configure the scope
                 options.Scope.Add("openid");
-                //options.Scope.Add("profile");
-                //options.Scope.Add("email");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
 
                 // Set the correct name claim type
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = "name"
+                    NameClaimType = "name", 
+                    RoleClaimType = "https://schemas.wussubininja.com/roles"
                 };
 
 
