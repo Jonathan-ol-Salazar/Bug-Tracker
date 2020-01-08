@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bug_Tracker.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         //private readonly RoleManager<IdentityRole<int>> _roleManager;
@@ -33,7 +34,7 @@ namespace Bug_Tracker.Controllers
             
         }
 
-        [Authorize]
+       
         public async Task Logout()
         {
             await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
@@ -46,7 +47,7 @@ namespace Bug_Tracker.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         //[Authorize]
         public IActionResult Profile()
         {

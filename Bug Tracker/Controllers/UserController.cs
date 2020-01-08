@@ -79,7 +79,7 @@ namespace Bug_Tracker.Controllers
                 response = client.Execute(request);
                 
                 // Remove the '[' and ']' from response string so it can be converted into JSON
-                response2dict = JObject.Parse(response.Content.TrimStart('[').TrimEnd(']'));
+        //        response2dict = JObject.Parse(response.Content.TrimStart('[').TrimEnd(']'));
                 // Retrieving role assigned through Auth0
                 var role = response2dict.SelectToken("name").ToString();
 

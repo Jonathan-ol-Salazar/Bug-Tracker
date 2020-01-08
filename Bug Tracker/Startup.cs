@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Bug_Tracker
 {
@@ -30,7 +32,13 @@ namespace Bug_Tracker
         {
 
             // MONGODB SETUP 
-            services.AddMvc();
+            services.AddMvc(o =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                o.Filters.Add(new AuthorizeFilter(policy));
+            });
             services.Configure<Settings>(options =>
             {
                 options.ConnectionString = Configuration.GetSection("MongoDB:ConnectionString").Value;
