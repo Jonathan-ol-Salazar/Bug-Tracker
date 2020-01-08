@@ -152,7 +152,7 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
+        //[HttpGet]
         public async Task<ActionResult> ConfirmDelete(int id)
         {
             var userFromDb = await _userRepository.GetUser(id);
