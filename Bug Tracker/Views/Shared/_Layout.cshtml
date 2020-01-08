@@ -26,8 +26,8 @@
                     <a href="~/theme/index3.html" class="nav-link">Home</a>
                 </li>
                 @*<li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Contact</a>
-                </li>*@
+                <a href="#" class="nav-link">Contact</a>
+            </li>*@
             </ul>
 
             <!-- SEARCH FORM -->
@@ -44,12 +44,32 @@
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
-               
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="qsLogoutBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
+                    </li>
+                    @*<li class="nav-item">
+                    <a id="qsLogoutBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Claims">Logout</a>
+                </li>*@
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a id="qsLoginBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                    </li>
+                }
+
+
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item">
                     <a class="nav-link" href="#">
-                        <i class="fas fa-question"></i>            
-                    </a>                   
+                        <i class="fas fa-question"></i>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">
@@ -57,6 +77,41 @@
                     </a>
                 </li>
             </ul>
+
+            @*LOGIN*@
+            @*            <div class="container">*@
+            @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SampleMvcApp</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+            </ul>
+        </div>*@
+            @*<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <ul class="navbar-nav flex-grow-1">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="qsLogoutBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a id="qsLoginBtn" class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>*@
         </nav>
         <!-- /.navbar -->
         <!-- Main Sidebar Container -->
