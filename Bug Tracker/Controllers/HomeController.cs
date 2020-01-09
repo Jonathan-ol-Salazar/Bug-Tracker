@@ -10,6 +10,11 @@ using System.IdentityModel.Tokens.Jwt;
 using Newtonsoft.Json.Linq;
 using BugTrackerDataAccess.Repositories;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using Nancy.Json;
+using MongoDB.Bson;
+using BugTrackerDataAccess.Models;
 
 namespace Bug_Tracker.Controllers
 {
@@ -64,9 +69,57 @@ namespace Bug_Tracker.Controllers
                 var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
 
 
+
+
+                //// GETTING ALL USERS
+                //string baseURL = "https://wussubininja.au.auth0.com/api/v2/users";
+                //string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                //// Endpoint to get user role
+                //client = new RestClient(baseURL);
+                //request = new RestRequest(Method.GET);
+                //// Add Auth0 Management API Access Token 
+                //request.AddHeader("authorization", authorizationValue);
+                //response = client.Execute(request);
+
+                //var content = response.Content;
+                //JArray contentArray = JArray.Parse(content);
+
+                //var xxx = contentArray[0].SelectToken("created_at");
+
+                //var Users = new List<User>();
+                //foreach (var user in contentArray)
+                //{
+                //    var document = new User();
+
+                //  //  document.UserID = user.SelectToken("user_id").ToObject<int>();
+                //    document.UserName = user.SelectToken("name").ToString();
+                //    document.Email = user.SelectToken("email").ToString();
+                //    document.Role = user.SelectToken("app_metadata").SelectToken("roles").ToString();
+
+
+                //    //{
+                //    //    {"User ID", user.SelectToken("user_id").ToString()},
+                //    //    {"User Name", user.SelectToken("user_id").ToString()},
+                //    //    {"Email", user.SelectToken("user_id").ToString()},
+                //    //    {"Role",  user.SelectToken("user_id").ToString()}
+                //    //};
+                //    Users.Add(document);
+
+
+
+                    
+                    
+
+                //}
+
+                //await _userRepository.AddUsers(Users);
+
+
+                //var x = 0;
+
                 // GETTING ROLES ASSIGNED TO USER FROM AUTH0
                 // Format: https://wussubininja.au.auth0.com/api/v2/users/USER_ID/roles
-                
+
                 string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user_ID + "/roles";
                 string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
                 // Endpoint to get user role
@@ -87,9 +140,14 @@ namespace Bug_Tracker.Controllers
                     request.AddParameter("application/json", "{ \"roles\": [ \"rol_fWiLOHdB4uUAg3Fq\" ] }", ParameterType.RequestBody);
                     response = client.Execute(request);
                 }
+
+
             }
+
             var model = await _userRepository.GetAllUsers();
+
             return View(model);
+            //return View();
         }
 
         public IActionResult Profile()

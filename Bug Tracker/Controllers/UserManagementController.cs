@@ -14,11 +14,11 @@ using Newtonsoft.Json.Linq;
 namespace Bug_Tracker.Controllers
 {
 
-    public class UserController : Controller
+    public class UserManagementController : Controller
     {
         private readonly IUserRepository _userRepository;
 
-        public UserController(IUserRepository userRepository)
+        public UserManagementController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
@@ -31,7 +31,6 @@ namespace Bug_Tracker.Controllers
         }
 
         [HttpGet]
-        //[ActionName("Get")]
         public async Task<ActionResult> GetUserById(int id)
         {
             var user = await _userRepository.GetUser(id);
@@ -42,14 +41,13 @@ namespace Bug_Tracker.Controllers
             return View("GetUserById", user);
         }
 
-        
+
         [HttpGet]
         public ActionResult Create()
         {
             return View("Create", new User());
         }
 
-        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(include: "UserID, UserName, Email, Role")] User user)
