@@ -11,6 +11,7 @@ using RestSharp;
 using System.IdentityModel.Tokens.Jwt;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Bug_Tracker.Controllers
 {
@@ -27,6 +28,8 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var model = await _userRepository.GetAllUsers();
+
             if (User.Identity.IsAuthenticated)
             {
                 string accessToken = await HttpContext.GetTokenAsync("access_token");
@@ -78,36 +81,71 @@ namespace Bug_Tracker.Controllers
 
                 var content = response.Content;
                 JArray contentArray = JArray.Parse(content);
-
-                var xxx = contentArray[0].SelectToken("created_at");
-
+                string x;
                 var Users = new List<User>();
-                foreach (var user in contentArray)
+                foreach (var userAuth0 in contentArray)
                 {
-                    var document = new User();
+                    // If Mongodb is empty
+                    if (model?.Any() != true)
+                    {
+                        var document = new User();
 
-                    //  document.UserID = user.SelectToken("user_id").ToObject<int>();
-                    document.UserName = user.SelectToken("name").ToString();
-                    document.Email = user.SelectToken("email").ToString();
-                    document.Role = user.SelectToken("app_metadata").SelectToken("roles").ToString();
+                        document.ID = userAuth0.SelectToken("user_id").ToString();
+                        document.UserName = userAuth0.SelectToken("name").ToString();
+                        document.Email = userAuth0.SelectToken("email").ToString();
+                        document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
+                        Users.Add(document);
+                        x = "in empty ";
+                    }
+                    else
+                    {
+                        bool match = false;
+                        foreach (var userMongo in model)
+                        {
+                            if(userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
+                            {
+                                match = true;
+                            }
+                        }
+                        if (match == false)
+                        {
+                            var document = new User();
 
-                    //{
-                    //    {"User ID", user.SelectToken("user_id").ToString()},
-                    //    {"User Name", user.SelectToken("user_id").ToString()},
-                    //    {"Email", user.SelectToken("user_id").ToString()},
-                    //    {"Role",  user.SelectToken("user_id").ToString()}
-                    //};
-                    Users.Add(document);
+                            document.ID = userAuth0.SelectToken("user_id").ToString();
+                            document.UserName = userAuth0.SelectToken("name").ToString();
+                            document.Email = userAuth0.SelectToken("email").ToString();
+                            document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
+                            Users.Add(document);
+                        }
 
+                        //foreach (var userMongo in model)
+                        //{
+                        //    var y = userMongo.ID.ToString();
+                        //    if (userAuth0.SelectToken("user_id").ToString() != userMongo.ID.ToString())
+                        //    {
 
+                        //        var document = new User();
 
+                        //        document.ID = userAuth0.SelectToken("user_id").ToString();
+                        //        document.UserName = userAuth0.SelectToken("name").ToString();
+                        //        document.Email = userAuth0.SelectToken("email").ToString();
+                        //        document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
+                        //        Users.Add(document);
+                        //    }
+                        //    x = "not empty";
+                        //}
 
+                    }
+                    x = "";
                 }
-
-                await _userRepository.AddUsers(Users);
+                if (Users.Count > 0)
+                {
+                    await _userRepository.AddUsers(Users);
+                }
+          
 
 
 
@@ -140,7 +178,7 @@ namespace Bug_Tracker.Controllers
             }
 
 
-            var model = await _userRepository.GetAllUsers();
+            
             return View(model);
         }
 

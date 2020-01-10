@@ -15,6 +15,11 @@ namespace BugTrackerDataAccess.Models
 
         [BsonElement]
         [Required]
+        public string ID { get; set; }
+
+
+        [BsonElement]
+        [Required]
         public string UserName { get; set; }
 
         [BsonElement]
