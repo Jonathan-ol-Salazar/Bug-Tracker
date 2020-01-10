@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
 namespace BugTrackerDataAccess.Models

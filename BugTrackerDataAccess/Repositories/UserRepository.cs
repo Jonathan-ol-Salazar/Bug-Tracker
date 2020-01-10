@@ -61,10 +61,10 @@ namespace BugTrackerDataAccess.Repositories
         //    await _context.Users.InsertManyAsync(userDocuments);
         //}
 
-        //public async Task AddUsers(List<User> user)
-        //{
-        //    await _context.Users.InsertManyAsync(user);
-        //}
+        public async Task AddUsers(List<User> user)
+        {
+            await _context.Users.InsertManyAsync(user);
+        }
 
 
 
@@ -103,15 +103,17 @@ namespace BugTrackerDataAccess.Repositories
         // EDIT USERS
             // Selecting Users 
         Task<User> GetUser(int id);
-            // 'Submit' button
+
+        Task Create(User user);
+        // 'Submit' button
         Task<bool> Update(User user);
             // 'Delete' button
         Task<bool> Delete(int id);
 
         // Add all Users from Auth0 to db
-        Task Create(User user);
+        //Task Create(User user);
 
-       // Task AddUsers(List<User> user);
+        Task AddUsers(List<User> user);
     }
 
 }
