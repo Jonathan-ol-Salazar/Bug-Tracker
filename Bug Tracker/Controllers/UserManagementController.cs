@@ -94,28 +94,28 @@ namespace Bug_Tracker.Controllers
             return View("ConfirmDelete", userFromDb);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id)
-        {
-            var user = await _userRepository.GetUser(id);
-            if (user == null)
-            {
-                Console.WriteLine("OMFL");
-                return new NotFoundResult();
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    var user = await _userRepository.GetUser(id);
+        //    if (user == null)
+        //    {
+        //        Console.WriteLine("OMFL");
+        //        return new NotFoundResult();
 
-            }
-            var result = await _userRepository.Delete(user.ID);
-            if (result)
-            {
-                TempData["Message"] = "User Deleted Successfully";
-            }
-            else
-            {
-                TempData["Message"] = "Error While Deleting the User";
-            }
-            return RedirectToAction("Index");
-        }
+        //    }
+        //    var result = await _userRepository.Delete(user.);
+        //    if (result)
+        //    {
+        //        TempData["Message"] = "User Deleted Successfully";
+        //    }
+        //    else
+        //    {
+        //        TempData["Message"] = "Error While Deleting the User";
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
 
         //public IActionResult Index()

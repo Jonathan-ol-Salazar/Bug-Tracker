@@ -1,7 +1,9 @@
 ﻿using BugTrackerDataAccess.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static MongoDB.Bson.Serialization.BsonSerializationContext;
 
 namespace BugTrackerDataAccess.Repositories
 {
@@ -13,6 +15,21 @@ namespace BugTrackerDataAccess.Repositories
         {
             _context = context;
         }
+
+        //{
+        //    FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.ID, id);
+        //    DeleteResult deleteResult = await _context.Users.DeleteOneAsync(filter);
+
+        //    return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+        //}
+        public async Task<bool> ResetUsers()
+        {
+            FilterDefinition<User> filter = Builders<User>.Filter.Empty;
+            DeleteResult deleteResult = await _context.Users.DeleteManyAsync(filter);
+
+            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+        }
+
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
@@ -85,19 +102,27 @@ namespace BugTrackerDataAccess.Repositories
             return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<bool> Delete(List<User> user)
+        {
+
+            var filter = new BsonDocument("user_id", new BsonDocument("$in", new BsonArray(user)));
+            var x = "";
+            DeleteResult deleteResult = await _context.Users.DeleteManyAsync(filter);
+
+            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+        }
         //{
         //    FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.ID, id);
         //    DeleteResult deleteResult = await _context.Users.DeleteManyAsync();
 
         //    return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
         //}
-        {
-            FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.ID, id);
-            DeleteResult deleteResult = await _context.Users.DeleteOneAsync(filter);
+        //{
+        //    FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.ID, id);
+        //    DeleteResult deleteResult = await _context.Users.DeleteOneAsync(filter);
 
-            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
-        }
+        //    return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+        //}
     }
 
 
@@ -114,12 +139,15 @@ namespace BugTrackerDataAccess.Repositories
         // 'Submit' button
         Task<bool> Update(User user);
             // 'Delete' button
-        Task<bool> Delete(string id);
+        Task<bool> Delete(List<User> user);
 
         // Add all Users from Auth0 to db
         //Task Create(User user);
 
         Task AddUsers(List<User> user);
+        Task<bool> ResetUsers();
+
+
     }
 
 }

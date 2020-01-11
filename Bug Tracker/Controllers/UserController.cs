@@ -28,7 +28,10 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var model = await _userRepository.GetAllUsers();
+            // var model = await _userRepository.GetAllUsers();
+
+            // Reset MongoDB 'Users' collection
+            await _userRepository.ResetUsers();
 
             if (User.Identity.IsAuthenticated)
             {
@@ -81,71 +84,101 @@ namespace Bug_Tracker.Controllers
 
                 var content = response.Content;
                 JArray contentArray = JArray.Parse(content);
-                string x;
                 var Users = new List<User>();
-                var add = new List<User>();
-                var delete = new List<User>();
 
-                bool isMongoDbEmpty = true;
-                if (model?.Any() != true)
+                foreach (var userAuth0 in contentArray)
                 {
-                    foreach (var userAuth0 in contentArray)
-                    {
-                        var document = new User();
+                    var document = new User();
 
-                        document.ID = userAuth0.SelectToken("user_id").ToString();
-                        document.UserName = userAuth0.SelectToken("name").ToString();
-                        document.Email = userAuth0.SelectToken("email").ToString();
-                        //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+                    document.ID = userAuth0.SelectToken("user_id").ToString();
+                    document.UserName = userAuth0.SelectToken("name").ToString();
+                    document.Email = userAuth0.SelectToken("email").ToString();
+                    //document.Id = userAuth0.SelectToken("email").ToString();
+                    //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
-                        Users.Add(document);
-                    }
-                    isMongoDbEmpty = false;
+                    Users.Add(document);
                 }
-                else
-                {
-                    foreach (var userMongo in model)
-                    {
+
+                await _userRepository.AddUsers(Users);
+
+                //string x;
+
+                
+                //var add = new List<User>();
+                //var delete = new List<User>();
 
 
-                        {
-                            bool match = false;
-                            foreach (var userAuth0 in contentArray)
-                            {
-                                if (userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
-                                {
-                                    match = true;
-                                    break;
-                                }
-                                else
-                                {
-                                    User user = new User();
-                                    user.ID = userAuth0.SelectToken("user_id").ToString();
-                                    match = false;
-                                    if (add.Contains(user).ToString().Contains(userMongo.ID.ToString()))
-                                    {
-                                        x = "it exists";
-                                    }
+                //bool isMongoDbEmpty = true;
+                //if (model?.Any() != true)
+                //{
+                //    foreach (var userAuth0 in contentArray)
+                //    {
+                //        var document = new User();
 
-                                    //var document = new User();
+                //        document.ID = userAuth0.SelectToken("user_id").ToString();
+                //        document.UserName = userAuth0.SelectToken("name").ToString();
+                //        document.Email = userAuth0.SelectToken("email").ToString();
+                //        //document.Id = userAuth0.SelectToken("email").ToString();
+                //        //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
-                                    //document.ID = userAuth0.SelectToken("user_id").ToString();
-                                    //document.UserName = userAuth0.SelectToken("name").ToString();
-                                    //document.Email = userAuth0.SelectToken("email").ToString();
-                                    ////  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+                //        add.Add(document);
+                //    }
+                //    isMongoDbEmpty = false;
+                //}
+                //else
+                //{
+                //    bool match = false;
+                //    JToken userAuth0Delete = null;
+                //    foreach (var userMongo in model)
+                //    {
+                //        foreach (var userAuth0 in contentArray)
+                //        {
+                //            // New user
+                //            var user = new User();
 
-                                    //add.Add(document);   
-                                }
-                            }
-                            if (match == false)
-                            {
-                                delete.Add(userMongo);
-                            }
+                //            user.ID = userAuth0.SelectToken("user_id").ToString();
+                //            user.UserName = userAuth0.SelectToken("name").ToString();
+                //            user.Email = userAuth0.SelectToken("email").ToString();
 
-                        }
-                    }
 
-                }
+                //            if (userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
+                //            {
+                //                match = true;
+                //                if (add.Contains(user))
+                //                {
+                //                    add.Remove(user);
+                //                }
+                //                userAuth0Delete = userAuth0;
+
+                //            }
+                //            // If add List already has
+                //            else if (!add.Contains(user) && !model.Contains(user))
+                //            {
+                //                add.Add(user);
+                //            }
+                //        }
+                //        if (match == false)
+                //        {
+                //            delete.Add(userMongo);
+                //        }
+                //        else if (match == true)
+                //        {
+                //            contentArray.Remove(userAuth0Delete);
+                //        }
+                //        match = false;
+                //    }
+                //}
+
+                //if (add.Count > 0)
+                //{
+                //    await _userRepository.AddUsers(add);
+                //}
+                //if (delete.Count > 0)
+                //{
+
+                //    await _userRepository.Delete(delete);
+                //}
+
 
                 //foreach (var userAuth0 in contentArray)
                 //{
@@ -157,7 +190,7 @@ namespace Bug_Tracker.Controllers
                 //        document.ID = userAuth0.SelectToken("user_id").ToString();
                 //        document.UserName = userAuth0.SelectToken("name").ToString();
                 //        document.Email = userAuth0.SelectToken("email").ToString();
-                //      //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+                //        //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
                 //        Users.Add(document);
                 //        x = "in empty ";
@@ -167,12 +200,12 @@ namespace Bug_Tracker.Controllers
                 //        bool match = false;
                 //        foreach (var userMongo in model)
                 //        {
-                //          //  contentArray.SelectToken
+                //            //  contentArray.SelectToken
                 //            if (!contentArray.Contains(userMongo.ID))
                 //            {
-                //                x = "not in array";                                                               
+                //                x = "not in array";
                 //            }
-                //            if(userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
+                //            if (userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
                 //            {
                 //                match = true;
                 //            }
@@ -184,7 +217,7 @@ namespace Bug_Tracker.Controllers
                 //            document.ID = userAuth0.SelectToken("user_id").ToString();
                 //            document.UserName = userAuth0.SelectToken("name").ToString();
                 //            document.Email = userAuth0.SelectToken("email").ToString();
-                //           // document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+                //            // document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
                 //            Users.Add(document);
                 //        }
@@ -211,10 +244,7 @@ namespace Bug_Tracker.Controllers
                 //    x = "";
                 //}
 
-                if (Users.Count > 0)
-                {
-                    await _userRepository.AddUsers(Users);
-                }
+
 
 
 
@@ -251,7 +281,7 @@ namespace Bug_Tracker.Controllers
 
             }
 
-
+            var model = await _userRepository.GetAllUsers();
 
             return View(model);
         }
@@ -322,28 +352,28 @@ namespace Bug_Tracker.Controllers
             return View("ConfirmDelete", userFromDb);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id)
-        {
-            var user = await _userRepository.GetUser(id);
-            if (user == null)
-            {
-                Console.WriteLine("OMFL");
-                return new NotFoundResult();
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    var user = await _userRepository.GetUser(id);
+        //    if (user == null)
+        //    {
+        //        Console.WriteLine("OMFL");
+        //        return new NotFoundResult();
 
-            }
-            var result = await _userRepository.Delete(user.ID);
-            if (result)
-            {
-                TempData["Message"] = "User Deleted Successfully";
-            }
-            else
-            {
-                TempData["Message"] = "Error While Deleting the User";
-            }
-            return RedirectToAction("Index");
-        }
+        //    }
+        //    var result = await _userRepository.Delete(user.ID);
+        //    if (result)
+        //    {
+        //        TempData["Message"] = "User Deleted Successfully";
+        //    }
+        //    else
+        //    {
+        //        TempData["Message"] = "Error While Deleting the User";
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
 
         //public IActionResult Index()
