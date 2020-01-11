@@ -85,9 +85,15 @@ namespace BugTrackerDataAccess.Repositories
             return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> Delete(string id)
+        //{
+        //    FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.ID, id);
+        //    DeleteResult deleteResult = await _context.Users.DeleteManyAsync();
+
+        //    return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+        //}
         {
-            FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.UserID, id);
+            FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.ID, id);
             DeleteResult deleteResult = await _context.Users.DeleteOneAsync(filter);
 
             return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
@@ -108,7 +114,7 @@ namespace BugTrackerDataAccess.Repositories
         // 'Submit' button
         Task<bool> Update(User user);
             // 'Delete' button
-        Task<bool> Delete(int id);
+        Task<bool> Delete(string id);
 
         // Add all Users from Auth0 to db
         //Task Create(User user);

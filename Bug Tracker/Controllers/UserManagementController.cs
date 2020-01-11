@@ -105,7 +105,7 @@ namespace Bug_Tracker.Controllers
                 return new NotFoundResult();
 
             }
-            var result = await _userRepository.Delete(user.UserID);
+            var result = await _userRepository.Delete(user.ID);
             if (result)
             {
                 TempData["Message"] = "User Deleted Successfully";

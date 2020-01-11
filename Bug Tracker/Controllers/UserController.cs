@@ -83,6 +83,7 @@ namespace Bug_Tracker.Controllers
                 JArray contentArray = JArray.Parse(content);
                 string x;
                 var Users = new List<User>();
+
                 foreach (var userAuth0 in contentArray)
                 {
                     // If Mongodb is empty
@@ -93,7 +94,7 @@ namespace Bug_Tracker.Controllers
                         document.ID = userAuth0.SelectToken("user_id").ToString();
                         document.UserName = userAuth0.SelectToken("name").ToString();
                         document.Email = userAuth0.SelectToken("email").ToString();
-                        document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+                      //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
                         Users.Add(document);
                         x = "in empty ";
@@ -103,6 +104,11 @@ namespace Bug_Tracker.Controllers
                         bool match = false;
                         foreach (var userMongo in model)
                         {
+                          //  contentArray.SelectToken
+                            if (!contentArray.Contains(userMongo.ID))
+                            {
+                                x = "not in array";                                                               
+                            }
                             if(userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
                             {
                                 match = true;
@@ -115,7 +121,7 @@ namespace Bug_Tracker.Controllers
                             document.ID = userAuth0.SelectToken("user_id").ToString();
                             document.UserName = userAuth0.SelectToken("name").ToString();
                             document.Email = userAuth0.SelectToken("email").ToString();
-                            document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+                           // document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
                             Users.Add(document);
                         }
@@ -141,6 +147,7 @@ namespace Bug_Tracker.Controllers
                     }
                     x = "";
                 }
+
                 if (Users.Count > 0)
                 {
                     await _userRepository.AddUsers(Users);
@@ -259,7 +266,7 @@ namespace Bug_Tracker.Controllers
                 return new NotFoundResult();
 
             }
-            var result = await _userRepository.Delete(user.UserID);
+            var result = await _userRepository.Delete(user.ID);
             if (result)
             {
                 TempData["Message"] = "User Deleted Successfully";
