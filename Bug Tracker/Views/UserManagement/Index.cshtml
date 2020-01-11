@@ -43,30 +43,36 @@
                     <th>
                         Role
                     </th>
+                    <th>
+                        Num. Projects
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ID)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.UserName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Email)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Role)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                            @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                            @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Projects)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                    </td>
+                </tr>
                 }
 
             </tbody>

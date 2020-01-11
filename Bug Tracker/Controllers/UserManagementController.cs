@@ -12,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 namespace Bug_Tracker.Controllers
 {
@@ -63,17 +64,30 @@ namespace Bug_Tracker.Controllers
 
             foreach (var userAuth0 in usersAuth0)
             {
+                // ArrayList to store all user assigned projects
+                var Projects = new ArrayList();
+                // Foreach loop to add all projects for Projects ArrayList
+                foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
+                {
+             //       project.SelectToken("app_metadata").SelectToken("projects");
+                    Projects.Add(project);
+                }
+
                 // GETTING ROLES ASSIGNED TO USER FROM AUTH0
                 baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userAuth0.SelectToken("user_id").ToString() + "/roles";
                 client = new RestClient(baseURL);
                 response = client.Execute(request);
                 JArray userRolesAuth0 = JArray.Parse(response.Content);
+                
+                
                 var document = new User();
 
                 document.ID = userAuth0.SelectToken("user_id").ToString();
                 document.UserName = userAuth0.SelectToken("name").ToString();
                 document.Email = userAuth0.SelectToken("email").ToString();
                 document.Role = userRolesAuth0.First.SelectToken("name").ToString();
+                document.Projects = Projects.Count;
+
 
                 Users.Add(document);
             }
