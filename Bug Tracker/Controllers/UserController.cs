@@ -83,76 +83,143 @@ namespace Bug_Tracker.Controllers
                 JArray contentArray = JArray.Parse(content);
                 string x;
                 var Users = new List<User>();
+                var add = new List<User>();
+                var delete = new List<User>();
 
-                foreach (var userAuth0 in contentArray)
+                bool isMongoDbEmpty = true;
+                if (model?.Any() != true)
                 {
-                    // If Mongodb is empty
-                    if (model?.Any() != true)
+                    foreach (var userAuth0 in contentArray)
                     {
                         var document = new User();
 
                         document.ID = userAuth0.SelectToken("user_id").ToString();
                         document.UserName = userAuth0.SelectToken("name").ToString();
                         document.Email = userAuth0.SelectToken("email").ToString();
-                      //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+                        //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
 
                         Users.Add(document);
-                        x = "in empty ";
                     }
-                    else
-                    {
-                        bool match = false;
-                        foreach (var userMongo in model)
-                        {
-                          //  contentArray.SelectToken
-                            if (!contentArray.Contains(userMongo.ID))
-                            {
-                                x = "not in array";                                                               
-                            }
-                            if(userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
-                            {
-                                match = true;
-                            }
-                        }
-                        if (match == false)
-                        {
-                            var document = new User();
-
-                            document.ID = userAuth0.SelectToken("user_id").ToString();
-                            document.UserName = userAuth0.SelectToken("name").ToString();
-                            document.Email = userAuth0.SelectToken("email").ToString();
-                           // document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
-
-                            Users.Add(document);
-                        }
-
-                        //foreach (var userMongo in model)
-                        //{
-                        //    var y = userMongo.ID.ToString();
-                        //    if (userAuth0.SelectToken("user_id").ToString() != userMongo.ID.ToString())
-                        //    {
-
-                        //        var document = new User();
-
-                        //        document.ID = userAuth0.SelectToken("user_id").ToString();
-                        //        document.UserName = userAuth0.SelectToken("name").ToString();
-                        //        document.Email = userAuth0.SelectToken("email").ToString();
-                        //        document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
-
-                        //        Users.Add(document);
-                        //    }
-                        //    x = "not empty";
-                        //}
-
-                    }
-                    x = "";
+                    isMongoDbEmpty = false;
                 }
+                else
+                {
+                    foreach (var userMongo in model)
+                    {
+
+
+                        {
+                            bool match = false;
+                            foreach (var userAuth0 in contentArray)
+                            {
+                                if (userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
+                                {
+                                    match = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    User user = new User();
+                                    user.ID = userAuth0.SelectToken("user_id").ToString();
+                                    match = false;
+                                    if (add.Contains(user).ToString().Contains(userMongo.ID.ToString()))
+                                    {
+                                        x = "it exists";
+                                    }
+
+                                    //var document = new User();
+
+                                    //document.ID = userAuth0.SelectToken("user_id").ToString();
+                                    //document.UserName = userAuth0.SelectToken("name").ToString();
+                                    //document.Email = userAuth0.SelectToken("email").ToString();
+                                    ////  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+
+                                    //add.Add(document);   
+                                }
+                            }
+                            if (match == false)
+                            {
+                                delete.Add(userMongo);
+                            }
+
+                        }
+                    }
+
+                }
+
+                //foreach (var userAuth0 in contentArray)
+                //{
+                //    // If Mongodb is empty
+                //    if (model?.Any() != true)
+                //    {
+                //        var document = new User();
+
+                //        document.ID = userAuth0.SelectToken("user_id").ToString();
+                //        document.UserName = userAuth0.SelectToken("name").ToString();
+                //        document.Email = userAuth0.SelectToken("email").ToString();
+                //      //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+
+                //        Users.Add(document);
+                //        x = "in empty ";
+                //    }
+                //    else
+                //    {
+                //        bool match = false;
+                //        foreach (var userMongo in model)
+                //        {
+                //          //  contentArray.SelectToken
+                //            if (!contentArray.Contains(userMongo.ID))
+                //            {
+                //                x = "not in array";                                                               
+                //            }
+                //            if(userAuth0.SelectToken("user_id").ToString() == userMongo.ID.ToString())
+                //            {
+                //                match = true;
+                //            }
+                //        }
+                //        if (match == false)
+                //        {
+                //            var document = new User();
+
+                //            document.ID = userAuth0.SelectToken("user_id").ToString();
+                //            document.UserName = userAuth0.SelectToken("name").ToString();
+                //            document.Email = userAuth0.SelectToken("email").ToString();
+                //           // document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+
+                //            Users.Add(document);
+                //        }
+
+                //        //foreach (var userMongo in model)
+                //        //{
+                //        //    var y = userMongo.ID.ToString();
+                //        //    if (userAuth0.SelectToken("user_id").ToString() != userMongo.ID.ToString())
+                //        //    {
+
+                //        //        var document = new User();
+
+                //        //        document.ID = userAuth0.SelectToken("user_id").ToString();
+                //        //        document.UserName = userAuth0.SelectToken("name").ToString();
+                //        //        document.Email = userAuth0.SelectToken("email").ToString();
+                //        //        document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+
+                //        //        Users.Add(document);
+                //        //    }
+                //        //    x = "not empty";
+                //        //}
+
+                //    }
+                //    x = "";
+                //}
 
                 if (Users.Count > 0)
                 {
                     await _userRepository.AddUsers(Users);
                 }
-          
+
+
+
+
+
 
 
 
@@ -185,7 +252,7 @@ namespace Bug_Tracker.Controllers
             }
 
 
-            
+
             return View(model);
         }
 
@@ -201,7 +268,7 @@ namespace Bug_Tracker.Controllers
             return View("GetUserById", user);
         }
 
-        
+
         [HttpGet]
         public ActionResult Create()
         {
