@@ -44,8 +44,8 @@
                             </div>
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body table-responsive p-0" style="height: 300px;">
-                            <table class="table table-head-fixed">
+                        <div class="card-body table-responsive p-0" style="height: 300px;" >
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>User ID</th>
@@ -56,33 +56,91 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.ID)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.UserName)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Email)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Role)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Projects)
-                                            </td>
-                                            <td>
-                                                @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                            </td>
-                                        </tr>
-                                    }
-
+                                    <tr>
+                                        <td>183</td>
+                                        <td>John Doe</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-success">Approved</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>219</td>
+                                        <td>Alexander Pierce</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-warning">Pending</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>657</td>
+                                        <td>Bob Doe</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-primary">Approved</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>175</td>
+                                        <td>Mike Doe</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-danger">Denied</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>134</td>
+                                        <td>Jim Doe</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-success">Approved</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>494</td>
+                                        <td>Victoria Doe</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-warning">Pending</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>832</td>
+                                        <td>Michael Doe</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-primary">Approved</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>982</td>
+                                        <td>Rocky Doe</td>
+                                        <td>11-7-2014</td>
+                                        <td><span class="tag tag-danger">Denied</span></td>
+                                        <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                    </tr>
                                 </tbody>
+                                @*<tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Projects)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                    </td>
+                </tr>
+            }
+
+        </tbody>*@
                             </table>
                         </div>
                         <!-- /.card-body -->
