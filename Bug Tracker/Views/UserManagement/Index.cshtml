@@ -11,12 +11,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>User Database</h1>
+                    <h1>User Management</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Blank Page</li>
+                        <li class="breadcrumb-item active">User Management</li>
                     </ol>
                 </div>
             </div>
@@ -25,60 +25,73 @@
 
     <!-- Main content -->
     <section class="content">
-        <p>
-            <a asp-action="Create"> Create New User</a>
-        </p>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        User ID
-                    </th>
-                    <th>
-                        User Name
-                    </th>
-                    <th>
-                        Email
-                    </th>
-                    <th>
-                        Role
-                    </th>
-                    <th>
-                        Num. Projects
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Role)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Projects)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                    </td>
-                </tr>
-                }
+        <div class="container-fluid">
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">User Database</h3>
 
-            </tbody>
+                            <div class="card-tools">
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-        </table>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0" style="height: 300px;">
+                            <table class="table table-head-fixed">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>User Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Num. Projects</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ID)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.UserName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Email)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Role)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Projects)
+                                            </td>
+                                            <td>
+                                                @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                            </td>
+                                        </tr>
+                                    }
 
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 </div>
