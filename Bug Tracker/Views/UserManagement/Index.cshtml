@@ -4,6 +4,17 @@
     ViewData["Title"] = "Home Page";
 }
 
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -23,6 +34,11 @@
         </div><!-- /.container-fluid -->
     </section>
 
+    @*<div class="container">
+        <h2>Filterable Table</h2>
+
+        <input class="form-control" id="myInput" type="text" placeholder="Search..">
+        <br>*@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -35,16 +51,15 @@
 
                             <div class="card-tools">
                                 <div class="input-group input-group-sm" style="width: 150px;">
-                                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                                    <div class="input-group-append">
+                                    <input class="form-control" id="myInput" type="text" placeholder="Search..">
+                                    @*<div class="input-group-append">
                                         <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                                    </div>
+                                    </div>*@
                                 </div>
                             </div>
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body table-responsive p-0" style="height: 300px;" >
+                        <div class="card-body table-responsive p-0" style="height: 300px;">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -55,7 +70,7 @@
                                         <th>Num. Projects</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="myTable">
                                     <tr>
                                         <td>183</td>
                                         <td>John Doe</td>
@@ -114,33 +129,33 @@
                                     </tr>
                                 </tbody>
                                 @*<tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Role)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Projects)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                    </td>
-                </tr>
-            }
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.ID)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.UserName)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Email)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Role)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Projects)
+                                                </td>
+                                                <td>
+                                                    @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                                    @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                    @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                                </td>
+                                            </tr>
+                                        }
 
-        </tbody>*@
+                                    </tbody>*@
                             </table>
                         </div>
                         <!-- /.card-body -->
@@ -154,3 +169,15 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+          
+<script>
+    $(document).ready(function () {
+        $("#myInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
