@@ -51,7 +51,7 @@
             <div class="container-fluid">
                 <!-- /.row -->
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-8">
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">User Database</h3>
@@ -115,8 +115,9 @@
     <!-- page script -->
     <script>
         $(function () {
-            $("#UserDatabase").DataTable();
-
+            $("#UserDatabase").DataTable({
+                "autoWidth": true
+            });
         });
     </script>
 </body>
