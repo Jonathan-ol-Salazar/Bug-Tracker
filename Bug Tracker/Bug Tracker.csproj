@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\theme\" />
+    <Folder Include="wwwroot\AdminLTE_theme\" />
   </ItemGroup>
 
   <ItemGroup>
