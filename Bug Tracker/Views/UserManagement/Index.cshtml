@@ -1,5 +1,4 @@
-﻿@model List<BugTrackerDataAccess.Models.User>
-
+﻿@model BugTrackerDataAccess.ViewModel.UserManagementViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -51,6 +50,58 @@
             <div class="container-fluid">
                 <!-- /.row -->
                 <div class="row">
+                    <div class="col-4">
+                        <div class="card card-default">
+                            <div class="card-header">
+                                <h3 class="card-title">Edit Users</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form role="form">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Users</label>
+                                        <select class="form-control select2" data-placeholder="Select a State" style="width: 100%;">
+                                            @foreach (var item in Model.UsersList)
+                                            {
+                                                <option>@item.UserName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role</label>
+                                        <select class="form-control select2" style="width: 100%;">
+                                            <option selected="selected">Alabama</option>
+                                            <option>Alaska</option>
+                                            <option>California</option>
+                                            <option>Delaware</option>
+                                            <option>Tennessee</option>
+                                            <option>Texas</option>
+                                            <option>Washington</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Project</label>
+                                        <select class="form-control select2" style="width: 100%;">
+                                            <option selected="selected">Alabama</option>
+                                            <option>Alaska</option>
+                                            <option>California</option>
+                                            <option>Delaware</option>
+                                            <option>Tennessee</option>
+                                            <option>Texas</option>
+                                            <option>Washington</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+
                     <div class="col-8">
                         <div class="card">
                             <div class="card-header">
@@ -69,7 +120,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="myTable">
-                                        @foreach (var item in Model)
+                                        @foreach (var item in Model.UsersList)
                                         {
                                             <tr>
                                                 <td>@item.ID</td>
@@ -78,10 +129,10 @@
                                                 <td>@item.Role</td>
                                                 <td>@item.NumProjects</td>
                                                 @*<td>
-                                                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                                    </td>*@
+                            @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                            @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                            @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                        </td>*@
                                             </tr>
                                         }
                                     </tbody>

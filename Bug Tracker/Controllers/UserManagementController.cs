@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using BugTrackerDataAccess.ViewModel;
 
 namespace Bug_Tracker.Controllers
 {
@@ -92,11 +93,39 @@ namespace Bug_Tracker.Controllers
                 Users.Add(document);
             }
 
+
+            // GETTING ALL ROLES 
+            baseURL = "https://wussubininja.au.auth0.com/api/v2/roles";
+            client = new RestClient(baseURL);
+            response = client.Execute(request);
+            JArray RolesAuth0 = JArray.Parse(response.Content);
+            var AllRoles = new List<Roles>();
+
+            foreach (var role in RolesAuth0)
+            {
+                var Auth0 = new Roles();
+
+                Auth0.Role = role.SelectToken("name").ToString();
+                Auth0.RoleID = role.SelectToken("id").ToString();
+                Auth0.RoleDescription = role.SelectToken("description").ToString();
+
+                AllRoles.Add(Auth0);
+            }
+
+
+
+            // GETTING ALL PROJECTS
+
             // Add all users from Auth0 to MongoDB 'Users' collection
             await _userRepository.AddUsers(Users);
             // Get all users from 'Users' collection and use a model for 'Index' view
-            var model = await _userRepository.GetAllUsers();
+            var GetAllUsers = await _userRepository.GetAllUsers();
 
+            UserManagementViewModel model = new UserManagementViewModel();
+            model.UsersList = GetAllUsers;
+            model.Auth0List = AllRoles;
+
+            // model.User = user
             return View(model);
         }
 
