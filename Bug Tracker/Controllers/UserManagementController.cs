@@ -86,7 +86,7 @@ namespace Bug_Tracker.Controllers
                 document.UserName = userAuth0.SelectToken("name").ToString();
                 document.Email = userAuth0.SelectToken("email").ToString();
                 document.Role = userRolesAuth0.First.SelectToken("name").ToString();
-                document.Projects = Projects.Count;
+                document.NumProjects = Projects.Count;
 
 
                 Users.Add(document);

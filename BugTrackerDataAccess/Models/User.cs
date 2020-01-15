@@ -33,7 +33,7 @@ namespace BugTrackerDataAccess.Models
 
         [BsonElement]
         [Required]
-        public int Projects { get; set; }
+        public int NumProjects { get; set; }
 
 
 
