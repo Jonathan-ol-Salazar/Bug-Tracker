@@ -11,28 +11,28 @@ namespace BugTrackerDataAccess.Models
         public ObjectId Id { get; set; }
 
         [BsonElement]
-        [Required]
+   //     [Required]
         public int UserID { get; set; }
 
         [BsonElement]
-        [Required]
+    //    [Required]
         public string ID { get; set; }
 
 
         [BsonElement]
-        [Required]
+      //  [Required]
         public string UserName { get; set; }
 
         [BsonElement]
-        [Required]
+     //   [Required]
         public string Email { get; set; }
 
         [BsonElement]
-        [Required]
+     //   [Required]
         public string Role { get; set; }
 
         [BsonElement]
-        [Required]
+   //     [Required]
         public int NumProjects { get; set; }
 
 

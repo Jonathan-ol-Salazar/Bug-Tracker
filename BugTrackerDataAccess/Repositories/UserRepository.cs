@@ -44,9 +44,9 @@ namespace BugTrackerDataAccess.Repositories
 
 
 
-        public async Task<User> GetUser(int id)
+        public async Task<User> GetUser(string id)
         {
-            FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.UserID, id);
+            FilterDefinition<User> filter = Builders<User>.Filter.Eq(x => x.ID, id);
             return await _context.Users.Find(filter).FirstOrDefaultAsync();
         }
 
@@ -92,7 +92,7 @@ namespace BugTrackerDataAccess.Repositories
         
         // EDIT USERS
             // Selecting Users 
-        Task<User> GetUser(int id);
+        Task<User> GetUser(string id);
 
         Task Create(User user);
         // 'Submit' button

@@ -10,6 +10,12 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="~/AdminLTE_theme/plugins/fontawesome-free/css/all.min.css">
     <!-- Ionicons -->
@@ -24,21 +30,29 @@
     <!-- jQuery -->
     @*<script src="~/AdminLTE_theme/plugins/jquery/jquery.min.js"></script>*@
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
+
+
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js" defer></script>
 
 
     <!-- DataTables -->
-    @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js" defer></script>
-        <script src="~/AdminLTE_theme/plugins/datatables/jquery.dataTables.js" defer></script>
-
-
-        <link rel="stylesheet" href="~/AdminLTE_theme/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
-        <script src="~/AdminLTE_theme/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>*@
-
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
-
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js" defer></script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous" defer></script>
+
+    <!-- Bootstrap 4 -->
+    @*<script src="~/AdminLTE_theme/plugins/bootstrap/js/bootstrap.bundle.min.js" defer></script>*@
+
+
+
 
 
 
@@ -78,42 +92,34 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form role="form" asp-action="Update">
+                            <form asp-action="Update">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label>Users</label>
-                                        <select class="form-control select2" data-placeholder="Select a State" style="width: 100%;">
+                                        <label asp-for="User.ID" class="control-label"></label>
+                                        @*<select class="form-control select2" data-placeholder="Select a State" style="width: 100%;">*@
+                                        <select asp-for="User.ID" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UsersList)
                                             {
-                                                <option>@item.UserName</option>
+                                                <option>@item.ID</option>
                                             }
                                         </select>
                                     </div>
+
                                     <div class="form-group">
-                                        <label>Role</label>
-                                        <select class="form-control select2" style="width: 100%;">                                            
+                                        <label asp-for="User.Role" class="control-label"></label>
+                                        <select asp-for="User.Role" class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.Auth0List)
                                             {
                                                 <option>@item.Role</option>
                                             }
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Project</label>
-                                        <select class="form-control select2" style="width: 100%;">
-                                            <option selected="selected">Alabama</option>
-                                            <option>Alaska</option>
-                                            <option>California</option>
-                                            <option>Delaware</option>
-                                            <option>Tennessee</option>
-                                            <option>Texas</option>
-                                            <option>Washington</option>
-                                        </select>
-                                    </div>
+
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Submit</button>
+                                    @*<input type="submit" value="Save" class="btn btn-primary" />*@
                                 </div>
                             </form>
                         </div>
@@ -147,10 +153,10 @@
                                                 <td>@item.Role</td>
                                                 <td>@item.NumProjects</td>
                                                 @*<td>
-                            @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                            @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                            @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                        </td>*@
+                                                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                                    </td>*@
                                             </tr>
                                         }
                                     </tbody>
@@ -168,20 +174,31 @@
     </div>
     <!-- /.content-wrapper -->
 
-    <!-- Bootstrap 4 -->
-    <script src="~/AdminLTE_theme/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- AdminLTE App -->
-    <script src="~/AdminLTE_theme/dist/js/adminlte.min.js"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="~/AdminLTE_theme/dist/js/demo.js"></script>
+
+
     <!-- page script -->
     <script>
-        $(document).ready( function () {
+        $(document).ready(function () {
             $("#UserDatabase").DataTable();
+
+
+            ////Initialize Select2 Elements
+            $('.select2').select2();
+            //$("#select2").select2().val();
+
+
+            //Initialize Select2 Elements
+            //$('.select2').select2()
+
+
+            //x = ("#select2").select2().val();
+            //console.log(x)
+
+
         });
-        //var x = ("#UserDatabse").select2("data");
-        //console.log(x);
+
+
     </script>
 </body>
 </html>

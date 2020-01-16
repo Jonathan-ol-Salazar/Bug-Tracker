@@ -131,7 +131,7 @@ namespace Bug_Tracker.Controllers
 
         [HttpGet]
         //[ActionName("Get")]
-        public async Task<ActionResult> GetUserById(int id)
+        public async Task<ActionResult> GetUserById(string id)
         {
             var user = await _userRepository.GetUser(id);
             if (user == null)
@@ -163,20 +163,20 @@ namespace Bug_Tracker.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<ActionResult> Update(int id)
-        {
-            User user = await _userRepository.GetUser(id);
-            return View("Update", user);
-        }
+        //[HttpGet]
+        //public async Task<ActionResult> Update(string id)
+        //{
+        //    User user = await _userRepository.GetUser(id);
+        //    return View("Update", user);
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "UserID, UserName, Email, Role")] User user)
+        public async Task<ActionResult> Update([Bind(include: "ID, Role")] User user)
         {
             if (ModelState.IsValid)
             {
-                var userFromDb = await _userRepository.GetUser(user.UserID);
+                var userFromDb = await _userRepository.GetUser(user.ID);
                 if (userFromDb == null)
                 {
                     return new NotFoundResult();
@@ -189,7 +189,7 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> ConfirmDelete(int id)
+        public async Task<ActionResult> ConfirmDelete(string id)
         {
             var userFromDb = await _userRepository.GetUser(id);
             return View("ConfirmDelete", userFromDb);
