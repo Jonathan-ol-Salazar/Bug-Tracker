@@ -21,7 +21,7 @@ namespace Bug_Tracker.Controllers
     public class UserManagementController : Controller
     {
         private readonly IUserRepository _userRepository;
-        private UserManagementViewModel model = new UserManagementViewModel();
+        //private UserManagementViewModel model = new UserManagementViewModel();
 
 
         public UserManagementController(IUserRepository userRepository)
@@ -125,7 +125,7 @@ namespace Bug_Tracker.Controllers
             // Get all users from 'Users' collection and use a model for 'Index' view
             var GetAllUsers = await _userRepository.GetAllUsers();
 
-            //UserManagementViewModel model = new UserManagementViewModel();
+            UserManagementViewModel model = new UserManagementViewModel();
             model.UsersList = GetAllUsers;
             model.Auth0List = AllRoles;
 
@@ -176,7 +176,7 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "ID, Role")] User user)
+        public async Task<ActionResult> Update([Bind(include: "ID, RoleID")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -225,8 +225,12 @@ namespace Bug_Tracker.Controllers
 
 
                 // Use Auth0 API to add role to user
+                object newRole = "{ \"roles\": [ \"" + user.RoleID + "\"] }";
                 request = new RestRequest(Method.POST);
-                request.AddParameter("application/json", "{ \"roles\": [ \"ROLE_ID\", \"ROLE_ID\" ] }", ParameterType.RequestBody);
+                request.AddHeader("content-type", "application/json");
+                request.AddHeader("authorization", authorizationValue);
+                request.AddHeader("cache-control", "no-cache");
+                request.AddParameter("application/json", newRole, ParameterType.RequestBody);
                 response = client.Execute(request);
 
 
