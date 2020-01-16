@@ -21,6 +21,8 @@ namespace Bug_Tracker.Controllers
     public class UserManagementController : Controller
     {
         private readonly IUserRepository _userRepository;
+        private UserManagementViewModel model = new UserManagementViewModel();
+
 
         public UserManagementController(IUserRepository userRepository)
         {
@@ -87,6 +89,8 @@ namespace Bug_Tracker.Controllers
                 document.UserName = userAuth0.SelectToken("name").ToString();
                 document.Email = userAuth0.SelectToken("email").ToString();
                 document.Role = userRolesAuth0.First.SelectToken("name").ToString();
+                document.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
+
                 document.NumProjects = Projects.Count;
 
 
@@ -121,7 +125,7 @@ namespace Bug_Tracker.Controllers
             // Get all users from 'Users' collection and use a model for 'Index' view
             var GetAllUsers = await _userRepository.GetAllUsers();
 
-            UserManagementViewModel model = new UserManagementViewModel();
+            //UserManagementViewModel model = new UserManagementViewModel();
             model.UsersList = GetAllUsers;
             model.Auth0List = AllRoles;
 
@@ -176,17 +180,61 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+                IRestResponse response = client.Execute(request);
+
+                // Parsing into JSON 
+                var response2dict = JObject.Parse(response.Content);
+                // Retrieving Access Token
+                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+
+
                 var userFromDb = await _userRepository.GetUser(user.ID);
                 if (userFromDb == null)
                 {
                     return new NotFoundResult();
                 }
                 user.Id = userFromDb.Id;
-                await _userRepository.Update(user);
+
+                //await _userRepository.Update(user);
                 TempData["Message"] = "Customer Updated Successfully";
+
+                UserManagementViewModel x = new UserManagementViewModel();
+                var roleID = "";
+                //foreach (var role in  )
+
+
+
+                //Use Auth0 API to remove all users role
+
+                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID + "/roles";
+                string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
+                client = new RestClient(baseURL);
+                request = new RestRequest(Method.DELETE);
+                request.AddHeader("content-type", "application/json");
+                request.AddHeader("authorization", authorizationValue);
+                request.AddHeader("cache-control", "no-cache");
+                request.AddParameter("application/json", oldRole, ParameterType.RequestBody);
+                response = client.Execute(request);
+
+
+                // Use Auth0 API to add role to user
+                request = new RestRequest(Method.POST);
+                request.AddParameter("application/json", "{ \"roles\": [ \"ROLE_ID\", \"ROLE_ID\" ] }", ParameterType.RequestBody);
+                response = client.Execute(request);
+
 
             }
             return RedirectToAction("Index");
+
+
+
         }
 
         public async Task<ActionResult> ConfirmDelete(string id)

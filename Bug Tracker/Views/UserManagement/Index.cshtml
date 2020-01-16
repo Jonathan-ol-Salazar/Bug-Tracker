@@ -100,7 +100,7 @@
                                         <select asp-for="User.ID" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UsersList)
                                             {
-                                                <option>@item.ID</option>
+                                                <option value="@item.ID" >@item.UserName</option>
                                             }
                                         </select>
                                     </div>
@@ -110,7 +110,7 @@
                                         <select asp-for="User.Role" class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.Auth0List)
                                             {
-                                                <option>@item.Role</option>
+                                                <option value="@item.RoleID">@item.Role</option>
                                             }
                                         </select>
                                     </div>

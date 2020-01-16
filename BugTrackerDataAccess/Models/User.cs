@@ -32,6 +32,12 @@ namespace BugTrackerDataAccess.Models
         public string Role { get; set; }
 
         [BsonElement]
+        //   [Required]
+        public string RoleID { get; set; }
+
+
+
+        [BsonElement]
    //     [Required]
         public int NumProjects { get; set; }
 
