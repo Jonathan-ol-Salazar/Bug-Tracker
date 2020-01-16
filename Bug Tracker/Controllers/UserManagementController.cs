@@ -204,14 +204,10 @@ namespace Bug_Tracker.Controllers
                 //await _userRepository.Update(user);
                 TempData["Message"] = "Customer Updated Successfully";
 
-                UserManagementViewModel x = new UserManagementViewModel();
-                var roleID = "";
-                //foreach (var role in  )
 
 
 
                 //Use Auth0 API to remove all users role
-
                 string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID + "/roles";
                 string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
                 object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";

@@ -65,7 +65,7 @@ namespace BugTrackerDataAccess.Repositories
         {
 
             var filter = new BsonDocument("user_id", new BsonDocument("$in", new BsonArray(user)));
-            var x = "";
+       
             DeleteResult deleteResult = await _context.Users.DeleteManyAsync(filter);
 
             return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;

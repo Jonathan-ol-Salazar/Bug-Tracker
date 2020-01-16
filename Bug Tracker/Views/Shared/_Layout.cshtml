@@ -139,7 +139,7 @@
                         @*<span class="far fa-user" alt="User Image" style="color:aqua"></span>*@
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">CURRENT USER</a>
+                        <a href="#" class="d-block">@User.Identity.Name</a>
                     </div>
                 </div>
 
@@ -197,7 +197,7 @@
                                 </p>
                             </a>
                         </li>
-                        
+                        @Html.ActionLink("User Management","Index", "UserManagement")
                         <li class="nav-header">MANAGEMENT</li>
 
                         <li class="nav-item">

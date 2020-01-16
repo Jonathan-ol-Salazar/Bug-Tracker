@@ -95,7 +95,7 @@
                             <form asp-action="Update">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label asp-for="User.ID" class="control-label"></label>
+                                        <label asp-for="User.ID" class="control-label">User Name</label>
                                         @*<select class="form-control select2" data-placeholder="Select a State" style="width: 100%;">*@
                                         <select asp-for="User.ID" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UsersList)
@@ -106,7 +106,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label asp-for="User.RoleID" class="control-label"></label>
+                                        <label asp-for="User.RoleID" class="control-label">Role</label>
                                         <select asp-for="User.RoleID" class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.Auth0List)
                                             {
