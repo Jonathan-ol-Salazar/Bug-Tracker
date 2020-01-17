@@ -204,31 +204,30 @@ namespace Bug_Tracker.Controllers
                 //await _userRepository.Update(user);
                 TempData["Message"] = "Customer Updated Successfully";
 
-
-
-
-                //Use Auth0 API to remove all users ROLES
-                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID + "/roles";
+                string baseURL = "";
                 string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-                object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
-                client = new RestClient(baseURL);
-                request = new RestRequest(Method.DELETE);
-                request.AddHeader("content-type", "application/json");
-                request.AddHeader("authorization", authorizationValue);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddParameter("application/json", oldRole, ParameterType.RequestBody);
-                response = client.Execute(request);
+                if (user.RoleID != null)
+                {
+                    //Use Auth0 API to remove all users ROLES
+                    baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID + "/roles";
+                    object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
+                    client = new RestClient(baseURL);
+                    request = new RestRequest(Method.DELETE);
+                    request.AddHeader("content-type", "application/json");
+                    request.AddHeader("authorization", authorizationValue);
+                    request.AddHeader("cache-control", "no-cache");
+                    request.AddParameter("application/json", oldRole, ParameterType.RequestBody);
+                    response = client.Execute(request);
 
-
-                // Use Auth0 API to add ROLE to user
-                object newRole = "{ \"roles\": [ \"" + user.RoleID + "\"] }";
-                request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/json");
-                request.AddHeader("authorization", authorizationValue);
-                request.AddHeader("cache-control", "no-cache");
-                request.AddParameter("application/json", newRole, ParameterType.RequestBody);
-                response = client.Execute(request);
-
+                    // Use Auth0 API to add ROLE to user
+                    object newRole = "{ \"roles\": [ \"" + user.RoleID + "\"] }";
+                    request = new RestRequest(Method.POST);
+                    request.AddHeader("content-type", "application/json");
+                    request.AddHeader("authorization", authorizationValue);
+                    request.AddHeader("cache-control", "no-cache");
+                    request.AddParameter("application/json", newRole, ParameterType.RequestBody);
+                    response = client.Execute(request);
+                }
 
                 // Use Auth0 API to add PROJECT to user metadata
                 baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID;
