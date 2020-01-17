@@ -53,8 +53,8 @@ namespace Bug_Tracker.Controllers
                 var handler = new JwtSecurityTokenHandler();
                 var token = handler.ReadJwtToken(idToken);
                 string user_ID = token.Payload.Sub;
-                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
 
+                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
                 var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("content-type", "application/x-www-form-urlencoded");

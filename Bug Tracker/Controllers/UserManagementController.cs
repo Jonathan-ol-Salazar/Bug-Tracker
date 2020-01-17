@@ -61,16 +61,20 @@ namespace Bug_Tracker.Controllers
 
             JArray usersAuth0 = JArray.Parse(response.Content);
             var Users = new List<User>();
-
+            
             foreach (var userAuth0 in usersAuth0)
             {
                 // ArrayList to store all user assigned projects
-                var Projects = new ArrayList();
-                // Foreach loop to add all projects for Projects ArrayList
-                foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
+                List<string> Projects = new List<string>();
+                //var Projects = new ArrayList();
+                if (userAuth0.SelectToken("app_metadata").SelectToken("projects").First != null)
                 {
-             //       project.SelectToken("app_metadata").SelectToken("projects");
-                    Projects.Add(project);
+                    // Foreach loop to add all projects for Projects ArrayList
+                    foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
+                    {
+                        //project.SelectToken("app_metadata").SelectToken("projects");
+                        Projects.Add(project.ToString());
+                    }
                 }
 
                 // GETTING ROLES ASSIGNED TO USER FROM AUTH0
@@ -87,7 +91,7 @@ namespace Bug_Tracker.Controllers
                 document.Email = userAuth0.SelectToken("email").ToString();
                 document.Role = userRolesAuth0.First.SelectToken("name").ToString();
                 document.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
-
+                document.Projects = Projects;
                 document.NumProjects = Projects.Count;
 
 
@@ -228,7 +232,13 @@ namespace Bug_Tracker.Controllers
 
                 // Use Auth0 API to add PROJECT to user metadata
                 baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID;
-                object newProject = "{ \"projects\": [\"" + string.Join(",", user.Projects) + "\"]}}";
+                object newProject = "{\"projects\": {}}}";
+                
+                if (user.Projects != null)
+                {
+                    newProject = "{ \"projects\": [\"" + string.Join(",", user.Projects) + "\"]}}";
+                }
+
                 client = new RestClient(baseURL);
                 request = new RestRequest(Method.PATCH);
                 request.AddHeader("authorization", authorizationValue);
