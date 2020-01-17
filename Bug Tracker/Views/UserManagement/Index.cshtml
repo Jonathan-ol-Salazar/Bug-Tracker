@@ -98,9 +98,9 @@
                                         <label asp-for="User.ID" class="control-label">User Name</label>
                                         @*<select class="form-control select2" data-placeholder="Select a State" style="width: 100%;">*@
                                         <select asp-for="User.ID" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.UsersList)
+                                            @foreach (var item in Model.UserList)
                                             {
-                                                <option value="@item.ID" >@item.UserName</option>
+                                                <option value="@item.ID">@item.UserName</option>
                                             }
                                         </select>
                                     </div>
@@ -110,7 +110,17 @@
                                         <select asp-for="User.RoleID" class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.Auth0List)
                                             {
-                                                <option value="@item.RoleID">@item.Role</option>
+                                                <option value="@item.RoleID">@item.RoleName</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                   *<div class="form-group">
+                                        <label asp-for="User" class="control-label">Role</label>
+                                        <select asp-for="User.RoleID" class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.Auth0List)
+                                            {
+                                                <option value="@item.RoleID">@item.RoleName</option>
                                             }
                                         </select>
                                     </div>
@@ -144,7 +154,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="myTable">
-                                        @foreach (var item in Model.UsersList)
+                                        @foreach (var item in Model.UserList)
                                         {
                                             <tr>
                                                 <td>@item.ID</td>

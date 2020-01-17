@@ -45,8 +45,15 @@ namespace Bug_Tracker
                 options.Database = Configuration.GetSection("MongoDB:Database").Value;
             });
 
+
+            // MongoDB COLLECTIONS
+            // Users
             services.AddTransient<IUserContext, UserContext>();
             services.AddTransient<IUserRepository, UserRepository>();
+            // Projects
+            services.AddTransient<IProjectContext, ProjectContext>();
+            services.AddTransient<IProjectRepository, ProjectRepository>();
+
 
             // AUTH0 SETUP
             services.Configure<CookiePolicyOptions>(options =>

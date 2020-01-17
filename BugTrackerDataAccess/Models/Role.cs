@@ -6,13 +6,13 @@ using System.Text;
 
 namespace BugTrackerDataAccess.Models
 {
-    public class Roles
+    public class Role
     {
         [BsonElement]
-        public string Role { get; set; }
+        public string RoleID { get; set; }
 
         [BsonElement]
-        public string RoleID { get; set; }
+        public string RoleName { get; set; }
 
         [BsonElement]
         public string RoleDescription { get; set; }

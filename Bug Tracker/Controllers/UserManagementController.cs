@@ -4,14 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using BugTrackerDataAccess.Models;
 using BugTrackerDataAccess.Repositories;
 using Bug_Tracker.Models;
-using Microsoft.AspNetCore.Authentication;
-using System;
-using System.Globalization;
 using RestSharp;
-using System.IdentityModel.Tokens.Jwt;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections;
 using BugTrackerDataAccess.ViewModel;
 
@@ -21,12 +16,14 @@ namespace Bug_Tracker.Controllers
     public class UserManagementController : Controller
     {
         private readonly IUserRepository _userRepository;
-        //private UserManagementViewModel model = new UserManagementViewModel();
+        private readonly IProjectRepository _projectRepository;
 
 
-        public UserManagementController(IUserRepository userRepository)
+        public UserManagementController(IUserRepository userRepository, IProjectRepository projectRepository)
         {
             _userRepository = userRepository;
+            _projectRepository = projectRepository;
+        
         }
 
         [HttpGet]
@@ -103,13 +100,13 @@ namespace Bug_Tracker.Controllers
             client = new RestClient(baseURL);
             response = client.Execute(request);
             JArray RolesAuth0 = JArray.Parse(response.Content);
-            var AllRoles = new List<Roles>();
+            var AllRoles = new List<Role>();
 
             foreach (var role in RolesAuth0)
             {
-                var Auth0 = new Roles();
+                var Auth0 = new Role();
 
-                Auth0.Role = role.SelectToken("name").ToString();
+                Auth0.RoleName = role.SelectToken("name").ToString();
                 Auth0.RoleID = role.SelectToken("id").ToString();
                 Auth0.RoleDescription = role.SelectToken("description").ToString();
 
@@ -119,6 +116,11 @@ namespace Bug_Tracker.Controllers
 
 
             // GETTING ALL PROJECTS
+            var GetAllProjects = await _projectRepository.GetAllProjects();
+
+
+
+
 
             // Add all users from Auth0 to MongoDB 'Users' collection
             await _userRepository.AddUsers(Users);
@@ -126,8 +128,9 @@ namespace Bug_Tracker.Controllers
             var GetAllUsers = await _userRepository.GetAllUsers();
 
             UserManagementViewModel model = new UserManagementViewModel();
-            model.UsersList = GetAllUsers;
+            model.UserList = GetAllUsers;
             model.Auth0List = AllRoles;
+            //model.ProjectList = 
 
             // model.User = user
             return View(model);

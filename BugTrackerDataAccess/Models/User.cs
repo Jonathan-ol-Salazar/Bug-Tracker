@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace BugTrackerDataAccess.Models
@@ -35,6 +36,9 @@ namespace BugTrackerDataAccess.Models
         //   [Required]
         public string RoleID { get; set; }
 
+        [BsonElement]
+        //[Required]
+        public List<string> Projects { get; set; }
 
 
         [BsonElement]
