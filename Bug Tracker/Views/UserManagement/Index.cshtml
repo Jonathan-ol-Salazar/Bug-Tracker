@@ -53,8 +53,9 @@
 
 
 
-
-
+    <!-- DuallistBox -->
+    <link rel="stylesheet" type="text/css" href=" https://cdnjs.cloudflare.com/ajax/libs/bootstrap4-duallistbox/4.0.1/bootstrap-duallistbox.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap4-duallistbox/4.0.1/jquery.bootstrap-duallistbox.min.js" defer></script>
 
 
 
@@ -108,24 +109,33 @@
                                     <div class="form-group">
                                         <label asp-for="User.RoleID" class="control-label">Role</label>
                                         <select asp-for="User.RoleID" class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.Auth0List)
+                                            @foreach (var item in Model.RoleList)
                                             {
                                                 <option value="@item.RoleID">@item.RoleName</option>
                                             }
                                         </select>
                                     </div>
 
-                                   *<div class="form-group">
-                                        <label asp-for="User" class="control-label">Role</label>
-                                        <select asp-for="User.RoleID" class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.Auth0List)
+                                    @*<div class="form-group">
+                                        <label asp-for="User.Projects" class="control-label">Role</label>
+                                        <select asp-for="User.Projects" class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.ProjectList)
                                             {
-                                                <option value="@item.RoleID">@item.RoleName</option>
+                                                <option>@item.ProjectName</option>
+                                            }
+                                        </select>
+                                    </div>*@
+                                    
+                                    <div class="form-group">
+                                        <label asp-for="User.Projects" class="control-label">Projects</label>
+                                        <select asp-for="User.Projects" class="duallistbox" multiple="multiple" style="width: 100%;">
+                                            @foreach (var item in Model.ProjectList)
+                                            {
+                                                <option>@item.ProjectName</option>
                                             }
                                         </select>
                                     </div>
-
-                                </div>
+</div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -204,6 +214,9 @@
 
             //x = ("#select2").select2().val();
             //console.log(x)
+
+            //Bootstrap Duallistbox
+            $('.duallistbox').bootstrapDualListbox()
 
 
         });

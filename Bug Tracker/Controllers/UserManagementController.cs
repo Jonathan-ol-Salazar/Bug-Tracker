@@ -111,28 +111,21 @@ namespace Bug_Tracker.Controllers
                 Auth0.RoleDescription = role.SelectToken("description").ToString();
 
                 AllRoles.Add(Auth0);
-            }
-
-
-
-            // GETTING ALL PROJECTS
-            var GetAllProjects = await _projectRepository.GetAllProjects();
-
-
-
-
-
+            }       
+                        
             // Add all users from Auth0 to MongoDB 'Users' collection
             await _userRepository.AddUsers(Users);
             // Get all users from 'Users' collection and use a model for 'Index' view
             var GetAllUsers = await _userRepository.GetAllUsers();
+            // Get all projects from 'Projects' collection and use a model for 'Index' view
+            var GetAllProjects = await _projectRepository.GetAllProjects();
 
+            // Model for view
             UserManagementViewModel model = new UserManagementViewModel();
             model.UserList = GetAllUsers;
-            model.Auth0List = AllRoles;
-            //model.ProjectList = 
+            model.RoleList = AllRoles;
+            model.ProjectList = GetAllProjects;
 
-            // model.User = user
             return View(model);
         }
 
@@ -179,7 +172,7 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "ID, RoleID")] User user)
+        public async Task<ActionResult> Update([Bind(include: "ID, RoleID, Projects")] User user)
         {
             if (ModelState.IsValid)
             {
@@ -210,7 +203,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-                //Use Auth0 API to remove all users role
+                //Use Auth0 API to remove all users ROLES
                 string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID + "/roles";
                 string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
                 object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
@@ -223,7 +216,7 @@ namespace Bug_Tracker.Controllers
                 response = client.Execute(request);
 
 
-                // Use Auth0 API to add role to user
+                // Use Auth0 API to add ROLE to user
                 object newRole = "{ \"roles\": [ \"" + user.RoleID + "\"] }";
                 request = new RestRequest(Method.POST);
                 request.AddHeader("content-type", "application/json");
@@ -232,6 +225,16 @@ namespace Bug_Tracker.Controllers
                 request.AddParameter("application/json", newRole, ParameterType.RequestBody);
                 response = client.Execute(request);
 
+
+                // Use Auth0 API to add PROJECT to user metadata
+                baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID;
+                object newProject = "{ \"projects\": [\"" + string.Join(",", user.Projects) + "\"]}}";
+                client = new RestClient(baseURL);
+                request = new RestRequest(Method.PATCH);
+                request.AddHeader("authorization", authorizationValue);
+                request.AddHeader("content-type", "application/json");
+                request.AddParameter("application/json", "{\"app_metadata\": " + newProject, ParameterType.RequestBody);
+                response = client.Execute(request);
 
             }
             return RedirectToAction("Index");
