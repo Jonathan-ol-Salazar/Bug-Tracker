@@ -19,6 +19,11 @@ namespace BugTrackerDataAccess.Models
     //    [Required]
         public string ID { get; set; }
 
+        [BsonElement]
+        //    [Required]
+        public List<string> IDArray { get; set; }
+
+
 
         [BsonElement]
       //  [Required]

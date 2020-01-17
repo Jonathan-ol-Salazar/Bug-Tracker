@@ -60,7 +60,7 @@ namespace Bug_Tracker.Controllers
 
 
             JArray usersAuth0 = JArray.Parse(response.Content);
-            var Users = new List<User>();
+            var AllUsers = new List<User>();
             
             foreach (var userAuth0 in usersAuth0)
             {
@@ -95,7 +95,7 @@ namespace Bug_Tracker.Controllers
                 document.NumProjects = Projects.Count;
 
 
-                Users.Add(document);
+                AllUsers.Add(document);
             }
 
 
@@ -118,15 +118,15 @@ namespace Bug_Tracker.Controllers
             }       
                         
             // Add all users from Auth0 to MongoDB 'Users' collection
-            await _userRepository.AddUsers(Users);
+            await _userRepository.AddUsers(AllUsers);
             // Get all users from 'Users' collection and use a model for 'Index' view
-            var GetAllUsers = await _userRepository.GetAllUsers();
+            // var GetAllUsers = await _userRepository.GetAllUsers();
             // Get all projects from 'Projects' collection and use a model for 'Index' view
             var GetAllProjects = await _projectRepository.GetAllProjects();
 
             // Model for view
             UserManagementViewModel model = new UserManagementViewModel();
-            model.UserList = GetAllUsers;
+            model.UserList = AllUsers;// GetAllUsers;
             model.RoleList = AllRoles;
             model.ProjectList = GetAllProjects;
 
@@ -176,76 +176,89 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "ID, RoleID, Projects")] User user)
+        public async Task<ActionResult> Update([Bind(include: "IDArray, RoleID, Projects")] User user)
         {
             if (ModelState.IsValid)
             {
-
-                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
-                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/x-www-form-urlencoded");
-                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
-
-                // Parsing into JSON 
-                var response2dict = JObject.Parse(response.Content);
-                // Retrieving Access Token
-                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
-
-
-                var userFromDb = await _userRepository.GetUser(user.ID);
-                if (userFromDb == null)
+                for (int i = 0; i < user.IDArray.Count; i++)  //foreach (var selectedUserID in selectedUsers.)
                 {
-                    return new NotFoundResult();
-                }
-                user.Id = userFromDb.Id;
+                    User selectedUser = new User();
+                    selectedUser.ID = user.IDArray[i];
+                    selectedUser.Projects = user.Projects;
+                    selectedUser.RoleID = user.RoleID;
 
-                //await _userRepository.Update(user);
-                TempData["Message"] = "Customer Updated Successfully";
 
-                string baseURL = "";
-                string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-                if (user.RoleID != null)
-                {
-                    //Use Auth0 API to remove all users ROLES
-                    baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID + "/roles";
-                    object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
+
+
+                    // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+                    var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                    request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+                    IRestResponse response = client.Execute(request);
+
+                    // Parsing into JSON 
+                    var response2dict = JObject.Parse(response.Content);
+                    // Retrieving Access Token
+                    var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+
+
+                    var userFromDb = await _userRepository.GetUser(selectedUser.ID);
+                    if (userFromDb == null)
+                    {
+                        return new NotFoundResult();
+                    }
+                    selectedUser.Id = userFromDb.Id;
+
+                    //await _userRepository.Update(selectedUser);
+                    TempData["Message"] = "Customer Updated Successfully";
+
+                    string baseURL = "";
+                    string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                    if (selectedUser.RoleID != null)
+                    {
+                        //Use Auth0 API to remove all users ROLES
+                        baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID + "/roles";
+                        object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
+                        client = new RestClient(baseURL);
+                        request = new RestRequest(Method.DELETE);
+                        request.AddHeader("content-type", "application/json");
+                        request.AddHeader("authorization", authorizationValue);
+                        request.AddHeader("cache-control", "no-cache");
+                        request.AddParameter("application/json", oldRole, ParameterType.RequestBody);
+                        response = client.Execute(request);
+
+                        // Use Auth0 API to add ROLE to user
+                        object newRole = "{ \"roles\": [ \"" + selectedUser.RoleID + "\"] }";
+                        request = new RestRequest(Method.POST);
+                        request.AddHeader("content-type", "application/json");
+                        request.AddHeader("authorization", authorizationValue);
+                        request.AddHeader("cache-control", "no-cache");
+                        request.AddParameter("application/json", newRole, ParameterType.RequestBody);
+                        response = client.Execute(request);
+                    }
+
+                    // Use Auth0 API to add PROJECT to user metadata
+                    baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
+                    object newProject = "{\"projects\": {}}}";
+
+                    if (selectedUser.Projects != null)
+                    {
+                        newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
+                    }
+
                     client = new RestClient(baseURL);
-                    request = new RestRequest(Method.DELETE);
-                    request.AddHeader("content-type", "application/json");
+                    request = new RestRequest(Method.PATCH);
                     request.AddHeader("authorization", authorizationValue);
-                    request.AddHeader("cache-control", "no-cache");
-                    request.AddParameter("application/json", oldRole, ParameterType.RequestBody);
+                    request.AddHeader("content-type", "application/json");
+                    request.AddParameter("application/json", "{\"app_metadata\": " + newProject, ParameterType.RequestBody);
                     response = client.Execute(request);
 
-                    // Use Auth0 API to add ROLE to user
-                    object newRole = "{ \"roles\": [ \"" + user.RoleID + "\"] }";
-                    request = new RestRequest(Method.POST);
-                    request.AddHeader("content-type", "application/json");
-                    request.AddHeader("authorization", authorizationValue);
-                    request.AddHeader("cache-control", "no-cache");
-                    request.AddParameter("application/json", newRole, ParameterType.RequestBody);
-                    response = client.Execute(request);
                 }
-
-                // Use Auth0 API to add PROJECT to user metadata
-                baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID;
-                object newProject = "{\"projects\": {}}}";
-                
-                if (user.Projects != null)
-                {
-                    newProject = "{ \"projects\": [\"" + string.Join(",", user.Projects) + "\"]}}";
-                }
-
-                client = new RestClient(baseURL);
-                request = new RestRequest(Method.PATCH);
-                request.AddHeader("authorization", authorizationValue);
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", "{\"app_metadata\": " + newProject, ParameterType.RequestBody);
-                response = client.Execute(request);
 
             }
+
+
             return RedirectToAction("Index");
 
 
