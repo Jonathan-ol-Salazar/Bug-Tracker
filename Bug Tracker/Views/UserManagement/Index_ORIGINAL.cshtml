@@ -11,12 +11,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>User Database</h1>
+                    <h1>User Management</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Blank Page</li>
+                        <li class="breadcrumb-item active">User Management</li>
                     </ol>
                 </div>
             </div>
@@ -43,30 +43,36 @@
                     <th>
                         Role
                     </th>
+                    <th>
+                        Num. Projects
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ID)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.UserName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Email)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Role)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Update", "Update", new { id = item.ID })
-                            @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                            @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Role)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumProjects)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                    </td>
+                </tr>
                 }
 
             </tbody>

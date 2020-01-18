@@ -10,6 +10,8 @@ using System.Globalization;
 using RestSharp;
 using System.IdentityModel.Tokens.Jwt;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Bug_Tracker.Controllers
 {
@@ -26,7 +28,11 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            
+            // var model = await _userRepository.GetAllUsers();
+
+            // Reset MongoDB 'Users' collection
+            await _userRepository.ResetUsers();
+
             if (User.Identity.IsAuthenticated)
             {
                 string accessToken = await HttpContext.GetTokenAsync("access_token");
@@ -64,12 +70,10 @@ namespace Bug_Tracker.Controllers
                 var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
 
 
-                // GETTING ROLES ASSIGNED TO USER FROM AUTH0
-
-                // Format: https://wussubininja.au.auth0.com/api/v2/users/USER_ID/roles
 
 
-                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user_ID + "/roles";
+                // GETTING ALL USERS
+                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users";
                 string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
                 // Endpoint to get user role
                 client = new RestClient(baseURL);
@@ -77,24 +81,64 @@ namespace Bug_Tracker.Controllers
                 // Add Auth0 Management API Access Token 
                 request.AddHeader("authorization", authorizationValue);
                 response = client.Execute(request);
-                
-                // Remove the '[' and ']' from response string so it can be converted into JSON
-        //        response2dict = JObject.Parse(response.Content.TrimStart('[').TrimEnd(']'));
-                // Retrieving role assigned through Auth0
-                var role = response2dict.SelectToken("name").ToString();
 
+                var content = response.Content;
+                JArray contentArray = JArray.Parse(content);
+                var Users = new List<User>();
+
+                foreach (var userAuth0 in contentArray)
+                {
+                    var document = new User();
+
+                    document.ID = userAuth0.SelectToken("user_id").ToString();
+                    document.UserName = userAuth0.SelectToken("name").ToString();
+                    document.Email = userAuth0.SelectToken("email").ToString();
+                    //document.Id = userAuth0.SelectToken("email").ToString();
+                    //  document.Role = userAuth0.SelectToken("app_metadata").SelectToken("roles").ToString();
+
+                    Users.Add(document);
+                }
+
+                await _userRepository.AddUsers(Users);
+
+            
+
+
+                //// GETTING ROLES ASSIGNED TO USER FROM AUTH0
+                //// Format: https://wussubininja.au.auth0.com/api/v2/users/USER_ID/roles
+
+                //string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user_ID + "/roles";
+                //string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                //// Endpoint to get user role
+                //client = new RestClient(baseURL);
+                //request = new RestRequest(Method.GET);
+                //// Add Auth0 Management API Access Token 
+                //request.AddHeader("authorization", authorizationValue);
+                //response = client.Execute(request);
+
+
+                //// If no role is set, 'Submitter' role will be selected
+                //if (response.ContentLength == -1)
+                //{
+                //    request = new RestRequest(Method.POST);
+                //    request.AddHeader("content-type", "application/json");
+                //    request.AddHeader("authorization", authorizationValue);
+                //    request.AddHeader("cache-control", "no-cache");
+                //    request.AddParameter("application/json", "{ \"roles\": [ \"rol_fWiLOHdB4uUAg3Fq\" ] }", ParameterType.RequestBody);
+                //    response = client.Execute(request);
+                //}
 
 
             }
 
-
             var model = await _userRepository.GetAllUsers();
+
             return View(model);
         }
 
         [HttpGet]
         //[ActionName("Get")]
-        public async Task<ActionResult> GetUserById(int id)
+        public async Task<ActionResult> GetUserById(string id)
         {
             var user = await _userRepository.GetUser(id);
             if (user == null)
@@ -104,7 +148,7 @@ namespace Bug_Tracker.Controllers
             return View("GetUserById", user);
         }
 
-        
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -127,7 +171,7 @@ namespace Bug_Tracker.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult> Update(int id)
+        public async Task<ActionResult> Update(string id)
         {
             User user = await _userRepository.GetUser(id);
             return View("Update", user);
@@ -135,11 +179,11 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "UserID, UserName, Email, Role")] User user)
+        public async Task<ActionResult> Update([Bind(include: "ID, UserName, Email, Role")] User user)
         {
             if (ModelState.IsValid)
             {
-                var userFromDb = await _userRepository.GetUser(user.UserID);
+                var userFromDb = await _userRepository.GetUser(user.ID);
                 if (userFromDb == null)
                 {
                     return new NotFoundResult();
@@ -152,34 +196,34 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> ConfirmDelete(int id)
+        public async Task<ActionResult> ConfirmDelete(string id)
         {
             var userFromDb = await _userRepository.GetUser(id);
             return View("ConfirmDelete", userFromDb);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id)
-        {
-            var user = await _userRepository.GetUser(id);
-            if (user == null)
-            {
-                Console.WriteLine("OMFL");
-                return new NotFoundResult();
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    var user = await _userRepository.GetUser(id);
+        //    if (user == null)
+        //    {
+        //        Console.WriteLine("OMFL");
+        //        return new NotFoundResult();
 
-            }
-            var result = await _userRepository.Delete(user.UserID);
-            if (result)
-            {
-                TempData["Message"] = "User Deleted Successfully";
-            }
-            else
-            {
-                TempData["Message"] = "Error While Deleting the User";
-            }
-            return RedirectToAction("Index");
-        }
+        //    }
+        //    var result = await _userRepository.Delete(user.ID);
+        //    if (result)
+        //    {
+        //        TempData["Message"] = "User Deleted Successfully";
+        //    }
+        //    else
+        //    {
+        //        TempData["Message"] = "Error While Deleting the User";
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
 
         //public IActionResult Index()
