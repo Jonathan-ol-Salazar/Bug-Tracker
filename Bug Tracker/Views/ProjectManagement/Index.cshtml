@@ -1,7 +1,217 @@
-﻿
+﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Project Management";
 }
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdminLTE 3 | DataTables</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<h1>Index</h1>
 
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/AdminLTE_theme/plugins/fontawesome-free/css/all.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/AdminLTE_theme/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+
+    <!-- jQuery -->
+    @*<script src="~/AdminLTE_theme/plugins/jquery/jquery.min.js"></script>*@
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
+
+
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js" defer></script>
+
+
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js" defer></script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous" defer></script>
+
+    <!-- Bootstrap 4 -->
+    @*<script src="~/AdminLTE_theme/plugins/bootstrap/js/bootstrap.bundle.min.js" defer></script>*@
+
+
+
+    <!-- DuallistBox -->
+    <link rel="stylesheet" type="text/css" href=" https://cdnjs.cloudflare.com/ajax/libs/bootstrap4-duallistbox/4.0.1/bootstrap-duallistbox.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap4-duallistbox/4.0.1/jquery.bootstrap-duallistbox.min.js" defer></script>
+
+
+
+
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>User Management</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Project Management</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <!-- /.row -->
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card card-default">
+                            <div class="card-header">
+                                <h3 class="card-title">Edit Users</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            @*<form asp-action="Update">
+                                @*<div class="card-body">
+                                    <div class="form-group">
+                                        <label asp-for="User.IDArray" class="control-label">User Name</label>
+                                        <select asp-for="User.IDArray" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.UserList)
+                                            {
+                                                <option value="@item.ID">@item.UserName</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label asp-for="User.RoleID" class="control-label">Role</label>
+                                        <select asp-for="User.RoleID" class="form-control" style="width: 100%;">                                       
+                                            <option value="" disabled selected>Please Select A Role</option>
+                                            @foreach (var item in Model.RoleList)
+                                            {
+                                                <option value="@item.RoleID">@item.RoleName</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label asp-for="User.Projects" class="control-label">Projects</label>
+                                        <select asp-for="User.Projects" class="duallistbox" multiple="multiple" style="width: 100%;">
+                                            @foreach (var item in Model.ProjectList)
+                                            {
+                                                <option>@item.ProjectID</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>*@
+                                <!-- /.card-body -->
+                                @*<div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                               
+                                </div>
+                            </form>*@
+                        </div>
+                        <!-- /.card -->
+                    </div>
+
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">User Database</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="UserDatabase" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                            <th>Submitter</th>
+                                            <th>Num. Assignments</th>
+                                            <th>Created</th>
+                                            <th>Updated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="myTable">
+                                        @foreach (var item in Model.IssueList)
+                                        {
+                                        <tr>
+                                            <td>@item.ID</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.Status</td>
+                                            <td>@item.Submitter</td>
+                                            <td>@item.NumUsers</td>
+                                            <td>@item.DateCreated</td>
+                                            <td>@item.LastUpdated</td>
+                                            @*<td>
+                                                @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                            </td>*@
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- page script -->
+    <script>
+        $(document).ready(function () {
+            $("#UserDatabase").DataTable();
+
+
+            ////Initialize Select2 Elements
+            //$('.select2').select2();
+            //$("#select2").select2();
+
+
+            //Initialize Select2 Elements
+            //$('.select2').select2()
+
+
+            //x = ("#select2").select2().val();
+            //console.log(x)
+
+            //Bootstrap Duallistbox
+            $('.duallistbox').bootstrapDualListbox()
+
+
+        });
+
+
+    </script>
+</body>
+</html>

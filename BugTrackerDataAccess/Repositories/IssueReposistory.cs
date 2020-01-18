@@ -30,7 +30,7 @@ namespace BugTrackerDataAccess.Repositories
 
         public async Task<Issue> GetIssue(string id)
         {
-            FilterDefinition<Issue> filter = Builders<Issue>.Filter.Eq(x => x.IssueID, id);
+            FilterDefinition<Issue> filter = Builders<Issue>.Filter.Eq(x => x.ID, id);
             return await _context.Issues.Find(filter).FirstOrDefaultAsync();
         }
 

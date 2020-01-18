@@ -10,13 +10,13 @@ namespace BugTrackerDataAccess.Models
         public ObjectId Id { get; set; }
 
         [BsonElement]
-        public string ProjectID { get; set; }
+        public string ID { get; set; }
 
         [BsonElement]
-        public string ProjectName { get; set; }
+        public string Name { get; set; }
 
         [BsonElement]
-        public string ProjectDescription { get; set; }
+        public string Description { get; set; }
 
         [BsonElement]
         public List<User> AssignedUsers { get; set; }
