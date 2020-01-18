@@ -106,17 +106,11 @@
                                         </select>
                                     </div>
                                 </div>
-
-
-
-
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Submit</button>
 
                                 </div>
-
                             </form>
-
 
                             <!-- form start -->
                             <form asp-action="Update">
@@ -167,20 +161,20 @@
                                     <tbody id="myTable">
                                         @foreach (var item in Model.IssueList)
                                         {
-                                        <tr>
-                                            <td>@item.ID</td>
-                                            <td>@item.Name</td>
-                                            <td>@item.Status</td>
-                                            <td>@item.Submitter</td>
-                                            <td>@item.NumUsers</td>
-                                            <td>@item.DateCreated</td>
-                                            <td>@item.LastUpdated</td>
-                                            @*<td>
-                                                @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                            </td>*@
-                                        </tr>
+                                            <tr>
+                                                <td>@item.ID</td>
+                                                <td>@item.Name</td>
+                                                <td>@item.Status</td>
+                                                <td>@item.Submitter</td>
+                                                <td>@item.NumUsers</td>
+                                                <td>@item.DateCreated</td>
+                                                <td>@item.LastUpdated</td>
+                                                @*<td>
+                                    @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                    @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                    @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                </td>*@
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
@@ -188,12 +182,54 @@
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Assigned Users</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="UserDatabase" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>User Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Num. Projects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="myTable">
+                                        @foreach (var item in Model.AssignedUserList)
+                                        {
+                                            <tr>
+                                                <td>@item.ID</td>
+                                                <td>@item.UserName</td>
+                                                <td>@item.Email</td>
+                                                <td>@item.Role</td>
+                                                <td>@item.NumProjects</td>
+                                                @*<td>
+                                @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                            </td>*@
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+
                     </div>
+
+
                 </div>
                 <!-- /.row -->
+                     
+
             </div><!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
+    <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
     <!-- page script -->
