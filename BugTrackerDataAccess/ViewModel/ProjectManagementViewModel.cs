@@ -16,5 +16,8 @@ namespace BugTrackerDataAccess.ViewModel
         // MongoDB
         public IEnumerable<Issue> IssueList { get; set; }
 
+        public Project Project { get; set; }
+
+
     }
 }
