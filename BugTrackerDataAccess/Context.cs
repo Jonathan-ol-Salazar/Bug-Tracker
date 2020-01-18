@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace BugTrackerDataAccess
 {
-    public class Context : IUserContext, IProjectContext
+    public class Context : IUserContext, IProjectContext, IIssueContext
     {
         private readonly IMongoDatabase mongoDatabase;
 
