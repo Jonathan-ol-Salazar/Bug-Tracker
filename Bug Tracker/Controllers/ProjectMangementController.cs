@@ -122,6 +122,7 @@ namespace Bug_Tracker.Controllers
             model.IssueList = await _issueRepository.GetAllIssues();
             model.AssignedUserList = AssignedUsersList;
             model.Project = Project;
+            model.SelectedProject = Project.IDCode;
 
             return View(model);
         }
@@ -169,16 +170,16 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "IDArray, RoleID, Projects")] User user)
+        public async Task<ActionResult> Update([Bind(include: "NewUsers, IDCode")] Project project)
         {
             if (ModelState.IsValid)
             {
-                for (int i = 0; i < user.IDArray.Count; i++)  //foreach (var selectedUserID in selectedUsers.)
+                for (int i = 0; i < project.NewUsers.Count; i++)  //foreach (var selectedUserID in selectedUsers.)
                 {
                     User selectedUser = new User();
-                    selectedUser.ID = user.IDArray[i];
-                    selectedUser.Projects = user.Projects;
-                    selectedUser.RoleID = user.RoleID;
+                    selectedUser.ID = project.NewUsers[i];
+                    //selectedUser.Projects = project.;
+                    //selectedUser.RoleID = project.RoleID;
 
 
 
@@ -202,43 +203,26 @@ namespace Bug_Tracker.Controllers
                         return new NotFoundResult();
                     }
                     selectedUser.Id = userFromDb.Id;
+                    selectedUser.Projects = userFromDb.Projects;
+                    selectedUser.Projects.Add(project.IDCode);
+
 
                     //await _userRepository.Update(selectedUser);
                     TempData["Message"] = "Customer Updated Successfully";
 
                     string baseURL = "";
                     string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-                    if (selectedUser.RoleID != null)
-                    {
-                        //Use Auth0 API to remove all users ROLES
-                        baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID + "/roles";
-                        object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
-                        client = new RestClient(baseURL);
-                        request = new RestRequest(Method.DELETE);
-                        request.AddHeader("content-type", "application/json");
-                        request.AddHeader("authorization", authorizationValue);
-                        request.AddHeader("cache-control", "no-cache");
-                        request.AddParameter("application/json", oldRole, ParameterType.RequestBody);
-                        response = client.Execute(request);
-
-                        // Use Auth0 API to add ROLE to user
-                        object newRole = "{ \"roles\": [ \"" + selectedUser.RoleID + "\"] }";
-                        request = new RestRequest(Method.POST);
-                        request.AddHeader("content-type", "application/json");
-                        request.AddHeader("authorization", authorizationValue);
-                        request.AddHeader("cache-control", "no-cache");
-                        request.AddParameter("application/json", newRole, ParameterType.RequestBody);
-                        response = client.Execute(request);
-                    }
 
                     // Use Auth0 API to add PROJECT to user metadata
                     baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
-                    object newProject = "{\"projects\": {}}}";
+                    //object newProject = "{\"projects\": {}}}";
 
-                    if (selectedUser.Projects != null)
-                    {
-                        newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
-                    }
+                    //if (selectedUser.Projects != null)
+                    //{
+                    //    newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
+                    //}
+
+                    object newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
 
                     client = new RestClient(baseURL);
                     request = new RestRequest(Method.PATCH);
