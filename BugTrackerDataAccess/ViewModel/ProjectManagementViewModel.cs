@@ -18,6 +18,8 @@ namespace BugTrackerDataAccess.ViewModel
 
         public Project Project { get; set; }
 
+        public IEnumerable<User> AssignedUserList { get; set; }
+
 
     }
 }

@@ -10,7 +10,7 @@ namespace BugTrackerDataAccess.Models
         public ObjectId Id { get; set; }
 
         [BsonElement]
-        public string ID { get; set; }
+        public string IDCode { get; set; }
 
         [BsonElement]
         public string Name { get; set; }

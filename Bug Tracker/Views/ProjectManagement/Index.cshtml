@@ -93,18 +93,35 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form asp-action="Update">
+                            <form asp-action="GetProjectById">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label asp-for="Project.ID" class="control-label">Project</label>
-                                        <select asp-for="Project.ID" class="form-control" style="width: 100%;">                                       
+                                        <label asp-for="Project.IDCode" class="control-label">Project</label>
+                                        <select asp-for="Project.IDCode" class="form-control" style="width: 100%;">
                                             <option value="" disabled selected>Please Select A Project</option>
                                             @foreach (var item in Model.ProjectList)
                                             {
-                                                <option value="@item.ID">@item.ID</option>
+                                                <option value="@item.IDCode">@item.IDCode</option>
                                             }
                                         </select>
                                     </div>
+                                </div>
+
+
+
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                                </div>
+
+                            </form>
+
+
+                            <!-- form start -->
+                            <form asp-action="Update">
+                                <div class="card-body">
+
 
                                     <div class="form-group">
                                         <label asp-for="Project.AssignedUsers" class="control-label">Assign Users to Project</label>
@@ -116,10 +133,12 @@
                                         </select>
                                     </div>
                                 </div>
+
+
                                 <!-- /.card-body -->
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                               
+
                                 </div>
                             </form>
                         </div>

@@ -39,6 +39,8 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         public string LastUpdated { get; set; }
 
+        [BsonElement]
+        public string AssignedProject { get; set; }
 
 
         // ADD IMAGE

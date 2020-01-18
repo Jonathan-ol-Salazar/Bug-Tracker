@@ -28,9 +28,10 @@ namespace Bug_Tracker.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Project Project = null)
         {
             // Reset MongoDB 'Users' collection
+            
             await _userRepository.ResetUsers();
 
             // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
@@ -98,30 +99,43 @@ namespace Bug_Tracker.Controllers
 
             // Add all users from Auth0 to MongoDB 'Users' collection
             await _userRepository.AddUsers(AllUsers);
-            // Get all users from 'Users' collection and use a model for 'Index' view
-            // var GetAllUsers = await _userRepository.GetAllUsers();
+
+            // Sorting users assigned to selected project
+            List<User> AssignedUsersList = new List<User>();
+
+            foreach (var user in AllUsers)
+            {
+                if (user.Projects.Contains(Project.IDCode)){
+                    AssignedUsersList.Add(user);
+                }
+            }
+
+
             // Get all projects from 'Projects' collection and use a model for 'Index' view
-            var GetAllProjects = await _projectRepository.GetAllProjects();
-            var GetAllIssues = await _issueRepository.GetAllIssues();
+            //var GetAllProjects = await _projectRepository.GetAllProjects();
+            //var GetAllIssues = await _issueRepository.GetAllIssues();
 
             // Model for view
             ProjectManagementViewModel model = new ProjectManagementViewModel();
             model.UserList = AllUsers;
-            model.ProjectList = GetAllProjects;
-            model.IssueList = GetAllIssues;
+            model.ProjectList = await _projectRepository.GetAllProjects(); 
+            model.IssueList = await _issueRepository.GetAllIssues();
+            model.AssignedUserList = AssignedUsersList;
+            model.Project = Project;
+
             return View(model);
         }
 
-        [HttpGet]
+        //[HttpGet]
         //[ActionName("Get")]
-        public async Task<ActionResult> GetUserById(string id)
+        public async Task<ActionResult> GetProjectById([Bind(include: "IDCode")] Project project)
         {
-            var user = await _userRepository.GetUser(id);
-            if (user == null)
+            var projectFromDb = await _projectRepository.GetProject(project.IDCode);
+            if (projectFromDb == null)
             {
                 return new NotFoundResult();
             }
-            return View("GetUserById", user);
+            return RedirectToAction("Index", projectFromDb);
         }
 
 
