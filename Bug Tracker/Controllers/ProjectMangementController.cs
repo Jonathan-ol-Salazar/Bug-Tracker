@@ -112,8 +112,7 @@ namespace Bug_Tracker.Controllers
                 else
                 {
                     UsersNotAssignedList.Add(user);
-                }
-                
+                }                
             }
                 
 
@@ -174,7 +173,7 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "NewUsers, IDCode")] Project project)
+        public async Task<ActionResult> Update([Bind(include: "AddUsers, RemoveUsers, IDCode")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -191,32 +190,81 @@ namespace Bug_Tracker.Controllers
                 var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
 
 
-
-                for (int i = 0; i < project.AddUsers.Count; i++) 
+                // Adding users to project
+                if (project.AddUsers != null)
                 {
-                    User selectedUser = new User();
-                    selectedUser.ID = project.AddUsers[i];
-
-                    var userFromDb = await _userRepository.GetUser(selectedUser.ID);
-                    if (userFromDb == null)
+                    for (int i = 0; i < project.AddUsers.Count; i++)
                     {
-                        return new NotFoundResult();
+                        User selectedUser = new User();
+                        selectedUser.ID = project.AddUsers[i];
+
+                        var userFromDb = await _userRepository.GetUser(selectedUser.ID);
+                        if (userFromDb == null)
+                        {
+                            return new NotFoundResult();
+                        }
+    
+                        //if (selectedUser.Projects.Count == 0 ){
+                        //    var Projects = string.Join(selectedUser.Projects);
+                        //}
+                        //else{
+                        //    var Projects = string.Join(",", selectedUser.Projects);
+                        //}
+
+                        selectedUser.Id = userFromDb.Id;
+                        selectedUser.Projects = userFromDb.Projects;
+                        selectedUser.Projects.Add(project.IDCode);
+
+
+                        var Projects = string.Join(",", selectedUser.Projects);
+
+                        // Use Auth0 API to add PROJECT to user metadata
+                        string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                        string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
+                        object newProject = "{ \"projects\": [\"" + Projects + "\"]}}";
+                        client = new RestClient(baseURL);
+                        request = new RestRequest(Method.PATCH);
+                        request.AddHeader("authorization", authorizationValue);
+                        request.AddHeader("content-type", "application/json");
+                        request.AddParameter("application/json", "{\"app_metadata\": " + newProject, ParameterType.RequestBody);
+                        response = client.Execute(request);
+
                     }
-                    selectedUser.Id = userFromDb.Id;
-                    selectedUser.Projects = userFromDb.Projects;
-                    selectedUser.Projects.Add(project.IDCode);
+                }
 
-                    // Use Auth0 API to add PROJECT to user metadata
-                    string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-                    string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
-                    object newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
-                    client = new RestClient(baseURL);
-                    request = new RestRequest(Method.PATCH);
-                    request.AddHeader("authorization", authorizationValue);
-                    request.AddHeader("content-type", "application/json");
-                    request.AddParameter("application/json", "{\"app_metadata\": " + newProject, ParameterType.RequestBody);
-                    response = client.Execute(request);
+                // Removing users from project
+                if (project.RemoveUsers != null)
+                {
+                    for (int i = 0; i < project.RemoveUsers.Count; i++)
+                    {
+                        User selectedUser = new User();
+                        selectedUser.ID = project.RemoveUsers[i];
 
+                        var userFromDb = await _userRepository.GetUser(selectedUser.ID);
+                        if (userFromDb == null)
+                        {
+                            return new NotFoundResult();
+                        }
+                        selectedUser.Id = userFromDb.Id;
+                        selectedUser.Projects = userFromDb.Projects;
+                        //selectedUser.Projects.Add(project.IDCode);
+                        selectedUser.Projects.Remove(project.IDCode);
+
+
+
+
+                        // Use Auth0 API to add PROJECT to user metadata
+                        string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                        string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
+                        object newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
+                        client = new RestClient(baseURL);
+                        request = new RestRequest(Method.PATCH);
+                        request.AddHeader("authorization", authorizationValue);
+                        request.AddHeader("content-type", "application/json");
+                        request.AddParameter("application/json", "{\"app_metadata\": " + newProject, ParameterType.RequestBody);
+                        response = client.Execute(request);
+
+                    }
                 }
 
 
@@ -229,12 +277,9 @@ namespace Bug_Tracker.Controllers
 
 
 
-
-
-
-
             }
-            return RedirectToAction("Index");
+            return await GetProjectById(project);
+            //return RedirectToAction("Index");
         }
 
         public async Task<ActionResult> ConfirmDelete(string id)
