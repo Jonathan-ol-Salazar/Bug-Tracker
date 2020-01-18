@@ -91,69 +91,58 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-4">
+                        @*SELECTING PROJECT*@
+                        <form asp-action="GetProjectById">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label asp-for="Project.IDCode" class="control-label">Select Project</label>
+                                    <select id="yeet" asp-for="Project.IDCode" class="form-control" style="width: 100%;">
+                                        <option value="" disabled selected>Please Select A Project</option>
+                                        @foreach (var item in Model.ProjectList)
+                                        {
+                                            <option value="@item.IDCode">@item.IDCode</option>
+                                        }
+                                    </select>
+                                    <br />
+                                    <button type="submit" class="btn btn-success btn-block">Select</button>
+                                </div>
+                            </div>
+                        </form>
+
+
                         <div class="card card-default">
                             <div class="card-header">
                                 <h3 class="card-title">Project Details</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form asp-action="GetProjectById">
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label asp-for="Project.IDCode" class="control-label">Project</label>
-                                        <select id="yeet" asp-for="Project.IDCode" class="form-control" style="width: 100%;">
-                                            <option value="" disabled selected>Please Select A Project</option>
-                                            @foreach (var item in Model.ProjectList)
-                                            {
-                                                <option value="@item.IDCode">@item.IDCode</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-
-                                </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            </form>
-
                             <!-- form start -->
                             <form asp-action="Update">
                                 <div class="card-body">
-
-
                                     <div class="form-group">
-                                        <select id="selectedProject" asp-for="Project.IDCode" >
+                                        @*SET SELECTED PROJECT FOR THIS FORM*@
+                                        <select id="selectedProject" asp-for="Project.IDCode">
                                             <option value="@Model.SelectedProject" selected></option>
                                         </select>
 
-                                        <label asp-for="Project.NewUsers" class="control-label">Assign Users to Project</label>
-                                        <select asp-for="Project.NewUsers" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.UserList)
+                                        <label asp-for="Project.AddUsers" class="control-label">Assign Users To Project</label>
+                                        <select asp-for="Project.AddUsers" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.UsersNotAssignedList)
                                             {
                                                 <option value="@item.ID">@item.UserName</option>
                                             }
                                         </select>
+                                        <br />
+                                        <label asp-for="Project.RemoveUsers" class="control-label">Remove Users From Project</label>
+                                        <select asp-for="Project.RemoveUsers" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.UsersAssignedList)
+                                            {
+                                                <option value="@item.ID">@item.UserName</option>
+                                            }
+                                        </select>
+
+                                        <button type="submit" class="btn btn-warning btn-block">Submit</button>
                                     </div>
-                                </div>
-
-
-                                <!-- /.card-body -->
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-
                                 </div>
                             </form>
                         </div>
@@ -220,7 +209,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="myTable">
-                                        @foreach (var item in Model.AssignedUserList)
+                                        @foreach (var item in Model.UsersAssignedList)
                                         {
                                             <tr>
                                                 <td>@item.ID</td>

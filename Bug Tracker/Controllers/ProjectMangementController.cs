@@ -101,26 +101,30 @@ namespace Bug_Tracker.Controllers
             await _userRepository.AddUsers(AllUsers);
 
             // Sorting users assigned to selected project
-            List<User> AssignedUsersList = new List<User>();
+            List<User> UsersAssignedList = new List<User>();
+            List<User> UsersNotAssignedList = new List<User>();
 
             foreach (var user in AllUsers)
             {
                 if (user.Projects.Contains(Project.IDCode)){
-                    AssignedUsersList.Add(user);
+                    UsersAssignedList.Add(user);
                 }
+                else
+                {
+                    UsersNotAssignedList.Add(user);
+                }
+                
             }
+                
 
-
-            // Get all projects from 'Projects' collection and use a model for 'Index' view
-            //var GetAllProjects = await _projectRepository.GetAllProjects();
-            //var GetAllIssues = await _issueRepository.GetAllIssues();
 
             // Model for view
             ProjectManagementViewModel model = new ProjectManagementViewModel();
             model.UserList = AllUsers;
             model.ProjectList = await _projectRepository.GetAllProjects(); 
             model.IssueList = await _issueRepository.GetAllIssues();
-            model.AssignedUserList = AssignedUsersList;
+            model.UsersAssignedList = UsersAssignedList;
+            model.UsersNotAssignedList = UsersNotAssignedList;
             model.Project = Project;
             model.SelectedProject = Project.IDCode;
 
@@ -174,28 +178,24 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                for (int i = 0; i < project.NewUsers.Count; i++)  //foreach (var selectedUserID in selectedUsers.)
+                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+                IRestResponse response = client.Execute(request);
+
+                // Parsing into JSON 
+                var response2dict = JObject.Parse(response.Content);
+                // Retrieving Access Token
+                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+
+
+
+                for (int i = 0; i < project.AddUsers.Count; i++) 
                 {
                     User selectedUser = new User();
-                    selectedUser.ID = project.NewUsers[i];
-                    //selectedUser.Projects = project.;
-                    //selectedUser.RoleID = project.RoleID;
-
-
-
-
-                    // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
-                    var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("content-type", "application/x-www-form-urlencoded");
-                    request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-                    IRestResponse response = client.Execute(request);
-
-                    // Parsing into JSON 
-                    var response2dict = JObject.Parse(response.Content);
-                    // Retrieving Access Token
-                    var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
-
+                    selectedUser.ID = project.AddUsers[i];
 
                     var userFromDb = await _userRepository.GetUser(selectedUser.ID);
                     if (userFromDb == null)
@@ -206,24 +206,10 @@ namespace Bug_Tracker.Controllers
                     selectedUser.Projects = userFromDb.Projects;
                     selectedUser.Projects.Add(project.IDCode);
 
-
-                    //await _userRepository.Update(selectedUser);
-                    TempData["Message"] = "Customer Updated Successfully";
-
-                    string baseURL = "";
-                    string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-
                     // Use Auth0 API to add PROJECT to user metadata
-                    baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
-                    //object newProject = "{\"projects\": {}}}";
-
-                    //if (selectedUser.Projects != null)
-                    //{
-                    //    newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
-                    //}
-
+                    string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                    string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
                     object newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
-
                     client = new RestClient(baseURL);
                     request = new RestRequest(Method.PATCH);
                     request.AddHeader("authorization", authorizationValue);
@@ -233,13 +219,22 @@ namespace Bug_Tracker.Controllers
 
                 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             }
-
-
             return RedirectToAction("Index");
-
-
-
         }
 
         public async Task<ActionResult> ConfirmDelete(string id)
