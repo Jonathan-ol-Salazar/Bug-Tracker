@@ -4,26 +4,29 @@ using System.Collections.Generic;
 
 namespace BugTrackerDataAccess.Models
 {
-    public class Project
+    public class Issue
     {
         [BsonId]
         public ObjectId Id { get; set; }
 
         [BsonElement]
-        public string ProjectID { get; set; }
+        public string IssueID { get; set; }
 
         [BsonElement]
-        public string ProjectName { get; set; }
+        public string IssueName { get; set; }
 
         [BsonElement]
-        public string ProjectDescription { get; set; }
+        public string IssueDescription { get; set; }
 
         [BsonElement]
         public List<User> AssignedUsers { get; set; }
 
-        [BsonElement]
-        public List<Issue> Issues { get; set; }
+        // ADD IMAGE
+        //[BsonElement]
+        //public string Tickets { get; set; }
 
+
+        // ADD MORE STUFF
 
     }
 }
