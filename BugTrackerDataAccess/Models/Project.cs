@@ -30,5 +30,9 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         public List<string> RemoveUsers { get; set; }
 
+        [BsonElement]
+        public User ProjectManager { get; set; }
+
+
     }
 }
