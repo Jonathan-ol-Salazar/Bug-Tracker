@@ -286,34 +286,59 @@ namespace Bug_Tracker.Controllers
         //}
 
 
-        public async Task<ActionResult> AddorRmove(string AddorRemove, Project project, User selectedUser, string Auth0ManagementAPI_AccessToken)
+        public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
         {
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
+            var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
             if (userFromDb == null)
             {
                 return new NotFoundResult();
             }
 
-            selectedUser.Id = userFromDb.Id;
-            selectedUser.Projects = userFromDb.Projects;
+            //selectedUser.Id = userFromDb.Id;
+            //selectedUser.Projects = userFromDb.Projects;
+            //if (AddorRemove == "Add")
+            //{
+            //    selectedUser.Projects.Add(project.IDCode);
+            //}
+            //else
+            //{
+            //    selectedUser.Projects.Remove(project.IDCode);
+            //}
+
+            //object Projects = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
+            //if (AddorRemove == "Remove")
+            //{
+            //    // If user has no more assigned projects, reset 'projects' metadata with '{}'
+            //    if (selectedUser.Projects.Count == 0)
+            //    {
+            //        Projects = "{ \"projects\": {}}}";
+            //    }
+            //}
+            string stringProject = "";
+            object Projects = null;
             if (AddorRemove == "Add")
             {
-                selectedUser.Projects.Add(project.IDCode);
-            }
-            else
-            {
-                selectedUser.Projects.Remove(project.IDCode);
-            }
-
-            object Projects = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
-            if (AddorRemove == "Remove")
-            {
-                // If user has no more assigned projects, reset 'projects' metadata with '{}'
-                if (selectedUser.Projects.Count == 0)
+                foreach (var project in userFromDb.Projects)
                 {
-                    Projects = "{ \"projects\": {}}}";
+                    stringProject += project + ", ";
                 }
+                stringProject += "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\",";
+
+                stringProject = stringProject.Remove(stringProject.Length - 1, 1);
+                Projects = "{ \"projects\": {" + stringProject + "}}}";
             }
+            
+
+
+
+
+
+
+
+
+
+
 
             // Use Auth0 API to add PROJECT to user metadata
             string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
@@ -333,7 +358,7 @@ namespace Bug_Tracker.Controllers
             //await _issueRepository.AddIssue(issue);
             //project.Issues.Add(issue);
             
-            return await GetProjectById(project);
+            return await GetProjectById(selectedProject);
 
         }
 
