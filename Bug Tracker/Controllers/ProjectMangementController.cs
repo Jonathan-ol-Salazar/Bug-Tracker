@@ -30,8 +30,7 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Project Project = null)
         {
-            // Reset MongoDB 'Users' collection
-            
+            // Reset MongoDB 'Users' collection            
             await _userRepository.ResetUsers();
 
             // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
@@ -104,15 +103,19 @@ namespace Bug_Tracker.Controllers
             List<User> UsersAssignedList = new List<User>();
             List<User> UsersNotAssignedList = new List<User>();
 
-            foreach (var user in AllUsers)
+            if (Project.IDCode != null)
             {
-                if (user.Projects.Contains(Project.IDCode)){
-                    UsersAssignedList.Add(user);
-                }
-                else
+                foreach (var user in AllUsers)
                 {
-                    UsersNotAssignedList.Add(user);
-                }                
+                    if (user.Projects.Contains(Project.IDCode))
+                    {
+                        UsersAssignedList.Add(user);
+                    }
+                    else
+                    {
+                        UsersNotAssignedList.Add(user);
+                    }
+                }
             }
                 
 
