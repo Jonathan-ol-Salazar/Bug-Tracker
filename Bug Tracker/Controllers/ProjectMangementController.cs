@@ -316,6 +316,7 @@ namespace Bug_Tracker.Controllers
             //    }
             //}
             string stringProject = "";
+            string selectedProjectJSON = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
             object Projects = null;
             if (AddorRemove == "Add")
             {
@@ -323,10 +324,36 @@ namespace Bug_Tracker.Controllers
                 {
                     stringProject += project + ", ";
                 }
-                stringProject += "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
+                stringProject += selectedProjectJSON;
 
                 Projects = "{ \"projects\": {" + stringProject +"}}}";
 
+            }
+            else if (AddorRemove == "Remove")
+            {
+                List<string> x = new List<string>();
+                foreach (var project in userFromDb.Projects)
+                {
+                    
+                    if (project != selectedProjectJSON)
+                    {
+                        x.Add(project);
+                        //stringProject += project + ", ";
+                    }
+                    stringProject = string.Join(",", x);
+
+                }
+                //string.Join(",", userFromDb.Projects).
+                //if (stringProject == "")
+                //{
+                //    Projects = "{}";
+                //}
+                //else
+                //{
+                //    //string stringProjectTrim = stringProject.Remove(stringProject.Length - 1, 1);
+                //    Projects = "{ \"projects\": {" + stringProject + "}}}";
+                //}
+                Projects = "{ \"projects\": {" + stringProject + "}}}";
             }
             
 
