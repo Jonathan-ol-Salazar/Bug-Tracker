@@ -108,6 +108,8 @@
                                     <br />
                                     <button type="submit" class="btn btn-success btn-block">Select</button>
                                     @Html.ActionLink("Add Issue", "CreateIssue", new { modelItem = Model.Issue })
+                                    @Html.ActionLink("Add Project", "CreateProject", new { modelItem = Model.Project })
+
                                 </div>
                             </div>
                         </form>
@@ -211,28 +213,28 @@
                                             <th>Title</th>
                                             <th>Status</th>
                                             <th>Submitter</th>
-                                            <th>Assignments</th>
                                             <th>Created</th>
                                             <th>Updated</th>
+                                            <th>Assignments</th>
                                         </tr>
                                     </thead>
                                     <tbody id="myTable">
                                         @foreach (var item in Model.Project.Issues)
                                         {
-                                            <tr>
-                                                <td>@item.ID</td>
-                                                <td>@item.Name</td>
-                                                <td>@item.Status</td>
-                                                <td>@item.Submitter</td>
-                                                @*<td>@item.NumUsers</td>
-                                                <td>@item.DateCreated</td>
-                                                <td>@item.LastUpdated</td>*@
-                                                @*<td>
-                                                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                                    </td>*@
-                                            </tr>
+                                        <tr>
+                                            <td>@item.ID</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.Status</td>
+                                            <td>@item.Submitter</td>
+                                            <td>@item.DateCreated</td>
+                                            <td>@item.LastUpdated</td>
+                                            @*<td>@item.NumUsers</td>*@
+                                            @*<td>
+                                                @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                            </td>*@
+                                        </tr>
                                         }
                                     </tbody>
                                 </table>

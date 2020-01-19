@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Collections;
 using BugTrackerDataAccess.ViewModel;
+using System;
 
 namespace Bug_Tracker.Controllers
 {
@@ -128,8 +129,6 @@ namespace Bug_Tracker.Controllers
                 {
                     Project.Issues = IssueList;
                 }
-
-
             }
             else
             {
@@ -137,16 +136,12 @@ namespace Bug_Tracker.Controllers
                 Project.Issues = IssueList;
             }
 
-
-
-
             model.UserList = AllUsers;
             model.ProjectList = await _projectRepository.GetAllProjects(); 
             model.UsersAssignedList = UsersAssignedList;
-            model.UsersNotAssignedList = UsersNotAssignedList;
+            model.UsersNotAssignedList = UsersNotAssignedList;         
             
-            
-            model.IssueList =IssueList;
+            //model.IssueList =IssueList;
 
 
             model.Project = Project;
@@ -166,16 +161,19 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                issue.DateCreated = DateTime.UtcNow.ToString();
+                issue.LastUpdated = issue.DateCreated;
+
+
+
+
+
                 await _issueRepository.AddIssue(issue);
                 TempData["Message"] = "User Createed Successfully";
-
-
             }
 
             var projectFromDb = await _projectRepository.GetProject(issue.Project);
 
-            //Project projectIssueAdded = new Project();
-            //projectIssueAdded = projectFromDb;
             if (projectFromDb.Issues == null)
             {
                 projectFromDb.Issues = new List<Issue>();
@@ -184,12 +182,51 @@ namespace Bug_Tracker.Controllers
             projectFromDb.Issues.Add(issue);
             await _projectRepository.Update(projectFromDb);
 
-            //Issue x = new Issue();
-            //x = issue;
-            //projectFromDb.Issues.Add(x);
+
             
             return RedirectToAction("Index", projectFromDb);
         }
+
+
+        [HttpGet]
+        public ActionResult CreateProject()
+        {
+            return View("CreateProject", new Project());
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManager")] Project project)
+        {
+            if (ModelState.IsValid)
+            {
+                project.DateCreated = DateTime.UtcNow.ToString();
+                project.LastUpdated = project.DateCreated;
+
+
+
+
+
+                await _projectRepository.AddProject(project);
+                TempData["Message"] = "User Createed Successfully";
+            }
+
+            //var projectFromDb = await _projectRepository.GetProject(project.Project);
+
+            //if (projectFromDb.Issues == null)
+            //{
+            //    projectFromDb.Issues = new List<Issue>();
+            //}
+
+            //projectFromDb.Issues.Add(issue);
+            //await _projectRepository.Update(projectFromDb);
+
+
+
+            return RedirectToAction("Index", project);
+        }
+
 
 
 

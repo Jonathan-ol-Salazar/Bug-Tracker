@@ -33,6 +33,13 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         public User ProjectManager { get; set; }
 
+        [BsonElement]
+        public string DateCreated { get; set; }
+
+        [BsonElement]
+        public string LastUpdated { get; set; }
+
+
 
     }
 }

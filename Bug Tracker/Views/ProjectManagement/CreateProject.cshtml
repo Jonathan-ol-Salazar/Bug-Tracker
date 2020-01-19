@@ -1,12 +1,8 @@
-﻿@model BugTrackerDataAccess.Models.Issue
+﻿@model BugTrackerDataAccess.Models.Project
 
 @{
-    ViewData["Title"] = "CreateIssue";
+    ViewData["Title"] = "CreateProject";
 }
-
-
-
-
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -31,16 +27,16 @@
     <section class="content">
 
 
-        <h4>User</h4>
+        <h4>Project</h4>
         <hr />
         <div class="row">
             <div class="col-md-4">
-                <form asp-action="CreateIssue">
+                <form asp-action="CreateProject">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
-                        <label asp-for="ID" class="control-label"></label>
-                        <input asp-for="ID" class="form-control" />
-                        <span asp-validation-for="ID" class="text-danger"></span>
+                        <label asp-for="IDCode" class="control-label"></label>
+                        <input asp-for="IDCode" class="form-control" />
+                        <span asp-validation-for="IDCode" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Name" class="control-label"></label>
@@ -48,25 +44,9 @@
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Status" class="control-label"></label>
-                        <input asp-for="Status"  class="form-control" />
-                        <span asp-validation-for="Status" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Submitter" class="control-label"></label>
-                        <input asp-for="Submitter" value=@User.Identity.Name class="form-control" />
-                        <span asp-validation-for="Submitter" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
                         <label asp-for="Description" class="control-label"></label>
                         <input asp-for="Description" class="form-control" />
                         <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-                  
-                    <div class="form-group">
-                        <label asp-for="Project" class="control-label"></label>
-                        <input asp-for="Project" class="form-control" />
-                        <span asp-validation-for="Project" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <input type="submit" value="Create" class="btn btn-primary" />
@@ -78,8 +58,6 @@
         <div>
             <a asp-action="Index">Back to List</a>
         </div>
-
-
 
     </section>
     <!-- /.content -->

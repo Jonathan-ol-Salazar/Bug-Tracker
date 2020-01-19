@@ -34,7 +34,7 @@ namespace BugTrackerDataAccess.Repositories
             return await _context.Projects.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task Create(Project project)
+        public async Task AddProject(Project project)
         {
             await _context.Projects.InsertOneAsync(project);
         }
@@ -72,7 +72,7 @@ namespace BugTrackerDataAccess.Repositories
         // Selecting Projects 
         Task<Project> GetProject(string id);
 
-        Task Create(Project project);
+        Task AddProject(Project project);
         // 'Submit' button
         Task<bool> Update(Project project);
         // 'Delete' button

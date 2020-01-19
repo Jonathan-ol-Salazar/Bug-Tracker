@@ -33,11 +33,11 @@ namespace BugTrackerDataAccess.Models
         //public int NumUsers { get; set; }
 
 
-        //[BsonElement]
-        //public string DateCreated { get; set; }
+        [BsonElement]
+        public string DateCreated { get; set; }
 
-        //[BsonElement]
-        //public string LastUpdated { get; set; }
+        [BsonElement]
+        public string LastUpdated { get; set; }
 
         [BsonElement]
         public string Project { get; set; }
