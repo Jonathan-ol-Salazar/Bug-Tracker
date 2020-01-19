@@ -323,10 +323,10 @@ namespace Bug_Tracker.Controllers
                 {
                     stringProject += project + ", ";
                 }
-                stringProject += "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\",";
+                stringProject += "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
 
-                stringProject = stringProject.Remove(stringProject.Length - 1, 1);
-                Projects = "{ \"projects\": {" + stringProject + "}}}";
+                Projects = "{ \"projects\": {" + stringProject +"}}}";
+
             }
             
 
