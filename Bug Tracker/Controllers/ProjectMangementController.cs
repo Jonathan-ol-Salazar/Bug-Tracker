@@ -103,36 +103,49 @@ namespace Bug_Tracker.Controllers
             List<User> UsersAssignedList = new List<User>();
             List<User> UsersNotAssignedList = new List<User>();
             List<Issue> IssueList = new List<Issue>();
-           
 
-            if (Project.IDCode != null)
-            {
-                foreach (var user in AllUsers)
-                {
-                    if (user.Projects.Contains(Project.IDCode))
-                    {
-                        UsersAssignedList.Add(user);
-                    }
-                    else
-                    {
-                        UsersNotAssignedList.Add(user);
-                    }
-                }
-            }
-
-            if (Project.Issues == null)
-            {
-                Project.Issues = IssueList;
-            }
 
             // Model for view
             ProjectManagementViewModel model = new ProjectManagementViewModel();
+            if (Project != null)
+            {
+                if (Project.IDCode != null)
+                {
+                    foreach (var user in AllUsers)
+                    {
+                        if (user.Projects.Contains(Project.IDCode))
+                        {
+                            UsersAssignedList.Add(user);
+                        }
+                        else
+                        {
+                            UsersNotAssignedList.Add(user);
+                        }
+                    }
+                }
+
+                if (Project.Issues == null)
+                {
+                    Project.Issues = IssueList;
+                }
+
+
+            }
+            else
+            {
+                Project = new Project();
+                Project.Issues = IssueList;
+            }
+
+
+
+
             model.UserList = AllUsers;
             model.ProjectList = await _projectRepository.GetAllProjects(); 
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
             
-            model.SelectedProject = Project.IDCode;
+            
             model.IssueList =IssueList;
 
 
