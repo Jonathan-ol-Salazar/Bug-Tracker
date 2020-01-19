@@ -251,17 +251,22 @@ namespace Bug_Tracker.Controllers
                         selectedUser.Projects.Remove(project.IDCode);
 
 
+                        object Projects = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
+                        if (selectedUser.Projects.Count == 0)
+                        {
+                            Projects = "{ \"projects\": {}}}";
+                        }
+
 
 
                         // Use Auth0 API to add PROJECT to user metadata
                         string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
                         string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
-                        object newProject = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
                         client = new RestClient(baseURL);
                         request = new RestRequest(Method.PATCH);
                         request.AddHeader("authorization", authorizationValue);
                         request.AddHeader("content-type", "application/json");
-                        request.AddParameter("application/json", "{\"app_metadata\": " + newProject, ParameterType.RequestBody);
+                        request.AddParameter("application/json", "{\"app_metadata\": " + Projects, ParameterType.RequestBody);
                         response = client.Execute(request);
 
                     }
