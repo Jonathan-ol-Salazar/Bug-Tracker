@@ -137,6 +137,18 @@
                                         <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.ProjectManager)</b>
                                     </p>
                                 </div>
+                                <div class="text-muted">
+                                    <p class="text-sm">
+                                        Date Created
+                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.DateCreated)</b>
+                                    </p>
+                                </div>
+                                <div class="text-muted">
+                                    <p class="text-sm">
+                                        Last Updated 
+                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.LastUpdated)</b>
+                                    </p>
+                                </div>
 
                                 <div class="text-center mt-5 mb-3">
                                     <a href="#" class="btn btn-sm btn-primary">Edit Details</a>
@@ -164,7 +176,7 @@
                                     <div class="form-group">
                                         @*SET SELECTED PROJECT FOR THIS FORM*@
                                         <select id="selectedProject" asp-for="Project.IDCode">
-                                            <option value="@Model.SelectedProject" selected></option>
+                                            <option value="@Model.Project.IDCode" selected></option>
                                         </select>
 
                                         <label asp-for="Project.AddUsers" class="control-label">Assign Users To Project</label>

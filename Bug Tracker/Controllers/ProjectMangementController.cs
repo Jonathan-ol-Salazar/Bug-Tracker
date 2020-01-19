@@ -31,90 +31,98 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Project Project = null)
         {
-            // Reset MongoDB 'Users' collection            
-            await _userRepository.ResetUsers();
-            Project = await _projectRepository.GetProject(Project.IDCode);
-            // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
-            var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("content-type", "application/x-www-form-urlencoded");
-            request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-            IRestResponse response = client.Execute(request);
-
-            // Parsing into JSON 
-            var response2dict = JObject.Parse(response.Content);
-            // Retrieving Access Token
-            var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
-            
-
-
-            // GETTING ALL USERS
-            string baseURL = "https://wussubininja.au.auth0.com/api/v2/users";
-            string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-            // Endpoint to get user role
-            client = new RestClient(baseURL);
-            request = new RestRequest(Method.GET);
-            // Add Auth0 Management API Access Token 
-            request.AddHeader("authorization", authorizationValue);
-            response = client.Execute(request);
-
-            JArray usersAuth0 = JArray.Parse(response.Content);
-            var AllUsers = new List<User>();
-
-            foreach (var userAuth0 in usersAuth0)
-            {
-                // ArrayList to store all user assigned projects
-                List<string> Projects = new List<string>();
-                //var Projects = new ArrayList();
-                if (userAuth0.SelectToken("app_metadata").SelectToken("projects").First != null)
-                {
-                    // Foreach loop to add all projects for Projects ArrayList
-                    foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
-                    {
-                        //project.SelectToken("app_metadata").SelectToken("projects");
-                        Projects.Add(project.ToString());
-                    }
-                }
-
-                // GETTING ROLES ASSIGNED TO USER FROM AUTH0
-                baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userAuth0.SelectToken("user_id").ToString() + "/roles";
-                client = new RestClient(baseURL);
-                response = client.Execute(request);
-                JArray userRolesAuth0 = JArray.Parse(response.Content);
-
-
-                var document = new User();
-
-                document.ID = userAuth0.SelectToken("user_id").ToString();
-                document.UserName = userAuth0.SelectToken("name").ToString();
-                document.Email = userAuth0.SelectToken("email").ToString();
-                document.Role = userRolesAuth0.First.SelectToken("name").ToString();
-                document.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
-                document.Projects = Projects;
-                document.NumProjects = Projects.Count;
-
-
-                AllUsers.Add(document);
-            }           
-
-            // Add all users from Auth0 to MongoDB 'Users' collection
-            await _userRepository.AddUsers(AllUsers);
-
             // Sorting users assigned to selected project
             List<User> UsersAssignedList = new List<User>();
             List<User> UsersNotAssignedList = new List<User>();
             List<Issue> IssueList = new List<Issue>();
 
 
-            // Model for view
-            ProjectManagementViewModel model = new ProjectManagementViewModel();
+
+            // Reset MongoDB 'Users' collection            
+            await _userRepository.ResetUsers();
+            Project = await _projectRepository.GetProject(Project.IDCode);
+
+
             if (Project != null)
             {
+
+                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+                IRestResponse response = client.Execute(request);
+
+                // Parsing into JSON 
+                var response2dict = JObject.Parse(response.Content);
+                // Retrieving Access Token
+                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+            
+
+
+                // GETTING ALL USERS
+                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users";
+                string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+                // Endpoint to get user role
+                client = new RestClient(baseURL);
+                request = new RestRequest(Method.GET);
+                // Add Auth0 Management API Access Token 
+                request.AddHeader("authorization", authorizationValue);
+                response = client.Execute(request);
+
+                JArray usersAuth0 = JArray.Parse(response.Content);
+                var AllUsers = new List<User>();
+
+                foreach (var userAuth0 in usersAuth0)
+                {
+                    // ArrayList to store all user assigned projects
+                    List<string> Projects = new List<string>();
+
+
+                    //var Projects = new ArrayList();
+                    if (userAuth0.SelectToken("app_metadata").SelectToken("projects").First != null)
+                    {
+                        // Foreach loop to add all projects for Projects ArrayList
+                        foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
+                        {
+                            //project.SelectToken("app_metadata").SelectToken("projects");
+                            Projects.Add(project.ToString());
+                        }
+                    }
+
+                    // GETTING ROLES ASSIGNED TO USER FROM AUTH0
+                    baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userAuth0.SelectToken("user_id").ToString() + "/roles";
+                    client = new RestClient(baseURL);
+                    response = client.Execute(request);
+                    JArray userRolesAuth0 = JArray.Parse(response.Content);
+
+
+                    var document = new User();
+
+                    document.ID = userAuth0.SelectToken("user_id").ToString();
+                    document.UserName = userAuth0.SelectToken("name").ToString();
+                    document.Email = userAuth0.SelectToken("email").ToString();
+                    document.Role = userRolesAuth0.First.SelectToken("name").ToString();
+                    document.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
+                    document.Projects = Projects;
+                    document.NumProjects = Projects.Count;
+
+
+                    AllUsers.Add(document);
+                }           
+
+                // Add all users from Auth0 to MongoDB 'Users' collection
+                await _userRepository.AddUsers(AllUsers);
+
+
+
+
+       
                 if (Project.IDCode != null)
                 {
                     foreach (var user in AllUsers)
                     {
-                        if (user.Projects.Contains(Project.IDCode))
+                        if (user.Projects.Contains( "\"" + Project.IDCode + "\": \"" + Project.Name +"\""))
                         {
                             UsersAssignedList.Add(user);
                         }
@@ -129,6 +137,9 @@ namespace Bug_Tracker.Controllers
                 {
                     Project.Issues = IssueList;
                 }
+
+
+
             }
             else
             {
@@ -136,7 +147,10 @@ namespace Bug_Tracker.Controllers
                 Project.Issues = IssueList;
             }
 
-            model.UserList = AllUsers;
+
+            // Model for view
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            //model.UserList = AllUsers;
             model.ProjectList = await _projectRepository.GetAllProjects(); 
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;         
