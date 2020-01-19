@@ -295,77 +295,32 @@ namespace Bug_Tracker.Controllers
                 return new NotFoundResult();
             }
 
-            //selectedUser.Id = userFromDb.Id;
-            //selectedUser.Projects = userFromDb.Projects;
-            //if (AddorRemove == "Add")
-            //{
-            //    selectedUser.Projects.Add(project.IDCode);
-            //}
-            //else
-            //{
-            //    selectedUser.Projects.Remove(project.IDCode);
-            //}
-
-            //object Projects = "{ \"projects\": [\"" + string.Join(",", selectedUser.Projects) + "\"]}}";
-            //if (AddorRemove == "Remove")
-            //{
-            //    // If user has no more assigned projects, reset 'projects' metadata with '{}'
-            //    if (selectedUser.Projects.Count == 0)
-            //    {
-            //        Projects = "{ \"projects\": {}}}";
-            //    }
-            //}
             string stringProject = "";
             string selectedProjectJSON = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
             object Projects = null;
             if (AddorRemove == "Add")
             {
-                foreach (var project in userFromDb.Projects)
+                stringProject = string.Join(",", userFromDb.Projects);
+                if (userFromDb.Projects.Count != 0)
                 {
-                    stringProject += project + ", ";
+                    stringProject += ",";
                 }
                 stringProject += selectedProjectJSON;
-
-                Projects = "{ \"projects\": {" + stringProject +"}}}";
-
             }
             else if (AddorRemove == "Remove")
             {
-                List<string> x = new List<string>();
+                List<string> projectList = new List<string>();
                 foreach (var project in userFromDb.Projects)
-                {
-                    
+                {                    
                     if (project != selectedProjectJSON)
                     {
-                        x.Add(project);
-                        //stringProject += project + ", ";
+                        projectList.Add(project);
                     }
-                    stringProject = string.Join(",", x);
-
+                    stringProject = string.Join(",", projectList);
                 }
-                //string.Join(",", userFromDb.Projects).
-                //if (stringProject == "")
-                //{
-                //    Projects = "{}";
-                //}
-                //else
-                //{
-                //    //string stringProjectTrim = stringProject.Remove(stringProject.Length - 1, 1);
-                //    Projects = "{ \"projects\": {" + stringProject + "}}}";
-                //}
-                Projects = "{ \"projects\": {" + stringProject + "}}}";
             }
-            
 
-
-
-
-
-
-
-
-
-
+            Projects = "{ \"projects\": {" + stringProject + "}}}";
 
             // Use Auth0 API to add PROJECT to user metadata
             string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
@@ -376,17 +331,8 @@ namespace Bug_Tracker.Controllers
             request.AddHeader("content-type", "application/json");
             request.AddParameter("application/json", "{\"app_metadata\": " + Projects, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-
-
-            //Issue issue = new Issue();
-            //issue.ID = "test2";
-            //issue.Name = "test2 name";
-            //issue.Description = "test2 description";
-            //await _issueRepository.AddIssue(issue);
-            //project.Issues.Add(issue);
             
             return await GetProjectById(selectedProject);
-
         }
 
         [HttpPost]
