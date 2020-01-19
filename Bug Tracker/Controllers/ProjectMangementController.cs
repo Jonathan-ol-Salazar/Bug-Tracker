@@ -102,6 +102,8 @@ namespace Bug_Tracker.Controllers
             // Sorting users assigned to selected project
             List<User> UsersAssignedList = new List<User>();
             List<User> UsersNotAssignedList = new List<User>();
+            List<Issue> IssueList = new List<Issue>();
+           
 
             if (Project.IDCode != null)
             {
@@ -117,21 +119,36 @@ namespace Bug_Tracker.Controllers
                     }
                 }
             }
-                
 
+            if (Project.Issues != null)
+            {
+                IssueList = Project.Issues;
+            }
 
             // Model for view
             ProjectManagementViewModel model = new ProjectManagementViewModel();
             model.UserList = AllUsers;
             model.ProjectList = await _projectRepository.GetAllProjects(); 
-            model.IssueList = await _issueRepository.GetAllIssues();
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
             model.Project = Project;
             model.SelectedProject = Project.IDCode;
+            model.IssueList =IssueList;
 
             return View(model);
         }
+
+        //public async Task<ActionResult> GetProjectIssues()
+        //{
+        //    var issueFromDb = await _issueRepository.GetAllIssues();
+        //    if (issueFromDb != null)
+        //    {
+        //        return new NotFoundResult();
+        //    }
+        //    return RedirectToAction("Index", issueFromDb);
+        //}
+
+
 
         //[HttpGet]
         //[ActionName("Get")]
