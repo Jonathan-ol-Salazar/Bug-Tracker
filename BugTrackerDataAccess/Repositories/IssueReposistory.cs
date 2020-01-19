@@ -34,7 +34,7 @@ namespace BugTrackerDataAccess.Repositories
             return await _context.Issues.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task Create(Issue issue)
+        public async Task AddIssue(Issue issue)
         {
             await _context.Issues.InsertOneAsync(issue);
         }
@@ -72,7 +72,7 @@ namespace BugTrackerDataAccess.Repositories
         // Selecting Issues 
         Task<Issue> GetIssue(string id);
 
-        Task Create(Issue issue);
+        Task AddIssue(Issue issue);
         // 'Submit' button
         Task<bool> Update(Issue issue);
         // 'Delete' button

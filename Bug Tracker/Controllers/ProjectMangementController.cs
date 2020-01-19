@@ -32,7 +32,7 @@ namespace Bug_Tracker.Controllers
         {
             // Reset MongoDB 'Users' collection            
             await _userRepository.ResetUsers();
-
+            Project = await _projectRepository.GetProject(Project.IDCode);
             // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
             var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
             var request = new RestRequest(Method.POST);
@@ -120,9 +120,9 @@ namespace Bug_Tracker.Controllers
                 }
             }
 
-            if (Project.Issues != null)
+            if (Project.Issues == null)
             {
-                IssueList = Project.Issues;
+                Project.Issues = IssueList;
             }
 
             // Model for view
@@ -131,22 +131,52 @@ namespace Bug_Tracker.Controllers
             model.ProjectList = await _projectRepository.GetAllProjects(); 
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
-            model.Project = Project;
+            
             model.SelectedProject = Project.IDCode;
             model.IssueList =IssueList;
 
+
+            model.Project = Project;
             return View(model);
         }
 
-        //public async Task<ActionResult> GetProjectIssues()
-        //{
-        //    var issueFromDb = await _issueRepository.GetAllIssues();
-        //    if (issueFromDb != null)
-        //    {
-        //        return new NotFoundResult();
-        //    }
-        //    return RedirectToAction("Index", issueFromDb);
-        //}
+        [HttpGet]
+        public ActionResult CreateIssue()
+        {
+            return View("CreateIssue", new Issue());
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateIssue([Bind(include: "ID, Name, Description, Project, Status, Submitter")] Issue issue)
+        {
+            if (ModelState.IsValid)
+            {
+                await _issueRepository.AddIssue(issue);
+                TempData["Message"] = "User Createed Successfully";
+
+
+            }
+
+            var projectFromDb = await _projectRepository.GetProject(issue.Project);
+
+            //Project projectIssueAdded = new Project();
+            //projectIssueAdded = projectFromDb;
+            if (projectFromDb.Issues == null)
+            {
+                projectFromDb.Issues = new List<Issue>();
+            }
+
+            projectFromDb.Issues.Add(issue);
+            await _projectRepository.Update(projectFromDb);
+
+            //Issue x = new Issue();
+            //x = issue;
+            //projectFromDb.Issues.Add(x);
+            
+            return RedirectToAction("Index", projectFromDb);
+        }
 
 
 
@@ -231,6 +261,14 @@ namespace Bug_Tracker.Controllers
             request.AddParameter("application/json", "{\"app_metadata\": " + Projects, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
 
+
+            //Issue issue = new Issue();
+            //issue.ID = "test2";
+            //issue.Name = "test2 name";
+            //issue.Description = "test2 description";
+            //await _issueRepository.AddIssue(issue);
+            //project.Issues.Add(issue);
+            
             return await GetProjectById(project);
 
         }
@@ -278,6 +316,14 @@ namespace Bug_Tracker.Controllers
                     }
                 }
             }
+
+            //Issue issue = new Issue();
+            //issue.ID = "test2";
+            //issue.Name = "test2 name";
+            //issue.Description = "test2 description";
+            //await _issueRepository.AddIssue(issue);
+            //project.Issues.Add(issue);
+
             return await GetProjectById(project);
             //return RedirectToAction("Index");
         }
