@@ -178,30 +178,28 @@ namespace Bug_Tracker.Controllers
         }
 
         [HttpGet]
-        public ActionResult CreateIssue()
+        public ActionResult CreateIssue(string ProjectIDCode)
         {
-            return View("CreateIssue", new Issue());
+            Issue issue = new Issue();
+            issue.ProjectIDCode = ProjectIDCode;
+            return View("CreateIssue", issue);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateIssue([Bind(include: "ID, Name, Description, Project, Status, Submitter")] Issue issue)
+        public async Task<ActionResult> CreateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter")] Issue issue)
         {
             if (ModelState.IsValid)
             {
                 issue.DateCreated = DateTime.UtcNow.ToString();
                 issue.LastUpdated = issue.DateCreated;
 
-
-
-
-
                 await _issueRepository.AddIssue(issue);
                 TempData["Message"] = "User Createed Successfully";
             }
 
-            var projectFromDb = await _projectRepository.GetProject(issue.Project);
+            var projectFromDb = await _projectRepository.GetProject(issue.ProjectIDCode);
 
             if (projectFromDb.Issues == null)
             {

@@ -10,10 +10,10 @@ namespace BugTrackerDataAccess.Models
         public ObjectId Id { get; set; }
 
         [BsonElement]
-        public string ID { get; set; }
+        public string IDCode { get; set; }
 
         [BsonElement]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         // EMUM ??
         [BsonElement]
@@ -40,7 +40,7 @@ namespace BugTrackerDataAccess.Models
         public string LastUpdated { get; set; }
 
         [BsonElement]
-        public string Project { get; set; }
+        public string ProjectIDCode { get; set; }
 
 
         // ADD IMAGE

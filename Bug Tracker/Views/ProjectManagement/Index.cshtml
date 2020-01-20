@@ -107,7 +107,7 @@
                                     </select>
                                     <br />
                                     <button type="submit" class="btn btn-success btn-block">Select</button>
-                                    @Html.ActionLink("Add Issue", "CreateIssue", new { modelItem = Model.Issue })
+                                    @Html.ActionLink("Add Issue", "CreateIssue", new { ProjectIDCode = Model.Project.IDCode })
                                     @Html.ActionLink("Add Project", "CreateProject", new { modelItem = Model.Project })
                                     @Html.ActionLink("Edit Project Details", "UpdateProjectDetails", new { IDCode = Model.Project.IDCode})
                                 </div>
@@ -234,8 +234,8 @@
                                         @foreach (var item in Model.Project.Issues)
                                         {
                                             <tr>
-                                                <td>@item.ID</td>
-                                                <td>@item.Name</td>
+                                                <td>@item.IDCode</td>
+                                                <td>@item.Title</td>
                                                 <td>@item.Status</td>
                                                 <td>@item.Submitter</td>
                                                 <td>@item.DateCreated</td>
