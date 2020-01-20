@@ -273,7 +273,44 @@ namespace Bug_Tracker.Controllers
         //}
 
 
-        public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
+        [HttpGet]
+        public async Task<ActionResult> UpdateProjectDetails(string IDCode)
+        {
+            Project project = await _projectRepository.GetProject(IDCode);
+            
+
+            return View("UpdateProjectDetails", project);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateProjectDetails([Bind(include: "IDCode, Name, Description, ProjectManager")] Project project)
+        {
+            if (ModelState.IsValid)
+            {
+                var projectFromDb = await _projectRepository.GetProject(project.IDCode);
+                if (projectFromDb == null)
+                {
+                    return new NotFoundResult();
+                }
+                project.Id = projectFromDb.Id;
+                project.AssignedUsers = project.AssignedUsers;
+                project.Issues = projectFromDb.Issues;
+                project.AddUsers = projectFromDb.AddUsers;
+                project.RemoveUsers = projectFromDb.RemoveUsers;                
+                project.DateCreated = projectFromDb.DateCreated;
+                project.LastUpdated = projectFromDb.LastUpdated;
+
+                await _projectRepository.Update(project);
+                TempData["Message"] = "Customer Updated Successfully";
+
+            }
+            return RedirectToAction("Index", project  );
+        }
+
+
+
+            public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
         {
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
             var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
