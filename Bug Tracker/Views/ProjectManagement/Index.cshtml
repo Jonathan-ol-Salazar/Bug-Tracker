@@ -81,6 +81,7 @@
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active">Project Management</li>
+                            <li class="breadcrumb-item active">@Html.DisplayFor(modelItem => Model.Project.Name)</li>
                         </ol>
                     </div>
                 </div>
@@ -93,7 +94,7 @@
                 <div class="row">
                     <div class="col-4">
                         @*SELECTING PROJECT*@
-                        <div class="card card-default">
+                        <div class="card card-secondary">
                             <div class="card-header">
                                 <h3 class="card-title">Select Project</h3>
                                 <div class="card-tools">
@@ -131,7 +132,7 @@
                             </div>
                         </div>
 
-                        <div class="card card-default">
+                        <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Project Details</h3>
                                 <div class="card-tools">
@@ -181,7 +182,7 @@
                             </div>
                         </div>
 
-                        <div class="card card-default">
+                        <div class="card card-info">
                             <div class="card-header">
                                 <h3 class="card-title">Edit Assignment</h3>
                                 <div class="card-tools">
@@ -228,113 +229,109 @@
                         <!-- /.card -->
                     </div>
 
-                            <div class="col-8">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Issues</h3>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body">
-                                        <table id="IssuesTable" class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Title</th>
-                                                    <th>Status</th>
-                                                    <th>Submitter</th>
-                                                    <th>Created</th>
-                                                    <th>Updated</th>
-                                                    <th>Actions</th>
-
-                                                    @*<th>Assignments</th>*@
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var item in Model.Project.Issues)
-                                                {
-                                                    <tr>
-                                                        <td>@item.IDCode</td>
-                                                        <td>@item.Title</td>
-                                                        <td>@item.Status</td>
-                                                        <td>@item.Submitter</td>
-                                                        <td>@item.Created</td>
-                                                        <td>@item.Updated</td>
-                                                        @*<td>@item.NumUsers</td>*@
-                                                        <td>
-                                                            @Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
-                                                            @*@Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })*@
-                                                            @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- /.card-body -->
+                    <div class="col-8">
+                        <div class="card card-danger">
+                            <div class="card-header">
+                                <h3 class="card-title">Issues</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <!-- /.card -->
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Assigned Users</h3>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body">
-                                        <table id="AssignedUsersTable" class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>User ID</th>
-                                                    <th>User Name</th>
-                                                    <th>Email</th>
-                                                    <th>Role</th>
-                                                    <th>Num. Projects</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var item in Model.UsersAssignedList)
-                                                {
-                                                    <tr>
-                                                        <td>@item.ID</td>
-                                                        <td>@item.UserName</td>
-                                                        <td>@item.Email</td>
-                                                        <td>@item.Role</td>
-                                                        <td>@item.NumProjects</td>
-                                                        @*<td>
-                                            @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                            @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                            @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                        </td>*@
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- /.card-body -->
-                                </div>
-
                             </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="IssuesTable" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                            <th>Submitter</th>
+                                            <th>Created</th>
+                                            <th>Updated</th>
+                                            <th>Actions</th>
 
-
+                                            @*<th>Assignments</th>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Project.Issues)
+                                        {
+                                            <tr>
+                                                <td>@item.IDCode</td>
+                                                <td>@item.Title</td>
+                                                <td>@item.Status</td>
+                                                <td>@item.Submitter</td>
+                                                <td>@item.Created</td>
+                                                <td>@item.Updated</td>
+                                                @*<td>@item.NumUsers</td>*@
+                                                <td>
+                                                    @Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
+                                                    @*@Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })*@
+                                                    @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
                         </div>
-                        <!-- /.row -->
+                        <!-- /.card -->
+                        <div class="card card-success">
+                            <div class="card-header">
+                                <h3 class="card-title">Assigned Users</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="AssignedUsersTable" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>User Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Num. Projects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.UsersAssignedList)
+                                        {
+                                            <tr>
+                                                <td>@item.ID</td>
+                                                <td>@item.UserName</td>
+                                                <td>@item.Email</td>
+                                                <td>@item.Role</td>
+                                                <td>@item.NumProjects</td>
+                                                @*<td>
+                                    @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                    @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                    @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                </td>*@
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
 
-
-                    </div><!-- /.container-fluid -->
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
