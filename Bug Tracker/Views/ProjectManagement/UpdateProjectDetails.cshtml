@@ -74,8 +74,8 @@
 
 
                         <div class="form-group">
-                            <label asp-for="ProjectManagerID" class="control-label">Add a Project Manager</label>
-                            <select asp-for="ProjectManagerID" multiple class="form-control" style="width: 100%;">                                
+                            <label asp-for="ProjectManagerUserID" class="control-label">Add a Project Manager</label>
+                            <select asp-for="ProjectManagerUserID" multiple class="form-control" style="width: 100%;">                                
                                 @foreach (var item in Model.ProjectManagerList)
                                 {
                                     <option value="@item.ID">@item.UserName, @item.ID</option>

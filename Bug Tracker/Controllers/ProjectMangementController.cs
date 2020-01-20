@@ -45,8 +45,10 @@ namespace Bug_Tracker.Controllers
             Project = await _projectRepository.GetProject(Project.IDCode);
 
 
-            if (Project != null)
+            if (Project == null)
             {
+                Project = new Project();
+            }
 
                 // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
                 var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
@@ -122,7 +124,7 @@ namespace Bug_Tracker.Controllers
                 }
                 // Adding all the users with 'Project Manager' role to list
                 Project.ProjectManagerList = ProjectManagerList;
-
+          
                 // Add list of 'Project Manager' users to 'Projects' collection
                 await _projectRepository.Update(Project);
 
@@ -131,9 +133,6 @@ namespace Bug_Tracker.Controllers
                 await _userRepository.AddUsers(AllUsers);
 
 
-
-
-       
                 if (Project.IDCode != null)
                 {
                     foreach (var user in AllUsers)
@@ -156,23 +155,23 @@ namespace Bug_Tracker.Controllers
 
 
 
-            }
-            else
-            {
-                Project = new Project();
-                Project.Issues = IssueList;
-            }
+            //}
+            //else
+            //{
+            //    Project = new Project();
+            //    Project.Issues = IssueList;
+            //}
 
 
 
             //model.UserList = AllUsers;
             model.ProjectList = await _projectRepository.GetAllProjects(); 
             model.UsersAssignedList = UsersAssignedList;
-            model.UsersNotAssignedList = UsersNotAssignedList;         
-            
+            model.UsersNotAssignedList = UsersNotAssignedList;
+
             //model.IssueList =IssueList;
 
-
+  
             model.Project = Project;
             return View(model);
         }
@@ -290,21 +289,40 @@ namespace Bug_Tracker.Controllers
 
 
         [HttpGet]
-        public ActionResult CreateProject()
+        public async Task<ActionResult> CreateProject()
         {
-            return View("CreateProject", new Project());
+            Project project = new Project();
+            List<User> ProjectManagerList = new List<User>();
+
+            var AllUsers = await _userRepository.GetAllUsers();
+
+            foreach (var user in AllUsers)
+            {
+                if (user.Role == "Project Manager")
+                {
+                    ProjectManagerList.Add(user);
+                }
+
+            }
+
+            project.ProjectManagerList = ProjectManagerList;
+            return View("CreateProject", project);
+
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManager")] Project project)
+        public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID")] Project project)
         {
             if (ModelState.IsValid)
             {
-                project.Updated = DateTime.UtcNow.ToString();
-                project.Updated = project.Updated;
+                var userFromDb = await _userRepository.GetUser(project.ProjectManagerUserID);
 
+                project.ProjectManager = userFromDb;
+                project.Created = DateTime.UtcNow.ToString();
+                project.Updated = project.Created;
+                
                 await _projectRepository.AddProject(project);
                 TempData["Message"] = "User Createed Successfully";
             }
@@ -369,12 +387,12 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateProjectDetails([Bind(include: "IDCode, Name, Description, ProjectManagerID")] Project project)
+        public async Task<ActionResult> UpdateProjectDetails([Bind(include: "IDCode, Name, Description, ProjectManagerUserID")] Project project)
         {
             if (ModelState.IsValid)
             {
                 var projectFromDb = await _projectRepository.GetProject(project.IDCode);
-                var userFromDb = await _userRepository.GetUser(project.ProjectManagerID);
+                var userFromDb = await _userRepository.GetUser(project.ProjectManagerUserID);
                 if (projectFromDb == null || userFromDb == null)
                 {
                     return new NotFoundResult();
