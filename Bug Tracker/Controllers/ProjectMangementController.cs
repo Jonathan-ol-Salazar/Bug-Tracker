@@ -225,19 +225,6 @@ namespace Bug_Tracker.Controllers
                 await _projectRepository.AddProject(project);
                 TempData["Message"] = "User Createed Successfully";
             }
-
-            //var projectFromDb = await _projectRepository.GetProject(project.Project);
-
-            //if (projectFromDb.Issues == null)
-            //{
-            //    projectFromDb.Issues = new List<Issue>();
-            //}
-
-            //projectFromDb.Issues.Add(issue);
-            //await _projectRepository.Update(projectFromDb);
-
-
-
             return RedirectToAction("Index", project);
         }
 
@@ -337,7 +324,7 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "AddUsers, RemoveUsers, IDCode")] Project project)
+        public async Task<ActionResult> UpdateProjectAssignment([Bind(include: "AddUsers, RemoveUsers, IDCode")] Project project)
         {
             if (ModelState.IsValid)
             {
