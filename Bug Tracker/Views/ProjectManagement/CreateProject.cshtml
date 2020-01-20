@@ -11,12 +11,14 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Create New User</h1>
+                    <h1>Create New Project</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Blank Page</li>
+                        <li class="breadcrumb-item active">Project Management</li>
+                        <li class="breadcrumb-item active">Edit @Model.IDCode</li>
+
                     </ol>
                 </div>
             </div>
@@ -25,59 +27,93 @@
 
     <!-- Main content -->
     <section class="content">
-
-
-        <h4>Project</h4>
-        <hr />
         <div class="row">
-            <div class="col-md-4">
-                <form asp-action="CreateProject">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="IDCode" class="control-label"></label>
-                        <input asp-for="IDCode" class="form-control" />
-                        <span asp-validation-for="IDCode" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Name" class="control-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Description" class="control-label"></label>
-                        <input asp-for="Description" class="form-control" />
-                        <span asp-validation-for="Description" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Project Details</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    @*<div class="form-group">
-                        <label asp-for="ProjectManager" class="control-label"></label>
-                        <input asp-for="ProjectManager" class="form-control" />
-                        <span asp-validation-for="ProjectManager" class="text-danger"></span>
-                    </div>*@
-                    <div class="form-group">
-                        <label asp-for="ProjectManagerUserID" class="control-label">Add a Project Manager</label>
-                        <select asp-for="ProjectManagerUserID" multiple class="form-control" style="width: 100%;">
-                            @foreach (var item in Model.ProjectManagerList)
-                            {
-                                <option value="@item.ID">@item.UserName, @item.ID</option>
-                            }
-                        </select>
+                    <div class="card-body">
+                        <form asp-action="CreateProject">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="IDCode" class="control-label"></label>
+                                <input asp-for="IDCode" class="form-control" />
+                                <span asp-validation-for="IDCode" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Description" class="control-label"></label>
+                                <input asp-for="Description" class="form-control" />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="ProjectManagerUserID" class="control-label">Add a Project Manager</label>
+                                <select asp-for="ProjectManagerUserID" multiple class="form-control" style="width: 100%;">
+                                    @foreach (var item in Model.ProjectManagerList)
+                                    {
+                                        <option value="@item.ID">@item.UserName, @item.ID</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Files</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
 
+                </div>
+            </div>
 
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Assign Users</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
 
-                </form>
+                </div>
             </div>
         </div>
-
-        <div>
-            <a asp-action="Index">Back to List</a>
-        </div>
-
     </section>
     <!-- /.content -->
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
 </div>
 <!-- /.content-wrapper -->
