@@ -41,10 +41,10 @@ namespace BugTrackerDataAccess.Models
         public List<User> ProjectManagerList { get; set; }
 
         [BsonElement]
-        public string DateCreated { get; set; }
+        public string Created { get; set; }
 
         [BsonElement]
-        public string LastUpdated { get; set; }
+        public string Updated { get; set; }
 
 
 

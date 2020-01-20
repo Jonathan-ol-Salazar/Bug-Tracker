@@ -34,10 +34,10 @@ namespace BugTrackerDataAccess.Models
 
 
         [BsonElement]
-        public string DateCreated { get; set; }
+        public string Created { get; set; }
 
         [BsonElement]
-        public string LastUpdated { get; set; }
+        public string Updated { get; set; }
 
         [BsonElement]
         public string ProjectIDCode { get; set; }

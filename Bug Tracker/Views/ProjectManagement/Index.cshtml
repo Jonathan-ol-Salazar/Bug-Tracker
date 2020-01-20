@@ -140,13 +140,13 @@
                                 <div class="text-muted">
                                     <p class="text-sm">
                                         Date Created
-                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.DateCreated)</b>
+                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.Created)</b>
                                     </p>
                                 </div>
                                 <div class="text-muted">
                                     <p class="text-sm">
                                         Last Updated 
-                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.LastUpdated)</b>
+                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.Updated)</b>
                                     </p>
                                 </div>
 
@@ -227,6 +227,8 @@
                                             <th>Submitter</th>
                                             <th>Created</th>
                                             <th>Updated</th>
+                                            <th>Actions</th>
+
                                             @*<th>Assignments</th>*@
                                         </tr>
                                     </thead>
@@ -238,14 +240,14 @@
                                                 <td>@item.Title</td>
                                                 <td>@item.Status</td>
                                                 <td>@item.Submitter</td>
-                                                <td>@item.DateCreated</td>
-                                                <td>@item.LastUpdated</td>
-                                                @*<td>@item.NumUsers</td>
+                                                <td>@item.Created</td>
+                                                <td>@item.Updated</td>
+                                                @*<td>@item.NumUsers</td>*@
                                                 <td>
-                                                    @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                                    @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                    @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                                </td>*@
+                                                    @Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
+                                                    @*@Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                    @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })*@
+                                                </td>
                                             </tr>
                                         }
                                     </tbody>

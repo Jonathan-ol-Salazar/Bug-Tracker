@@ -192,8 +192,8 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                issue.DateCreated = DateTime.UtcNow.ToString();
-                issue.LastUpdated = issue.DateCreated;
+                issue.Created = DateTime.UtcNow.ToString();
+                issue.Updated = issue.Created;
 
                 await _issueRepository.AddIssue(issue);
                 TempData["Message"] = "User Createed Successfully";
@@ -213,6 +213,69 @@ namespace Bug_Tracker.Controllers
             
             return RedirectToAction("Index", projectFromDb);
         }
+        
+
+        [HttpGet]
+        public async Task<ActionResult> UpdateIssue(string IDCode)
+        {
+            Issue issue = await _issueRepository.GetIssue(IDCode);
+
+            return View("UpdateIssue", issue);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter")] Issue issue)
+        {
+            var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
+
+            if (ModelState.IsValid)
+            {         
+                if (projectFromDb == null || issueFromDb == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                issue.Id = issueFromDb.Id;
+                //issue.IDCode = issueFromDb.IDCode;
+                issue.Created = issueFromDb.Created;                
+                //issue.ProjectIDCode = issueFromDb.ProjectIDCode;
+                //issue.Submitter = issueFromDb.Submitter;
+                issue.Updated = DateTime.UtcNow.ToString();
+
+                await _issueRepository.Update(issue);
+
+
+                TempData["Message"] = "User Createed Successfully";
+
+            }
+            Issue issueOld = null;
+            int indexUpdate = -1;
+            foreach (var issueExisting in projectFromDb.Issues)
+            {
+                if (issueExisting.Id == issue.Id)
+                {
+                    issueOld = issueExisting;
+                    indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
+                    break;
+                }
+            }
+            if (indexUpdate != -1)
+            {
+                projectFromDb.Issues[indexUpdate] = issue;
+                await _projectRepository.Update(projectFromDb);
+
+            }
+
+            return RedirectToAction("Index", projectFromDb);
+        }
+
+
+
+
+
+
 
 
         [HttpGet]
@@ -228,12 +291,8 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                project.DateCreated = DateTime.UtcNow.ToString();
-                project.LastUpdated = project.DateCreated;
-
-
-
-
+                project.Updated = DateTime.UtcNow.ToString();
+                project.Updated = project.Updated;
 
                 await _projectRepository.AddProject(project);
                 TempData["Message"] = "User Createed Successfully";
@@ -286,6 +345,8 @@ namespace Bug_Tracker.Controllers
         //}
 
 
+
+
         [HttpGet]
         public async Task<ActionResult> UpdateProjectDetails(string IDCode)
         {
@@ -312,11 +373,9 @@ namespace Bug_Tracker.Controllers
                 project.Issues = projectFromDb.Issues;
                 project.AddUsers = projectFromDb.AddUsers;
                 project.RemoveUsers = projectFromDb.RemoveUsers;                
-                project.DateCreated = projectFromDb.DateCreated;
-                project.LastUpdated = projectFromDb.LastUpdated;
                 project.ProjectManagerList = projectFromDb.ProjectManagerList;
-                project.DateCreated = projectFromDb.DateCreated;
-                project.LastUpdated = DateTime.UtcNow.ToString();
+                project.Created = projectFromDb.Created;
+                project.Updated = DateTime.UtcNow.ToString();
                 project.ProjectManager = userFromDb;
 
                 await _projectRepository.Update(project);
