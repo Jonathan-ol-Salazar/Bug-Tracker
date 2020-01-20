@@ -245,8 +245,8 @@
                                                 @*<td>@item.NumUsers</td>*@
                                                 <td>
                                                     @Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
-                                                    @*@Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                    @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })*@
+                                                    @*@Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })*@
+                                                    @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })
                                                 </td>
                                             </tr>
                                         }
