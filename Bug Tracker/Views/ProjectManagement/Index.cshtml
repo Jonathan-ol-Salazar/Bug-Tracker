@@ -107,9 +107,11 @@
                                     </select>
                                     <br />
                                     <button type="submit" class="btn btn-success btn-block">Select</button>
-                                    @Html.ActionLink("Add Issue", "CreateIssue", new { ProjectIDCode = Model.Project.IDCode })
+                                    @*@Html.ActionLink("Add Issue", "CreateIssue", new { ProjectIDCode = Model.Project.IDCode })*@
                                     @Html.ActionLink("Add Project", "CreateProject", new { })
-                                    @Html.ActionLink("Edit Project Details", "UpdateProjectDetails", new { IDCode = Model.Project.IDCode})
+                                    @*@Html.ActionLink("Edit Project Details", "UpdateProjectDetails", new { IDCode = Model.Project.IDCode })*@                                   
+                                   
+
                                 </div>
                             </div>
                         </form>
@@ -151,7 +153,15 @@
                                 </div>
 
                                 <div class="text-center mt-5 mb-3">
-                                    <a href="#" class="btn btn-sm btn-primary">Edit Details</a>
+
+                                    <a href="@Url.Action("UpdateProjectDetails", "ProjectManagement", new {  IDCode = Model.Project.IDCode })" class="btn btn-sm btn-primary">
+                                        Edit Project Details
+                                    </a>                                    
+
+                                    <a href="@Url.Action("CreateIssue", "ProjectManagement", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-danger">
+                                        Add New Issue
+                                    </a>
+
                                 </div>
                             </div>
                         </div>
