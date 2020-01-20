@@ -227,26 +227,26 @@
                                             <th>Submitter</th>
                                             <th>Created</th>
                                             <th>Updated</th>
-                                            <th>Assignments</th>
+                                            @*<th>Assignments</th>*@
                                         </tr>
                                     </thead>
-                                    <tbody id="myTable">
+                                    <tbody >
                                         @foreach (var item in Model.Project.Issues)
                                         {
-                                        <tr>
-                                            <td>@item.ID</td>
-                                            <td>@item.Name</td>
-                                            <td>@item.Status</td>
-                                            <td>@item.Submitter</td>
-                                            <td>@item.DateCreated</td>
-                                            <td>@item.LastUpdated</td>
-                                            @*<td>@item.NumUsers</td>*@
-                                            @*<td>
-                                                @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                            </td>*@
-                                        </tr>
+                                            <tr>
+                                                <td>@item.ID</td>
+                                                <td>@item.Name</td>
+                                                <td>@item.Status</td>
+                                                <td>@item.Submitter</td>
+                                                <td>@item.DateCreated</td>
+                                                <td>@item.LastUpdated</td>
+                                                @*<td>@item.NumUsers</td>
+                                                <td>
+                                                    @Html.ActionLink("Update", "Update", new { id = item.UserID })
+                                                    @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                    @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
+                                                </td>*@
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
@@ -278,7 +278,7 @@
                                             <th>Num. Projects</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="myTable">
+                                    <tbody >
                                         @foreach (var item in Model.UsersAssignedList)
                                         {
                                             <tr>
