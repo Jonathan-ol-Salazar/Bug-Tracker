@@ -34,6 +34,13 @@ namespace BugTrackerDataAccess.Models
         public User ProjectManager { get; set; }
 
         [BsonElement]
+        public string ProjectManagerID { get; set; }
+
+
+        [BsonElement]
+        public List<User> ProjectManagerList { get; set; }
+
+        [BsonElement]
         public string DateCreated { get; set; }
 
         [BsonElement]

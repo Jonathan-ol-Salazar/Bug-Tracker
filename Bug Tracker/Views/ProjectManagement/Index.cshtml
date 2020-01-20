@@ -110,7 +110,6 @@
                                     @Html.ActionLink("Add Issue", "CreateIssue", new { modelItem = Model.Issue })
                                     @Html.ActionLink("Add Project", "CreateProject", new { modelItem = Model.Project })
                                     @Html.ActionLink("Edit Project Details", "UpdateProjectDetails", new { IDCode = Model.Project.IDCode})
-                                    @Html.DisplayFor(modelItem => Model.Project.IDCode)
                                 </div>
                             </div>
                         </form>
@@ -135,7 +134,7 @@
                                 <div class="text-muted">
                                     <p class="text-sm">
                                         Project Manager
-                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.ProjectManager)</b>
+                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.ProjectManager.UserName)</b>
                                     </p>
                                 </div>
                                 <div class="text-muted">

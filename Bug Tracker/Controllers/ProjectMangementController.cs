@@ -35,7 +35,9 @@ namespace Bug_Tracker.Controllers
             List<User> UsersAssignedList = new List<User>();
             List<User> UsersNotAssignedList = new List<User>();
             List<Issue> IssueList = new List<Issue>();
-
+            
+            // Model for view
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
 
 
             // Reset MongoDB 'Users' collection            
@@ -71,7 +73,9 @@ namespace Bug_Tracker.Controllers
                 response = client.Execute(request);
 
                 JArray usersAuth0 = JArray.Parse(response.Content);
-                var AllUsers = new List<User>();
+                List<User> AllUsers = new List<User>();
+                List<User> ProjectManagerList = new List<User>();
+
 
                 foreach (var userAuth0 in usersAuth0)
                 {
@@ -97,19 +101,31 @@ namespace Bug_Tracker.Controllers
                     JArray userRolesAuth0 = JArray.Parse(response.Content);
 
 
-                    var document = new User();
+                    var user = new User();
 
-                    document.ID = userAuth0.SelectToken("user_id").ToString();
-                    document.UserName = userAuth0.SelectToken("name").ToString();
-                    document.Email = userAuth0.SelectToken("email").ToString();
-                    document.Role = userRolesAuth0.First.SelectToken("name").ToString();
-                    document.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
-                    document.Projects = Projects;
-                    document.NumProjects = Projects.Count;
+                    user.ID = userAuth0.SelectToken("user_id").ToString();
+                    user.UserName = userAuth0.SelectToken("name").ToString();
+                    user.Email = userAuth0.SelectToken("email").ToString();
+                    user.Role = userRolesAuth0.First.SelectToken("name").ToString();
+                    user.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
+                    user.Projects = Projects;
+                    user.NumProjects = Projects.Count;
 
 
-                    AllUsers.Add(document);
-                }           
+                    AllUsers.Add(user);
+
+                    if (user.Role == "Project Manager")
+                    {
+                        ProjectManagerList.Add(user);
+                    }
+                    
+                }
+                // Adding all the users with 'Project Manager' role to list
+                Project.ProjectManagerList = ProjectManagerList;
+
+                // Add list of 'Project Manager' users to 'Projects' collection
+                await _projectRepository.Update(Project);
+
 
                 // Add all users from Auth0 to MongoDB 'Users' collection
                 await _userRepository.AddUsers(AllUsers);
@@ -148,8 +164,7 @@ namespace Bug_Tracker.Controllers
             }
 
 
-            // Model for view
-            ProjectManagementViewModel model = new ProjectManagementViewModel();
+
             //model.UserList = AllUsers;
             model.ProjectList = await _projectRepository.GetAllProjects(); 
             model.UsersAssignedList = UsersAssignedList;
@@ -284,12 +299,13 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateProjectDetails([Bind(include: "IDCode, Name, Description, ProjectManager")] Project project)
+        public async Task<ActionResult> UpdateProjectDetails([Bind(include: "IDCode, Name, Description, ProjectManagerID")] Project project)
         {
             if (ModelState.IsValid)
             {
                 var projectFromDb = await _projectRepository.GetProject(project.IDCode);
-                if (projectFromDb == null)
+                var userFromDb = await _userRepository.GetUser(project.ProjectManagerID);
+                if (projectFromDb == null || userFromDb == null)
                 {
                     return new NotFoundResult();
                 }
@@ -300,6 +316,10 @@ namespace Bug_Tracker.Controllers
                 project.RemoveUsers = projectFromDb.RemoveUsers;                
                 project.DateCreated = projectFromDb.DateCreated;
                 project.LastUpdated = projectFromDb.LastUpdated;
+                project.ProjectManagerList = projectFromDb.ProjectManagerList;
+                project.DateCreated = projectFromDb.DateCreated;
+                project.LastUpdated = DateTime.UtcNow.ToString();
+                project.ProjectManager = userFromDb;
 
                 await _projectRepository.Update(project);
                 TempData["Message"] = "Customer Updated Successfully";
