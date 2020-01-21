@@ -48,8 +48,9 @@ namespace Bug_Tracker.Controllers
             if (Project == null)
             {
                 Project = new Project();
+                Project.Issues = IssueList;
             }
-
+         
                 // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
                 var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
                 var request = new RestRequest(Method.POST);
@@ -61,7 +62,7 @@ namespace Bug_Tracker.Controllers
                 var response2dict = JObject.Parse(response.Content);
                 // Retrieving Access Token
                 var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
-            
+
 
 
                 // GETTING ALL USERS
@@ -120,11 +121,11 @@ namespace Bug_Tracker.Controllers
                     {
                         ProjectManagerList.Add(user);
                     }
-                    
+
                 }
                 // Adding all the users with 'Project Manager' role to list
                 Project.ProjectManagerList = ProjectManagerList;
-          
+
                 // Add list of 'Project Manager' users to 'Projects' collection
                 await _projectRepository.Update(Project);
 
@@ -137,7 +138,7 @@ namespace Bug_Tracker.Controllers
                 {
                     foreach (var user in AllUsers)
                     {
-                        if (user.Projects.Contains( "\"" + Project.IDCode + "\": \"" + Project.Name +"\""))
+                        if (user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
                         {
                             UsersAssignedList.Add(user);
                         }
