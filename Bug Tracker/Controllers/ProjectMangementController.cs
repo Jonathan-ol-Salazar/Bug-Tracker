@@ -417,7 +417,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-            public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
+        public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
         {
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
             var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
