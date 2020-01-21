@@ -106,26 +106,17 @@
                             </div>
                             <div class="card-body">
                                 <form asp-action="DeleteProjects">
-                                    <div class="form-group">
-                                        @*<select id="yeet" asp-for="@Model.ProjectDeleteList" class="form-control" style="width: 100%;">
-                                            <option value="" disabled selected>Please Select A Project</option>
+                                    <div class="form-group">                                   
+
+                                        <label asp-for="@Model.ProjectsSelected" class="control-label">Assign Users To Project</label>
+                                        <select asp-for="@Model.ProjectsSelected" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.ProjectList)
                                             {
                                                 <option value="@item.IDCode">@item.IDCode</option>
                                             }
                                         </select>
-                                        <br />
-                                        <button type="submit" class="btn btn-success btn-block">Select</button>*@
 
-
-                                        <label asp-for="@Model.ProjectDeleteList" class="control-label">Assign Users To Project</label>
-                                        <select asp-for="@Model.ProjectDeleteList" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.ProjectList)
-                                            {
-                                                <option value="@item">@item.Name</option>
-                                            }
-                                        </select>
-
+                                        <button type="submit" class="btn btn-success btn-block">Select</button>
 
                                     </div>
                                 </form>
@@ -133,13 +124,7 @@
                             </div>
                             <!-- /.card-header -->
                         </div>
-
-
-
-
-
                     </div>
-
 
 
                     <div class="col-8">

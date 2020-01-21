@@ -29,6 +29,8 @@ namespace BugTrackerDataAccess.ViewModel
 
         //public IEnumerable<Project> ProjectDeleteList { get; set; }
         public List<Project> ProjectDeleteList { get; set; }
+        
+        public List<string> ProjectsSelected { get; set; }
 
     }
 }

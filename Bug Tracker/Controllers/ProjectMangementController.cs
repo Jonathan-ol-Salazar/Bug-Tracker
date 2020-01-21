@@ -515,9 +515,18 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectDeleteList")] ProjectManagementViewModel projectManagementViewModel)
+        public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
         {
-            var result = await _projectRepository.Delete(projectManagementViewModel.ProjectDeleteList);
+            List<Project> ProjectList = new List<Project>();
+
+
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                ProjectList.Add(await _projectRepository.GetProject(projectSelected));
+            }
+
+
+            var result = await _projectRepository.Delete(ProjectList);
 
             if (result)
             {
@@ -543,10 +552,19 @@ namespace Bug_Tracker.Controllers
         }
 
 
-        public ActionResult DeleteProjects([Bind(include: "ProjectDeleteList")] ProjectManagementViewModel projectManagementViewModel)
+        public async Task<ActionResult> DeleteProjects([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
         {
-            //ProjectManagementViewModel model = new ProjectManagementViewModel();
-            //model = projectManagementViewModel;
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            List<Project> ProjectList = new List<Project>();
+
+
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                ProjectList.Add(await _projectRepository.GetProject(projectSelected));
+            }
+
+            model = projectManagementViewModel;
+            model.ProjectList = ProjectList;
 
             return View("DeleteConfirmation", projectManagementViewModel);
         }
