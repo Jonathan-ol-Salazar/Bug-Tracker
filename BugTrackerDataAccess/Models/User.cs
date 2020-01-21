@@ -53,5 +53,14 @@ namespace BugTrackerDataAccess.Models
 
 
         //public string ProfileImage { get; set; }
+
     }
+
+
+
+
+
+
+
+
 }

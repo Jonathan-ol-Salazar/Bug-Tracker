@@ -30,11 +30,11 @@ namespace BugTrackerDataAccess.Repositories
 
         public async Task<Project> GetProject(string id)
         {
-            FilterDefinition<Project> filter = Builders<Project>.Filter.Eq(x => x.ProjectID, id);
+            FilterDefinition<Project> filter = Builders<Project>.Filter.Eq(x => x.IDCode, id);
             return await _context.Projects.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task Create(Project project)
+        public async Task AddProject(Project project)
         {
             await _context.Projects.InsertOneAsync(project);
         }
@@ -72,7 +72,7 @@ namespace BugTrackerDataAccess.Repositories
         // Selecting Projects 
         Task<Project> GetProject(string id);
 
-        Task Create(Project project);
+        Task AddProject(Project project);
         // 'Submit' button
         Task<bool> Update(Project project);
         // 'Delete' button

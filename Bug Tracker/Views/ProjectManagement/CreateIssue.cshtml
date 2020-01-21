@@ -1,0 +1,130 @@
+﻿@model BugTrackerDataAccess.Models.Issue
+
+@{
+    ViewData["Title"] = "CreateIssue";
+}
+
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdminLTE 3 | DataTables</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <!-- jQuery -->
+    @*<script src="~/AdminLTE_theme/plugins/jquery/jquery.min.js"></script>*@
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
+
+</head>
+<body class="hold-transition sidebar-mini">
+
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Create New User</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Blank Page</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+
+            <h4>User</h4>
+            <hr />
+            <div class="row">
+                <div class="col-md-4">
+                    <form asp-action="CreateIssue">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <select id="Submitter" asp-for="Submitter">
+                                <option value="@User.Identity.Name" selected="selected">@Model.Submitter</option>
+                            </select>
+                            <select id="Project" asp-for="ProjectIDCode">
+                                <option value="@Model.ProjectIDCode" selected="selected">@Model.ProjectIDCode</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="IDCode" class="control-label"></label>
+                            <input asp-for="IDCode" class="form-control" />
+                            <span asp-validation-for="IDCode" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Title" class="control-label"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Status" class="control-label"></label>
+                            <input asp-for="Status" class="form-control" />
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                        @*<div class="form-group">
+                            <label asp-for="Submitter" class="control-label"></label>
+                            <input asp-for="Submitter" value=@User.Identity.Name class="form-control" />
+                            <span asp-validation-for="Submitter" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        @*<div class="form-group">
+                            <label asp-for="Project" class="control-label"></label>
+                            <input asp-for="Project" class="form-control" />
+                            <span asp-validation-for="Project" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-group">
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+
+
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- page script -->
+    <script>
+        $(document).ready(function () {
+
+            var Submitter = document.getElementById("Submitter");
+            Submitter.style.display = "none";
+
+            var Project = document.getElementById("Project");
+            Project.style.display = "none";
+        });
+
+
+    </script>
+</body>
+</html>
