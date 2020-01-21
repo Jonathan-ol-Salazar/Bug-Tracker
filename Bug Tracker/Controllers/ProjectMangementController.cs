@@ -510,45 +510,51 @@ namespace Bug_Tracker.Controllers
                 }
             }
 
-            //Issue issue = new Issue();
-            //issue.ID = "test2";
-            //issue.Name = "test2 name";
-            //issue.Description = "test2 description";
-            //await _issueRepository.AddIssue(issue);
-            //project.Issues.Add(issue);
-
             return await GetProjectById(project);
-            //return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> ConfirmDelete(string id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectDeleteList")] ProjectManagementViewModel projectManagementViewModel)
         {
-            var userFromDb = await _userRepository.GetUser(id);
-            return View("ConfirmDelete", userFromDb);
+            var result = await _projectRepository.Delete(projectManagementViewModel.ProjectDeleteList);
+
+            if (result)
+            {
+                TempData["Message"] = "User Deleted Successfully";
+            }
+            else
+            {
+                TempData["Message"] = "Error While Deleting the User";
+            }
+
+            return RedirectToAction("Index");
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var user = await _userRepository.GetUser(id);
-        //    if (user == null)
-        //    {
-        //        Console.WriteLine("OMFL");
-        //        return new NotFoundResult();
 
-        //    }
-        //    var result = await _userRepository.Delete(user.ID);
-        //    if (result)
-        //    {
-        //        TempData["Message"] = "User Deleted Successfully";
-        //    }
-        //    else
-        //    {
-        //        TempData["Message"] = "Error While Deleting the User";
-        //    }
-        //    return RedirectToAction("Index");
-        //}
+        [HttpGet]
+        public async Task<ActionResult> DeleteProjects()
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            model.ProjectList = await _projectRepository.GetAllProjects();
+
+
+            return View("DeleteProjects", model);
+        }
+
+
+        public ActionResult DeleteProjects([Bind(include: "ProjectDeleteList")] ProjectManagementViewModel projectManagementViewModel)
+        {
+            //ProjectManagementViewModel model = new ProjectManagementViewModel();
+            //model = projectManagementViewModel;
+
+            return View("DeleteConfirmation", projectManagementViewModel);
+        }
+
+
+
+
+
 
 
         //public IActionResult Index()

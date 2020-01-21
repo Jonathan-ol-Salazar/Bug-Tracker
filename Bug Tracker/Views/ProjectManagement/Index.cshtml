@@ -126,11 +126,18 @@
 
                                     </div>
                                 </form>
-                                <a href="@Url.Action("CreateProject", "ProjectManagement", new { })" class="btn btn-sm btn-primary">
-                                    Add New Project
-                                </a>
+                                <div class="text-center mt-5 mb-3">
+
+                                    <a href="@Url.Action("CreateProject", "ProjectManagement", new { })" class="btn btn-sm btn-primary">
+                                        Add New Project
+                                    </a>
+                                    <a href="@Url.Action("DeleteProjects", "ProjectManagement", new { })" class="btn btn-sm btn-danger">
+                                        Delete Project
+                                    </a>
+
+                                </div>
                             </div>
-                        </div>
+                        </div> 
 
                         <div class="card card-primary">
                             <div class="card-header">
@@ -170,11 +177,13 @@
 
                                 <div class="text-center mt-5 mb-3">
 
+                                
+
                                     <a href="@Url.Action("UpdateProjectDetails", "ProjectManagement", new {  IDCode = Model.Project.IDCode })" class="btn btn-sm btn-primary">
                                         Edit Project Details
                                     </a>
 
-                                    <a href="@Url.Action("CreateIssue", "ProjectManagement", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-danger">
+                                    <a href="@Url.Action("CreateIssue", "ProjectManagement", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-warning">
                                         Add New Issue
                                     </a>
 
