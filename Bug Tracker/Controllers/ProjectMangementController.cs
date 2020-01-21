@@ -417,7 +417,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-            public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
+        public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
         {
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
             var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
@@ -510,45 +510,69 @@ namespace Bug_Tracker.Controllers
                 }
             }
 
-            //Issue issue = new Issue();
-            //issue.ID = "test2";
-            //issue.Name = "test2 name";
-            //issue.Description = "test2 description";
-            //await _issueRepository.AddIssue(issue);
-            //project.Issues.Add(issue);
-
             return await GetProjectById(project);
-            //return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> ConfirmDelete(string id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
         {
-            var userFromDb = await _userRepository.GetUser(id);
-            return View("ConfirmDelete", userFromDb);
+            List<Project> ProjectList = new List<Project>();
+
+
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                ProjectList.Add(await _projectRepository.GetProject(projectSelected));
+            }
+
+
+            var result = await _projectRepository.Delete(ProjectList);
+
+            if (result)
+            {
+                TempData["Message"] = "User Deleted Successfully";
+            }
+            else
+            {
+                TempData["Message"] = "Error While Deleting the User";
+            }
+
+            return RedirectToAction("Index");
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var user = await _userRepository.GetUser(id);
-        //    if (user == null)
-        //    {
-        //        Console.WriteLine("OMFL");
-        //        return new NotFoundResult();
 
-        //    }
-        //    var result = await _userRepository.Delete(user.ID);
-        //    if (result)
-        //    {
-        //        TempData["Message"] = "User Deleted Successfully";
-        //    }
-        //    else
-        //    {
-        //        TempData["Message"] = "Error While Deleting the User";
-        //    }
-        //    return RedirectToAction("Index");
-        //}
+        [HttpGet]
+        public async Task<ActionResult> DeleteProjects()
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            model.ProjectList = await _projectRepository.GetAllProjects();
+
+
+            return View("DeleteProjects", model);
+        }
+
+
+        public async Task<ActionResult> DeleteProjects([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            List<Project> ProjectList = new List<Project>();
+
+
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                ProjectList.Add(await _projectRepository.GetProject(projectSelected));
+            }
+
+            model = projectManagementViewModel;
+            model.ProjectList = ProjectList;
+
+            return View("DeleteConfirmation", projectManagementViewModel);
+        }
+
+
+
+
+
 
 
         //public IActionResult Index()
