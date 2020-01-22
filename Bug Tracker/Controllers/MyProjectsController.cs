@@ -91,7 +91,7 @@ namespace Bug_Tracker.Controllers
                                
             }
 
-
+            model.ProjectList = new List<Project>();
 
             model.ProjectList = ProjectList;
             return View(model);
