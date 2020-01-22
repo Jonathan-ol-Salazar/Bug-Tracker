@@ -80,6 +80,7 @@ namespace Bug_Tracker.Controllers
             List<User> ProjectManagerList = new List<User>();
 
 
+
             foreach (var userAuth0 in usersAuth0)
             {
                 // ArrayList to store all user assigned projects
@@ -95,7 +96,7 @@ namespace Bug_Tracker.Controllers
                         //project.SelectToken("app_metadata").SelectToken("projects");
                         string projectString = project.ToString();
                         Projects.Add(projectString);
-                
+
 
 
                     }
@@ -108,7 +109,9 @@ namespace Bug_Tracker.Controllers
                 JArray userRolesAuth0 = JArray.Parse(response.Content);
 
 
+
                 var user = new User();
+
 
                 user.ID = userAuth0.SelectToken("user_id").ToString();
                 user.UserName = userAuth0.SelectToken("name").ToString();
@@ -117,6 +120,7 @@ namespace Bug_Tracker.Controllers
                 user.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
                 user.Projects = Projects;
                 user.NumProjects = Projects.Count;
+
 
 
                 AllUsers.Add(user);
@@ -128,6 +132,7 @@ namespace Bug_Tracker.Controllers
 
                 //if (Project.IDCode != null)
                 //{
+
                     //foreach (var user in AllUsers)
                     //{
                         //if (user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
@@ -143,6 +148,8 @@ namespace Bug_Tracker.Controllers
                 //}
 
                 foreach (var project in Projects) 
+
+
                 {
 
                     // Get IDCode from result above "IDCode" :"Name"                        
@@ -228,6 +235,7 @@ namespace Bug_Tracker.Controllers
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
             
+
 
             model.Project = Project;
             return View(model);
@@ -385,8 +393,10 @@ namespace Bug_Tracker.Controllers
 
                 project.ProjectManager = userFromDb;
                 project.Created = DateTime.UtcNow.ToString();
+
                 project.Updated = project.Created;                
  
+
 
                 await _projectRepository.AddProject(project);
 
