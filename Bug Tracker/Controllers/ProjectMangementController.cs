@@ -348,6 +348,8 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<ActionResult> CreateProject()
         {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+
             Project project = new Project();
             List<User> ProjectManagerList = new List<User>();
 
@@ -359,18 +361,23 @@ namespace Bug_Tracker.Controllers
                 {
                     ProjectManagerList.Add(user);
                 }
-
             }
 
+
             project.ProjectManagerList = ProjectManagerList;
-            return View("CreateProject", project);
+
+
+            model.UserList = AllUsers;
+            model.Project = project;
+
+            return View("CreateProject", model);
 
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID")] Project project)
+        public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID, AddUsers")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -378,9 +385,16 @@ namespace Bug_Tracker.Controllers
 
                 project.ProjectManager = userFromDb;
                 project.Created = DateTime.UtcNow.ToString();
-                project.Updated = project.Created;
+                project.Updated = project.Created;                
+ 
 
                 await _projectRepository.AddProject(project);
+
+
+                await UpdateProjectAssignment(project);
+
+
+
                 TempData["Message"] = "User Createed Successfully";
             }
             return RedirectToAction("Index", project);
@@ -423,16 +437,6 @@ namespace Bug_Tracker.Controllers
         }
 
 
-        //[HttpGet]
-        //public async Task<ActionResult> Update(string id)
-        //{
-        //    User user = await _userRepository.GetUser(id);
-        //    return View("Update", user);
-        //}
-
-
-
-
         [HttpGet]
         public async Task<ActionResult> UpdateProjectDetails(string IDCode)
         {
@@ -457,8 +461,8 @@ namespace Bug_Tracker.Controllers
                 project.Id = projectFromDb.Id;
                 project.AssignedUsers = project.AssignedUsers;
                 project.Issues = projectFromDb.Issues;
-                project.AddUsers = projectFromDb.AddUsers;
-                project.RemoveUsers = projectFromDb.RemoveUsers;
+                //project.AddUsers = projectFromDb.AddUsers;
+                //project.RemoveUsers = projectFromDb.RemoveUsers;
                 project.ProjectManagerList = projectFromDb.ProjectManagerList;
                 project.Created = projectFromDb.Created;
                 project.Updated = DateTime.UtcNow.ToString();
@@ -477,6 +481,20 @@ namespace Bug_Tracker.Controllers
         {
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
             var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
+            List<User> AssignedUsers = new List<User>();
+
+            // If 'AssignedUsers' is empty, initialize with empty list. Else, retrive list to be updated
+            if (projectFromDb.AssignedUsers == null)
+            {
+                // Initialize
+                projectFromDb.AssignedUsers = AssignedUsers;
+            }
+            else
+            {
+                // Retrive to be updated
+                AssignedUsers = projectFromDb.AssignedUsers;
+            }
+
             if (userFromDb == null)
             {
                 return new NotFoundResult();
@@ -485,10 +503,10 @@ namespace Bug_Tracker.Controllers
             string stringProject = "";
             string selectedProjectJSON = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
             object Projects = null;
+
             if (AddorRemove == "Add")
             {
-                projectFromDb.AssignedUsers.Add(userFromDb);
-                await _projectRepository.Update(projectFromDb);
+                AssignedUsers.Add(userFromDb);
 
                 stringProject = string.Join(",", userFromDb.Projects);
                 if (userFromDb.Projects.Count != 0)
@@ -499,6 +517,9 @@ namespace Bug_Tracker.Controllers
             }
             else if (AddorRemove == "Remove")
             {
+                AssignedUsers.Remove(userFromDb);
+
+
                 List<string> projectList = new List<string>();
                 foreach (var project in userFromDb.Projects)
                 {
@@ -509,6 +530,9 @@ namespace Bug_Tracker.Controllers
                     stringProject = string.Join(",", projectList);
                 }
             }
+
+            projectFromDb.AssignedUsers = AssignedUsers;
+            await _projectRepository.Update(projectFromDb);
 
             Projects = "{ \"projects\": {" + stringProject + "}}}";
 
@@ -568,6 +592,7 @@ namespace Bug_Tracker.Controllers
                     }
                 }
 
+                // Remove all users from project before deleting the project 
                 if (project.DeleteProject == true)
                 {
                     foreach (var selectedUser in project.AssignedUsers)
@@ -576,8 +601,6 @@ namespace Bug_Tracker.Controllers
 
                     }
                 }
-
-
 
             }
 
