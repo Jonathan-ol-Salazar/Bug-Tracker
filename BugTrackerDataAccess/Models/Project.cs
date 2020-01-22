@@ -46,6 +46,8 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         public string Updated { get; set; }
 
+        [BsonElement]
+        public bool DeleteProject { get; set; }
 
 
     }

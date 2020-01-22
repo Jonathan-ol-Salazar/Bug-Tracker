@@ -35,7 +35,7 @@ namespace Bug_Tracker.Controllers
             List<User> UsersAssignedList = new List<User>();
             List<User> UsersNotAssignedList = new List<User>();
             List<Issue> IssueList = new List<Issue>();
-            
+
             // Model for view
             ProjectManagementViewModel model = new ProjectManagementViewModel();
 
@@ -50,129 +50,185 @@ namespace Bug_Tracker.Controllers
                 Project = new Project();
                 Project.Issues = IssueList;
             }
-         
-                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
-                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/x-www-form-urlencoded");
-                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
 
-                // Parsing into JSON 
-                var response2dict = JObject.Parse(response.Content);
-                // Retrieving Access Token
-                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+            // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+            var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/x-www-form-urlencoded");
+            request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+
+            // Parsing into JSON 
+            var response2dict = JObject.Parse(response.Content);
+            // Retrieving Access Token
+            var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
 
 
 
-                // GETTING ALL USERS
-                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users";
-                string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-                // Endpoint to get user role
+            // GETTING ALL USERS
+            string baseURL = "https://wussubininja.au.auth0.com/api/v2/users";
+            string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+            // Endpoint to get user role
+            client = new RestClient(baseURL);
+            request = new RestRequest(Method.GET);
+            // Add Auth0 Management API Access Token 
+            request.AddHeader("authorization", authorizationValue);
+            response = client.Execute(request);
+
+            JArray usersAuth0 = JArray.Parse(response.Content);
+            List<User> AllUsers = new List<User>();
+            List<User> ProjectManagerList = new List<User>();
+
+
+            foreach (var userAuth0 in usersAuth0)
+            {
+                // ArrayList to store all user assigned projects
+                List<string> Projects = new List<string>();
+
+
+                //var Projects = new ArrayList();
+                if (userAuth0.SelectToken("app_metadata").SelectToken("projects").First != null)
+                {
+                    // Foreach loop to add all projects for Projects ArrayList
+                    foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
+                    {
+                        //project.SelectToken("app_metadata").SelectToken("projects");
+                        string projectString = project.ToString();
+                        Projects.Add(projectString);
+                
+
+
+                    }
+                }
+
+                // GETTING ROLES ASSIGNED TO USER FROM AUTH0
+                baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userAuth0.SelectToken("user_id").ToString() + "/roles";
                 client = new RestClient(baseURL);
-                request = new RestRequest(Method.GET);
-                // Add Auth0 Management API Access Token 
-                request.AddHeader("authorization", authorizationValue);
                 response = client.Execute(request);
-
-                JArray usersAuth0 = JArray.Parse(response.Content);
-                List<User> AllUsers = new List<User>();
-                List<User> ProjectManagerList = new List<User>();
+                JArray userRolesAuth0 = JArray.Parse(response.Content);
 
 
-                foreach (var userAuth0 in usersAuth0)
+                var user = new User();
+
+                user.ID = userAuth0.SelectToken("user_id").ToString();
+                user.UserName = userAuth0.SelectToken("name").ToString();
+                user.Email = userAuth0.SelectToken("email").ToString();
+                user.Role = userRolesAuth0.First.SelectToken("name").ToString();
+                user.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
+                user.Projects = Projects;
+                user.NumProjects = Projects.Count;
+
+
+                AllUsers.Add(user);
+
+                if (user.Role == "Project Manager")
                 {
-                    // ArrayList to store all user assigned projects
-                    List<string> Projects = new List<string>();
-
-
-                    //var Projects = new ArrayList();
-                    if (userAuth0.SelectToken("app_metadata").SelectToken("projects").First != null)
-                    {
-                        // Foreach loop to add all projects for Projects ArrayList
-                        foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
-                        {
-                            //project.SelectToken("app_metadata").SelectToken("projects");
-                            Projects.Add(project.ToString());
-                        }
-                    }
-
-                    // GETTING ROLES ASSIGNED TO USER FROM AUTH0
-                    baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userAuth0.SelectToken("user_id").ToString() + "/roles";
-                    client = new RestClient(baseURL);
-                    response = client.Execute(request);
-                    JArray userRolesAuth0 = JArray.Parse(response.Content);
-
-
-                    var user = new User();
-
-                    user.ID = userAuth0.SelectToken("user_id").ToString();
-                    user.UserName = userAuth0.SelectToken("name").ToString();
-                    user.Email = userAuth0.SelectToken("email").ToString();
-                    user.Role = userRolesAuth0.First.SelectToken("name").ToString();
-                    user.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
-                    user.Projects = Projects;
-                    user.NumProjects = Projects.Count;
-
-
-                    AllUsers.Add(user);
-
-                    if (user.Role == "Project Manager")
-                    {
-                        ProjectManagerList.Add(user);
-                    }
-
-                }
-                // Adding all the users with 'Project Manager' role to list
-                Project.ProjectManagerList = ProjectManagerList;
-
-                // Add list of 'Project Manager' users to 'Projects' collection
-                await _projectRepository.Update(Project);
-
-
-                // Add all users from Auth0 to MongoDB 'Users' collection
-                await _userRepository.AddUsers(AllUsers);
-
-
-                if (Project.IDCode != null)
-                {
-                    foreach (var user in AllUsers)
-                    {
-                        if (user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
-                        {
-                            UsersAssignedList.Add(user);
-                        }
-                        else
-                        {
-                            UsersNotAssignedList.Add(user);
-                        }
-                    }
+                    ProjectManagerList.Add(user);
                 }
 
-                if (Project.Issues == null)
+                //if (Project.IDCode != null)
+                //{
+                    //foreach (var user in AllUsers)
+                    //{
+                        //if (user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
+                        //{
+                        //    UsersAssignedList.Add(user);
+
+                        //}
+                        //else
+                        //{
+                        //    UsersNotAssignedList.Add(user);
+                        //}
+                //}
+                //}
+
+                foreach (var project in Projects) 
                 {
-                    Project.Issues = IssueList;
+
+                    // Get IDCode from result above "IDCode" :"Name"                        
+                    string projectIDCode = string.Empty;
+
+                    if (!string.IsNullOrEmpty(project))
+                    {
+                        projectIDCode = project.Split(':')[0];
+                        projectIDCode = projectIDCode.Replace("\"", "");
+                    }
+
+                    // Get Project
+                    var projectFromDb = await _projectRepository.GetProject(projectIDCode);
+
+                    // THIS IS TO CHECK IF PROJECTS EXISTS, REMOVE THIS AFTER YOU HAVE CLEANED THE USERS ASSIGNED PROJECTS METADATA
+                    if (projectFromDb != null)
+                    {
+                        // this needs to be removed too
+                        if (projectFromDb.AssignedUsers == null)
+                        {
+                            projectFromDb.AssignedUsers = new List<User>();
+                        }
+
+                        List<User> usersToBeAdded = new List<User>();
+                        // Check if user is in Project 
+                        foreach (var assignedUser in projectFromDb.AssignedUsers)
+                        {
+                            // if not, add user to list of 'Assigned Users'
+                            if (assignedUser.ID != user.ID)
+                            {
+                                usersToBeAdded.Add(user);
+                            }
+                        }
+
+                        projectFromDb.AssignedUsers = usersToBeAdded;
+
+                        await _projectRepository.Update(projectFromDb);
+
+
+                    }
                 }
 
 
 
-            //}
-            //else
-            //{
-            //    Project = new Project();
-            //    Project.Issues = IssueList;
-            //}
+            }
+            // Adding all the users with 'Project Manager' role to list
+            Project.ProjectManagerList = ProjectManagerList;
 
 
+            // Add all users from Auth0 to MongoDB 'Users' collection
+            await _userRepository.AddUsers(AllUsers);
 
-            //model.UserList = AllUsers;
-            model.ProjectList = await _projectRepository.GetAllProjects(); 
+
+            if (Project.IDCode != null)
+            {
+                foreach (var user in AllUsers)
+                {
+                    if (user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
+                    {
+                        UsersAssignedList.Add(user);
+
+                    }
+                    else
+                    {
+                        UsersNotAssignedList.Add(user);
+                    }
+                }
+            }
+
+            Project.AssignedUsers = UsersAssignedList;
+
+            // Add list of 'Project Manager' users to 'Projects' collection
+            await _projectRepository.Update(Project);
+
+
+            if (Project.Issues == null)
+            {
+                Project.Issues = IssueList;
+            }
+
+
+            model.ProjectList = await _projectRepository.GetAllProjects();
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
+            
 
-            //model.IssueList =IssueList;
-
-  
             model.Project = Project;
             return View(model);
         }
@@ -210,10 +266,10 @@ namespace Bug_Tracker.Controllers
             await _projectRepository.Update(projectFromDb);
 
 
-            
+
             return RedirectToAction("Index", projectFromDb);
         }
-        
+
 
         [HttpGet]
         public async Task<ActionResult> UpdateIssue(string IDCode)
@@ -231,7 +287,7 @@ namespace Bug_Tracker.Controllers
             var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
 
             if (ModelState.IsValid)
-            {         
+            {
                 if (projectFromDb == null || issueFromDb == null)
                 {
                     return new NotFoundResult();
@@ -239,7 +295,7 @@ namespace Bug_Tracker.Controllers
 
                 issue.Id = issueFromDb.Id;
                 //issue.IDCode = issueFromDb.IDCode;
-                issue.Created = issueFromDb.Created;                
+                issue.Created = issueFromDb.Created;
                 //issue.ProjectIDCode = issueFromDb.ProjectIDCode;
                 //issue.Submitter = issueFromDb.Submitter;
                 issue.Updated = DateTime.UtcNow.ToString();
@@ -292,6 +348,8 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<ActionResult> CreateProject()
         {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+
             Project project = new Project();
             List<User> ProjectManagerList = new List<User>();
 
@@ -303,18 +361,23 @@ namespace Bug_Tracker.Controllers
                 {
                     ProjectManagerList.Add(user);
                 }
-
             }
 
+
             project.ProjectManagerList = ProjectManagerList;
-            return View("CreateProject", project);
+
+
+            model.UserList = AllUsers;
+            model.Project = project;
+
+            return View("CreateProject", model);
 
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID")] Project project)
+        public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID, AddUsers")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -322,9 +385,16 @@ namespace Bug_Tracker.Controllers
 
                 project.ProjectManager = userFromDb;
                 project.Created = DateTime.UtcNow.ToString();
-                project.Updated = project.Created;
-                
+                project.Updated = project.Created;                
+ 
+
                 await _projectRepository.AddProject(project);
+
+
+                await UpdateProjectAssignment(project);
+
+
+
                 TempData["Message"] = "User Createed Successfully";
             }
             return RedirectToAction("Index", project);
@@ -367,21 +437,11 @@ namespace Bug_Tracker.Controllers
         }
 
 
-        //[HttpGet]
-        //public async Task<ActionResult> Update(string id)
-        //{
-        //    User user = await _userRepository.GetUser(id);
-        //    return View("Update", user);
-        //}
-
-
-
-
         [HttpGet]
         public async Task<ActionResult> UpdateProjectDetails(string IDCode)
         {
             Project project = await _projectRepository.GetProject(IDCode);
-            
+
 
             return View("UpdateProjectDetails", project);
         }
@@ -401,8 +461,8 @@ namespace Bug_Tracker.Controllers
                 project.Id = projectFromDb.Id;
                 project.AssignedUsers = project.AssignedUsers;
                 project.Issues = projectFromDb.Issues;
-                project.AddUsers = projectFromDb.AddUsers;
-                project.RemoveUsers = projectFromDb.RemoveUsers;                
+                //project.AddUsers = projectFromDb.AddUsers;
+                //project.RemoveUsers = projectFromDb.RemoveUsers;
                 project.ProjectManagerList = projectFromDb.ProjectManagerList;
                 project.Created = projectFromDb.Created;
                 project.Updated = DateTime.UtcNow.ToString();
@@ -412,15 +472,29 @@ namespace Bug_Tracker.Controllers
                 TempData["Message"] = "Customer Updated Successfully";
 
             }
-            return RedirectToAction("Index", project  );
+            return RedirectToAction("Index", project);
         }
 
 
 
-            public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
+        public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
         {
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
             var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
+            List<User> AssignedUsers = new List<User>();
+
+            // If 'AssignedUsers' is empty, initialize with empty list. Else, retrive list to be updated
+            if (projectFromDb.AssignedUsers == null)
+            {
+                // Initialize
+                projectFromDb.AssignedUsers = AssignedUsers;
+            }
+            else
+            {
+                // Retrive to be updated
+                AssignedUsers = projectFromDb.AssignedUsers;
+            }
+
             if (userFromDb == null)
             {
                 return new NotFoundResult();
@@ -429,8 +503,11 @@ namespace Bug_Tracker.Controllers
             string stringProject = "";
             string selectedProjectJSON = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
             object Projects = null;
+
             if (AddorRemove == "Add")
             {
+                AssignedUsers.Add(userFromDb);
+
                 stringProject = string.Join(",", userFromDb.Projects);
                 if (userFromDb.Projects.Count != 0)
                 {
@@ -440,9 +517,12 @@ namespace Bug_Tracker.Controllers
             }
             else if (AddorRemove == "Remove")
             {
+                AssignedUsers.Remove(userFromDb);
+
+
                 List<string> projectList = new List<string>();
                 foreach (var project in userFromDb.Projects)
-                {                    
+                {
                     if (project != selectedProjectJSON)
                     {
                         projectList.Add(project);
@@ -450,6 +530,9 @@ namespace Bug_Tracker.Controllers
                     stringProject = string.Join(",", projectList);
                 }
             }
+
+            projectFromDb.AssignedUsers = AssignedUsers;
+            await _projectRepository.Update(projectFromDb);
 
             Projects = "{ \"projects\": {" + stringProject + "}}}";
 
@@ -462,7 +545,7 @@ namespace Bug_Tracker.Controllers
             request.AddHeader("content-type", "application/json");
             request.AddParameter("application/json", "{\"app_metadata\": " + Projects, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-            
+
             return await GetProjectById(selectedProject);
         }
 
@@ -508,47 +591,86 @@ namespace Bug_Tracker.Controllers
                         await AddorRmove("Remove", project, selectedUser, Auth0ManagementAPI_AccessToken);
                     }
                 }
+
+                // Remove all users from project before deleting the project 
+                if (project.DeleteProject == true)
+                {
+                    foreach (var selectedUser in project.AssignedUsers)
+                    {
+                        await AddorRmove("Remove", project, selectedUser, Auth0ManagementAPI_AccessToken);
+
+                    }
+                }
+
             }
 
-            //Issue issue = new Issue();
-            //issue.ID = "test2";
-            //issue.Name = "test2 name";
-            //issue.Description = "test2 description";
-            //await _issueRepository.AddIssue(issue);
-            //project.Issues.Add(issue);
-
             return await GetProjectById(project);
-            //return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> ConfirmDelete(string id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
         {
-            var userFromDb = await _userRepository.GetUser(id);
-            return View("ConfirmDelete", userFromDb);
+            List<Project> ProjectList = new List<Project>();
+
+
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                var project = await _projectRepository.GetProject(projectSelected);
+                project.DeleteProject = true;
+                await UpdateProjectAssignment(project);
+
+                ProjectList.Add(project);
+            }
+
+
+            var result = await _projectRepository.Delete(ProjectList);
+
+            if (result)
+            {
+                TempData["Message"] = "User Deleted Successfully";
+            }
+            else
+            {
+                TempData["Message"] = "Error While Deleting the User";
+            }
+
+            return RedirectToAction("Index");
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var user = await _userRepository.GetUser(id);
-        //    if (user == null)
-        //    {
-        //        Console.WriteLine("OMFL");
-        //        return new NotFoundResult();
 
-        //    }
-        //    var result = await _userRepository.Delete(user.ID);
-        //    if (result)
-        //    {
-        //        TempData["Message"] = "User Deleted Successfully";
-        //    }
-        //    else
-        //    {
-        //        TempData["Message"] = "Error While Deleting the User";
-        //    }
-        //    return RedirectToAction("Index");
-        //}
+        [HttpGet]
+        public async Task<ActionResult> DeleteProjects()
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            model.ProjectList = await _projectRepository.GetAllProjects();
+
+
+            return View("DeleteProjects", model);
+        }
+
+
+        public async Task<ActionResult> DeleteProjects([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            List<Project> ProjectList = new List<Project>();
+
+
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                ProjectList.Add(await _projectRepository.GetProject(projectSelected));
+            }
+
+            model = projectManagementViewModel;
+            model.ProjectList = ProjectList;
+
+            return View("DeleteConfirmation", projectManagementViewModel);
+        }
+
+
+
+
+
 
 
         //public IActionResult Index()
