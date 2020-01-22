@@ -22,12 +22,15 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         public string Submitter { get; set; }
 
+        //[BsonElement]
+        //public User Submitter { get; set; }
+
 
         [BsonElement]
         public string Description { get; set; }
 
         //[BsonElement]
-        //public List<User> AssignedUsers { get; set; }
+        public List<User> AssignedUsers { get; set; }
 
         //[BsonElement]
         //public int NumUsers { get; set; }
