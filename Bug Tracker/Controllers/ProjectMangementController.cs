@@ -84,6 +84,7 @@ namespace Bug_Tracker.Controllers
             {
                 // ArrayList to store all user assigned projects
                 List<string> Projects = new List<string>();
+                List<string> Issues = new List<string>();
 
 
                 //var Projects = new ArrayList();
@@ -96,6 +97,20 @@ namespace Bug_Tracker.Controllers
                         string projectString = project.ToString();
                         Projects.Add(projectString);
                 
+
+
+                    }
+                }
+
+                if (userAuth0.SelectToken("app_metadata").SelectToken("issues").First != null)
+                {
+                    // Foreach loop to add all projects for Projects ArrayList
+                    foreach (var issue in userAuth0.SelectToken("app_metadata").SelectToken("issue"))
+                    {
+                        //project.SelectToken("app_metadata").SelectToken("projects");
+                        string issueString = issue.ToString();
+                        Issues.Add(issueString);
+
 
 
                     }
@@ -117,7 +132,7 @@ namespace Bug_Tracker.Controllers
                 user.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
                 user.Projects = Projects;
                 user.NumProjects = Projects.Count;
-
+                user.Issues = Issues;
 
                 AllUsers.Add(user);
 
@@ -233,6 +248,22 @@ namespace Bug_Tracker.Controllers
             return View(model);
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         [HttpGet]
         public async Task<ActionResult> CreateIssue(string ProjectIDCode)
         {
@@ -251,6 +282,24 @@ namespace Bug_Tracker.Controllers
             return View("CreateIssue", model);
         }
 
+        public string GetAuthorizationToken()
+        {
+            // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+            var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/x-www-form-urlencoded");
+            request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+
+            // Parsing into JSON 
+            var response2dict = JObject.Parse(response.Content);
+            // Retrieving Access Token
+            var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+
+            return Auth0ManagementAPI_AccessToken;
+        }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -260,15 +309,19 @@ namespace Bug_Tracker.Controllers
             {
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
-                issue.AssignedUsers = new List<User>();
+                issue.Users = new List<string>();
 
-                if (issue.AddUsers != null)
-                {
-                    foreach (var user in issue.AddUsers)
-                    {
-                        issue.AssignedUsers.Add(await _userRepository.GetUser(user));
-                    }
-                }
+              //  if (issue.AddUsers != null)
+              //  {
+                    //issue.Users = issue.AddUsers;
+                    ////Add if you want to add 'User' type objects into 'Issue'
+                    //foreach (var user in issue.AddUsers)
+                    //{
+                    //    issue.AssignedUsers.Add(await _userRepository.GetUser(user));
+
+
+                    //}
+                //}
                 //else
                 //{
                 //    issue.AddUsers = new List<string>();
@@ -278,6 +331,8 @@ namespace Bug_Tracker.Controllers
 
 
                 await _issueRepository.AddIssue(issue);
+
+
                 TempData["Message"] = "User Createed Successfully";
             }
 
@@ -291,6 +346,16 @@ namespace Bug_Tracker.Controllers
             projectFromDb.Issues.Add(issue);
             await _projectRepository.Update(projectFromDb);
 
+            foreach (var user in issue.AddUsers)
+            {
+                var User = await _userRepository.GetUser(user);
+                await AddorRmove("Add", User, null, issue, GetAuthorizationToken());
+
+            }
+
+
+
+            //public async Task<ActionResult> AddorRmove(string AddorRemove, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
 
 
             return RedirectToAction("Index", projectFromDb);
@@ -503,76 +568,154 @@ namespace Bug_Tracker.Controllers
 
 
 
-        public async Task<ActionResult> AddorRmove(string AddorRemove, Project selectedProject, User selectedUser, string Auth0ManagementAPI_AccessToken)
+        public async Task<ActionResult> AddorRmove(string AddorRemove, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
         {
+            // split into two sections - project and issue
+            object data = null;
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
-            var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
-            List<User> AssignedUsers = new List<User>();
-
-            // If 'AssignedUsers' is empty, initialize with empty list. Else, retrive list to be updated
-            if (projectFromDb.AssignedUsers == null)
-            {
-                // Initialize
-                projectFromDb.AssignedUsers = AssignedUsers;
-            }
-            else
-            {
-                // Retrive to be updated
-                AssignedUsers = projectFromDb.AssignedUsers;
-            }
-
+            
             if (userFromDb == null)
             {
                 return new NotFoundResult();
             }
 
-            string stringProject = "";
-            string selectedProjectJSON = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
-            object Projects = null;
-
-            if (AddorRemove == "Add")
+            if (selectedProject != null)
             {
-                AssignedUsers.Add(userFromDb);
+                var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
+                List<User> AssignedUsers = new List<User>();
 
-                stringProject = string.Join(",", userFromDb.Projects);
-                if (userFromDb.Projects.Count != 0)
+                // If 'AssignedUsers' is empty, initialize with empty list. Else, retrive list to be updated
+                if (projectFromDb.AssignedUsers == null)
                 {
-                    stringProject += ",";
+                    // Initialize
+                    projectFromDb.AssignedUsers = AssignedUsers;
                 }
-                stringProject += selectedProjectJSON;
-            }
-            else if (AddorRemove == "Remove")
-            {
-                AssignedUsers.Remove(userFromDb);
-
-
-                List<string> projectList = new List<string>();
-                foreach (var project in userFromDb.Projects)
+                else
                 {
-                    if (project != selectedProjectJSON)
+                    // Retrive to be updated
+                    AssignedUsers = projectFromDb.AssignedUsers;
+                }
+
+
+
+                string stringProject = "";
+                string selectedProjectJSON = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
+
+                if (AddorRemove == "Add")
+                {
+                    AssignedUsers.Add(userFromDb);
+
+                    stringProject = string.Join(",", userFromDb.Projects);
+                    if (userFromDb.Projects.Count != 0)
                     {
-                        projectList.Add(project);
+                        stringProject += ",";
                     }
-                    stringProject = string.Join(",", projectList);
+                    stringProject += selectedProjectJSON;
                 }
+                else if (AddorRemove == "Remove")
+                {
+                    AssignedUsers.Remove(userFromDb);
+
+
+                    List<string> projectList = new List<string>();
+                    foreach (var project in userFromDb.Projects)
+                    {
+                        if (project != selectedProjectJSON)
+                        {
+                            projectList.Add(project);
+                        }
+                        stringProject = string.Join(",", projectList);
+                    }
+                }
+
+                projectFromDb.AssignedUsers = AssignedUsers;
+                await _projectRepository.Update(projectFromDb);
+
+                data = "{ \"projects\": {" + stringProject + "}}}";
+
+            }
+            else
+            {
+                //var selectedIssue = await _issueRepository.GetIssue(selectedIssue.IDCode); // dont need this line just use User itself
+                List<string> Users = new List<string>();
+                string userIDName = selectedUser.ID + ": " + selectedUser.UserName;// + userFromDb.ToString();
+
+                // If 'AssignedUsers' is empty, initialize with empty list. Else, retrive list to be updated
+                if (selectedIssue.Users == null)
+                {
+                    // Initialize
+                    selectedIssue.Users = Users;
+                }
+                else
+                {
+                    // Retrive to be updated
+                    Users = selectedIssue.Users;
+                }
+
+
+
+                string stringIssue = "";
+                string selectedIssueJSON = "\"" + selectedIssue.IDCode + "\": \"" + selectedIssue.Title + "\"";
+     
+
+
+                if (AddorRemove == "Add")
+                {
+                    Users.Add(userIDName);
+
+                    stringIssue = string.Join(",", userFromDb.Issues);
+                    if (userFromDb.Issues.Count != 0)
+                    {
+                        stringIssue += ",";
+                    }
+                    stringIssue += selectedIssueJSON;
+                }
+                else if (AddorRemove == "Remove")
+                {
+                    Users.Remove(userIDName);
+
+
+                    List<string> issuetList = new List<string>();
+                    foreach (var Issue in userFromDb.Issues)
+                    {
+                        if (Issue != selectedIssueJSON) 
+                        { 
+                            
+                            issuetList.Add(Issue);
+                        }
+                        stringIssue = string.Join(",", issuetList);
+                    }
+                }
+
+                selectedIssue.Users = Users;
+                await _issueRepository.Update(selectedIssue);
+
+                data = "{ \"issue\": {" + stringIssue + "}}}";
             }
 
-            projectFromDb.AssignedUsers = AssignedUsers;
-            await _projectRepository.Update(projectFromDb);
 
-            Projects = "{ \"projects\": {" + stringProject + "}}}";
 
-            // Use Auth0 API to add PROJECT to user metadata
+
+
+            // Use Auth0 API to add Issue to user metadata
             string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
             string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
             var client = new RestClient(baseURL);
             var request = new RestRequest(Method.PATCH);
             request.AddHeader("authorization", authorizationValue);
             request.AddHeader("content-type", "application/json");
-            request.AddParameter("application/json", "{\"app_metadata\": " + Projects, ParameterType.RequestBody);
+            request.AddParameter("application/json", "{\"app_metadata\": " + data, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
 
-            return await GetProjectById(selectedProject);
+            if (selectedProject != null)
+            {
+                return await GetProjectById(selectedProject);
+            }
+            else
+            {
+                return null;
+            }
+               
         }
 
         [HttpPost]
@@ -602,7 +745,7 @@ namespace Bug_Tracker.Controllers
                         User selectedUser = new User();
                         selectedUser.ID = project.AddUsers[i];
 
-                        await AddorRmove("Add", project, selectedUser, Auth0ManagementAPI_AccessToken);
+                        await AddorRmove("Add", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
                     }
                 }
 
@@ -614,7 +757,8 @@ namespace Bug_Tracker.Controllers
                         User selectedUser = new User();
                         selectedUser.ID = project.RemoveUsers[i];
 
-                        await AddorRmove("Remove", project, selectedUser, Auth0ManagementAPI_AccessToken);
+                        await AddorRmove("Remove", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+
                     }
                 }
 
@@ -623,7 +767,7 @@ namespace Bug_Tracker.Controllers
                 {
                     foreach (var selectedUser in project.AssignedUsers)
                     {
-                        await AddorRmove("Remove", project, selectedUser, Auth0ManagementAPI_AccessToken);
+                        await AddorRmove("Remove", selectedUser, project, null , Auth0ManagementAPI_AccessToken);
 
                     }
                 }

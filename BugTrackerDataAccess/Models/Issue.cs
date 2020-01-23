@@ -29,6 +29,10 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         public List<User> AssignedUsers { get; set; }
 
+        [BsonElement]
+        public List<string> Users { get; set; }
+
+
         //[BsonElement]
         //public int NumUsers { get; set; }
 
