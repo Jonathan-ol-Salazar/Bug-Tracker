@@ -234,22 +234,48 @@ namespace Bug_Tracker.Controllers
         }
 
         [HttpGet]
-        public ActionResult CreateIssue(string ProjectIDCode)
+        public async Task<ActionResult> CreateIssue(string ProjectIDCode)
         {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
             Issue issue = new Issue();
+
             issue.ProjectIDCode = ProjectIDCode;
-            return View("CreateIssue", issue);
+
+            // Store Issue
+            model.Issue = issue;
+            // Initialize and store all users
+            model.UserList = new List<User>();
+            model.UserList = await _userRepository.GetAllUsers();
+
+
+            return View("CreateIssue", model);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter")] Issue issue)
+        public async Task<ActionResult> CreateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers")] Issue issue)
         {
             if (ModelState.IsValid)
             {
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
+                issue.AssignedUsers = new List<User>();
+
+                if (issue.AddUsers != null)
+                {
+                    foreach (var user in issue.AddUsers)
+                    {
+                        issue.AssignedUsers.Add(await _userRepository.GetUser(user));
+                    }
+                }
+                //else
+                //{
+                //    issue.AddUsers = new List<string>();
+
+                //}
+
+
 
                 await _issueRepository.AddIssue(issue);
                 TempData["Message"] = "User Createed Successfully";
