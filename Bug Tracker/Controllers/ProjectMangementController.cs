@@ -336,29 +336,18 @@ namespace Bug_Tracker.Controllers
                 TempData["Message"] = "User Createed Successfully";
             }
 
-            var projectFromDb = await _projectRepository.GetProject(issue.ProjectIDCode);
+            var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
 
-            if (projectFromDb.Issues == null)
-            {
-                projectFromDb.Issues = new List<Issue>();
-            }
 
-            projectFromDb.Issues.Add(issue);
-            await _projectRepository.Update(projectFromDb);
 
             foreach (var user in issue.AddUsers)
             {
                 var User = await _userRepository.GetUser(user);
-                await AddorRmove("Add", User, null, issue, GetAuthorizationToken());
+                await AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
             }
 
-
-
-            //public async Task<ActionResult> AddorRmove(string AddorRemove, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
-
-
-            return RedirectToAction("Index", projectFromDb);
+            return RedirectToAction("Index", await _projectRepository.GetProject(issue.ProjectIDCode));
         }
 
 
@@ -567,8 +556,8 @@ namespace Bug_Tracker.Controllers
         }
 
 
-
-        public async Task<ActionResult> AddorRmove(string AddorRemove, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
+        // add param for issue or project
+        public async Task<ActionResult> AddorRmove(string AddorRemove, string use, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
         {
             // split into two sections - project and issue
             object data = null;
@@ -579,7 +568,7 @@ namespace Bug_Tracker.Controllers
                 return new NotFoundResult();
             }
 
-            if (selectedProject != null)
+            if (use == "Project")
             {
                 var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
                 List<User> AssignedUsers = new List<User>();
@@ -634,9 +623,8 @@ namespace Bug_Tracker.Controllers
                 data = "{ \"projects\": {" + stringProject + "}}}";
 
             }
-            else
+            else if (use == "Issue")
             {
-                //var selectedIssue = await _issueRepository.GetIssue(selectedIssue.IDCode); // dont need this line just use User itself
                 List<string> Users = new List<string>();
                 string userIDName = selectedUser.ID + ": " + selectedUser.UserName;// + userFromDb.ToString();
 
@@ -656,7 +644,7 @@ namespace Bug_Tracker.Controllers
 
                 string stringIssue = "";
                 string selectedIssueJSON = "\"" + selectedIssue.IDCode + "\": \"" + selectedIssue.Title + "\"";
-     
+
 
 
                 if (AddorRemove == "Add")
@@ -678,9 +666,9 @@ namespace Bug_Tracker.Controllers
                     List<string> issuetList = new List<string>();
                     foreach (var Issue in userFromDb.Issues)
                     {
-                        if (Issue != selectedIssueJSON) 
-                        { 
-                            
+                        if (Issue != selectedIssueJSON)
+                        {
+
                             issuetList.Add(Issue);
                         }
                         stringIssue = string.Join(",", issuetList);
@@ -691,11 +679,19 @@ namespace Bug_Tracker.Controllers
                 await _issueRepository.Update(selectedIssue);
 
                 data = "{ \"issue\": {" + stringIssue + "}}}";
+
+
+                // If the selected project has a 'null' value for 'Issues' initialize it with a blank list
+                if (selectedProject.Issues == null)
+                {
+                    selectedProject.Issues = new List<Issue>();
+                }
+
+                // Add the issue to the project and update the database
+                selectedProject.Issues.Add(selectedIssue);
+                await _projectRepository.Update(selectedProject);
+
             }
-
-
-
-
 
             // Use Auth0 API to add Issue to user metadata
             string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
@@ -707,15 +703,18 @@ namespace Bug_Tracker.Controllers
             request.AddParameter("application/json", "{\"app_metadata\": " + data, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
 
-            if (selectedProject != null)
-            {
-                return await GetProjectById(selectedProject);
-            }
-            else
-            {
-                return null;
-            }
-               
+            //if (selectedProject != null)
+            //{
+            //    return await GetProjectById(selectedProject);
+            //}
+            //else
+            //{
+            //    return null; // return project
+            //}
+
+            return await GetProjectById(selectedProject);
+
+
         }
 
         [HttpPost]
@@ -745,7 +744,7 @@ namespace Bug_Tracker.Controllers
                         User selectedUser = new User();
                         selectedUser.ID = project.AddUsers[i];
 
-                        await AddorRmove("Add", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+                        await AddorRmove("Add", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
                     }
                 }
 
@@ -757,7 +756,7 @@ namespace Bug_Tracker.Controllers
                         User selectedUser = new User();
                         selectedUser.ID = project.RemoveUsers[i];
 
-                        await AddorRmove("Remove", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+                        await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
 
                     }
                 }
@@ -767,7 +766,7 @@ namespace Bug_Tracker.Controllers
                 {
                     foreach (var selectedUser in project.AssignedUsers)
                     {
-                        await AddorRmove("Remove", selectedUser, project, null , Auth0ManagementAPI_AccessToken);
+                        await AddorRmove("Remove", "Project", selectedUser, project, null , Auth0ManagementAPI_AccessToken);
 
                     }
                 }
