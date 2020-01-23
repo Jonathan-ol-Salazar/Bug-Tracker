@@ -311,25 +311,6 @@ namespace Bug_Tracker.Controllers
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
 
-              //  if (issue.AddUsers != null)
-              //  {
-                    //issue.Users = issue.AddUsers;
-                    ////Add if you want to add 'User' type objects into 'Issue'
-                    //foreach (var user in issue.AddUsers)
-                    //{
-                    //    issue.AssignedUsers.Add(await _userRepository.GetUser(user));
-
-
-                    //}
-                //}
-                //else
-                //{
-                //    issue.AddUsers = new List<string>();
-
-                //}
-
-
-
                 await _issueRepository.AddIssue(issue);
 
 
@@ -678,6 +659,10 @@ namespace Bug_Tracker.Controllers
                 selectedIssue.Users = Users;
                 await _issueRepository.Update(selectedIssue);
 
+
+
+
+
                 data = "{ \"issue\": {" + stringIssue + "}}}";
 
 
@@ -687,9 +672,44 @@ namespace Bug_Tracker.Controllers
                     selectedProject.Issues = new List<Issue>();
                 }
 
+                List<Issue> issueForProject = new List<Issue>();
+
+                int counter = 0;
+                bool issueExists = false;
+                foreach (var issue in selectedProject.Issues)
+                {
+                    if (issue.IDCode == selectedIssue.IDCode)
+                    {
+                        issueExists = true;
+                        break;
+                    }
+                    counter++;
+
+                }
+
+                issueForProject = selectedProject.Issues;
+
+
+                if (issueExists == true)
+                {
+                    issueForProject[counter].Users = Users;
+                }
+                else
+                {
+                    issueForProject.Add(selectedIssue);
+                }
+
+                selectedProject.Issues = issueForProject;
+
+
+
                 // Add the issue to the project and update the database
-                selectedProject.Issues.Add(selectedIssue);
+                //selectedProject.Issues = 
                 await _projectRepository.Update(selectedProject);
+
+
+
+
 
             }
 
