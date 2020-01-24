@@ -401,8 +401,8 @@ namespace Bug_Tracker.Controllers
                     foreach(var user in issue.AddUsers)
                     {
                         var User = await _userRepository.GetUser(user);
-                        issue.Users.Add((user + ": " + User.UserName));
-                        await _issueRepository.Update(issue);
+                        //issue.Users.Add((user + ": " + User.UserName));
+                        //await _issueRepository.Update(issue);
 
                         await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
@@ -414,31 +414,16 @@ namespace Bug_Tracker.Controllers
                 {
                     foreach (var user in issue.RemoveUsers)
                     {
-                        var User = await _userRepository.GetUser(user);       
-                        issue.Users.Remove(user + ": " + User.UserName);
-                        await _issueRepository.Update(issue);
-
+                        var User = await _userRepository.GetUser(user);
+                        //issue.Users.Remove(user + ": " + User.UserName);
                         await AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
                     }
 
                 }
-                //await _issueRepository.Update(issue);
 
-
-                // UPDATING Auth0
-                //foreach (var user in issue.AddUsers)
-                //{
-                //    var User = await _userRepository.GetUser(user);
-                //    await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
-                //}
-                //foreach (var user in issue.RemoveUsers)
-                //{
-                //    var User = await _userRepository.GetUser(user);
-                //    await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
-                //}
+                await _issueRepository.Update(issue);
+                //await AddorRmove("Update", "Issue", issue, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
 
 
