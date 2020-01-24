@@ -373,7 +373,7 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers")] Issue issue)
+        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers, Users")] Issue issue)
         {
             var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
             var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
@@ -391,6 +391,54 @@ namespace Bug_Tracker.Controllers
                 //issue.ProjectIDCode = issueFromDb.ProjectIDCode;
                 //issue.Submitter = issueFromDb.Submitter;
                 issue.Updated = DateTime.UtcNow.ToString();
+
+                List<string> Users = new List<string>();
+
+
+                // Adding Users 
+                if (issue.AddUsers != null)
+                {
+                    issue.Users.AddRange(issue.AddUsers);
+                }
+
+                // Remove Users
+                if(issue.RemoveUsers != null)
+                {
+                    foreach (var user in issue.RemoveUsers)
+                    {
+                        issue.Users.Remove(user);
+                    }
+
+                }
+
+
+
+                //// Adding Users                
+
+                //if (issue.AddUsers == null || issue.Users == null)
+                //{
+                //    issue.Users = new List<string>();
+                //}
+                
+
+                //{
+                //    //issue.Users = issue.AddUsers;
+                //    Users.AddRange(issue.AddUsers);
+                //}
+                ////Users = issue.Users;
+                ////Users.AddRange(issue.AddUsers);
+
+                //// Removing Users
+                //if (issue.RemoveUsers != null && issue.AddUsers != null)
+                //{
+                //    //Users = issue.Users;
+                //    foreach (var user in issue.RemoveUsers)
+                //    {
+                //        Users.Remove(user);
+                //    }
+                //}
+
+               // issue.Users = Users;
 
                 await _issueRepository.Update(issue);
 
