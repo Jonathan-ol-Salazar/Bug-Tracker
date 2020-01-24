@@ -106,7 +106,7 @@ namespace Bug_Tracker.Controllers
                 if (userAuth0.SelectToken("app_metadata").SelectToken("issues").First != null)
                 {
                     // Foreach loop to add all projects for Projects ArrayList
-                    foreach (var issue in userAuth0.SelectToken("app_metadata").SelectToken("issue"))
+                    foreach (var issue in userAuth0.SelectToken("app_metadata").SelectToken("issues"))
                     {
                         //project.SelectToken("app_metadata").SelectToken("projects");
                         string issueString = issue.ToString();
@@ -380,25 +380,31 @@ namespace Bug_Tracker.Controllers
 
             if (ModelState.IsValid)
             {
+                // Updating 'Issue' collection
                 if (projectFromDb == null || issueFromDb == null)
                 {
                     return new NotFoundResult();
                 }
 
                 issue.Id = issueFromDb.Id;
-                //issue.IDCode = issueFromDb.IDCode;
                 issue.Created = issueFromDb.Created;
-                //issue.ProjectIDCode = issueFromDb.ProjectIDCode;
-                //issue.Submitter = issueFromDb.Submitter;
                 issue.Updated = DateTime.UtcNow.ToString();
 
-                List<string> Users = new List<string>();
-
+                if(issue.Users == null)
+                {
+                    issue.Users = new List<string>();
+                }
 
                 // Adding Users 
                 if (issue.AddUsers != null)
                 {
-                    issue.Users.AddRange(issue.AddUsers);
+
+
+                    foreach(var user in issue.AddUsers)
+                    {
+                        var User = await _userRepository.GetUser(user);
+                        issue.Users.Add((user + ": " + User.UserName));
+                    }
                 }
 
                 // Remove Users
@@ -406,46 +412,41 @@ namespace Bug_Tracker.Controllers
                 {
                     foreach (var user in issue.RemoveUsers)
                     {
-                        issue.Users.Remove(user);
+                        var User = await _userRepository.GetUser(user);       
+                        issue.Users.Remove(user + ": " + User.UserName);
                     }
 
                 }
 
+                //List<string> UserID = new List<string>();
 
-
-                //// Adding Users                
-
-                //if (issue.AddUsers == null || issue.Users == null)
+                //foreach (var user in issue.Users)
                 //{
-                //    issue.Users = new List<string>();
-                //}
-                
+                //    var User = await _userRepository.GetUser(user);
+                //    UserID.Add(user + ": " + User.UserName);
 
-                //{
-                //    //issue.Users = issue.AddUsers;
-                //    Users.AddRange(issue.AddUsers);
-                //}
-                ////Users = issue.Users;
-                ////Users.AddRange(issue.AddUsers);
-
-                //// Removing Users
-                //if (issue.RemoveUsers != null && issue.AddUsers != null)
-                //{
-                //    //Users = issue.Users;
-                //    foreach (var user in issue.RemoveUsers)
-                //    {
-                //        Users.Remove(user);
-                //    }
                 //}
 
-               // issue.Users = Users;
-
+                //issue.Users = UserID;
                 await _issueRepository.Update(issue);
+
+
+                // UPDATING Auth0
+
+
+
+
+
+
+
 
 
                 TempData["Message"] = "User Createed Successfully";
 
             }
+
+
+            // UPDATING 'Projects' collection
             Issue issueOld = null;
             int indexUpdate = -1;
             foreach (var issueExisting in projectFromDb.Issues)
