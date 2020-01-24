@@ -398,12 +398,14 @@ namespace Bug_Tracker.Controllers
                 // Adding Users 
                 if (issue.AddUsers != null)
                 {
-
-
                     foreach(var user in issue.AddUsers)
                     {
                         var User = await _userRepository.GetUser(user);
                         issue.Users.Add((user + ": " + User.UserName));
+                        await _issueRepository.Update(issue);
+
+                        await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
                     }
                 }
 
@@ -414,26 +416,29 @@ namespace Bug_Tracker.Controllers
                     {
                         var User = await _userRepository.GetUser(user);       
                         issue.Users.Remove(user + ": " + User.UserName);
+                        await _issueRepository.Update(issue);
+
+                        await AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
                     }
 
                 }
-
-                //List<string> UserID = new List<string>();
-
-                //foreach (var user in issue.Users)
-                //{
-                //    var User = await _userRepository.GetUser(user);
-                //    UserID.Add(user + ": " + User.UserName);
-
-                //}
-
-                //issue.Users = UserID;
-                await _issueRepository.Update(issue);
+                //await _issueRepository.Update(issue);
 
 
                 // UPDATING Auth0
+                //foreach (var user in issue.AddUsers)
+                //{
+                //    var User = await _userRepository.GetUser(user);
+                //    await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
+                //}
+                //foreach (var user in issue.RemoveUsers)
+                //{
+                //    var User = await _userRepository.GetUser(user);
+                //    await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
+                //}
 
 
 
@@ -735,6 +740,12 @@ namespace Bug_Tracker.Controllers
                         stringIssue = string.Join(",", issuetList);
                     }
                 }
+                else if (AddorRemove == "Update")
+                {
+                    //issue
+                }
+
+
 
                 selectedIssue.Users = Users;
                 await _issueRepository.Update(selectedIssue);
@@ -743,7 +754,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-                data = "{ \"issue\": {" + stringIssue + "}}}";
+                data = "{ \"issues\": {" + stringIssue + "}}}";
 
 
                 // If the selected project has a 'null' value for 'Issues' initialize it with a blank list
