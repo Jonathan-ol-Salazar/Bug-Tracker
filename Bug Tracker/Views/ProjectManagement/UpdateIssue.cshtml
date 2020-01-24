@@ -1,4 +1,4 @@
-﻿@model BugTrackerDataAccess.Models.Issue
+﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 
 @{
     ViewData["Title"] = "Edit Issue";
@@ -56,38 +56,64 @@
                     <form asp-action="UpdateIssue">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                        @*PRE-SELECTED ATTRIBUTES TO SELECT CURRENT USER*@
                         <div class="form-group">
-                            <select id="Submitter" asp-for="Submitter">
-                                <option value="@User.Identity.Name" selected="selected">@Model.Submitter</option>
+                            <select id="Submitter" asp-for="Issue.Submitter">
+                                <option value="@User.Identity.Name" selected="selected">@Model.Issue.Submitter</option>
                             </select>
-                            <select id="Project" asp-for="ProjectIDCode">
-                                <option value="@Model.ProjectIDCode" selected="selected">@Model.ProjectIDCode</option>
+                            <select id="Project" asp-for="Issue.ProjectIDCode">
+                                <option value="@Model.Issue.ProjectIDCode" selected="selected">@Model.Issue.ProjectIDCode</option>
                             </select>
-                            <select id="IDCode" asp-for="IDCode">
-                                <option value="@Model.IDCode" selected="selected">@Model.IDCode</option>
+                            <select id="IDCode" asp-for="Issue.IDCode">
+                                <option value="@Model.Issue.IDCode" selected="selected">@Model.Issue.IDCode</option>
                             </select>
                         </div>
 
-                        @*<div class="form-group">
-            <label asp-for="IDCode" class="control-label"></label>
-            <input asp-for="IDCode" class="form-control" />
-            <span asp-validation-for="IDCode" class="text-danger"></span>
-        </div>*@
+                        @*SELECTIONS THAT THE USER CAN CHANGE*@
                         <div class="form-group">
-                            <label asp-for="Title" class="control-label"></label>
-                            <input asp-for="Title" class="form-control" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <label asp-for="Issue.Title" class="control-label"></label>
+                            <input asp-for="Issue.Title" class="form-control" />
+                            <span asp-validation-for="Issue.Title" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Status" class="control-label"></label>
-                            <input asp-for="Status" class="form-control" />
-                            <span asp-validation-for="Status" class="text-danger"></span>
+                            <label asp-for="Issue.Status" class="control-label"></label>
+                            <input asp-for="Issue.Status" class="form-control" />
+                            <span asp-validation-for="Issue.Status" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Description" class="control-label"></label>
-                            <input asp-for="Description" class="form-control" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <label asp-for="Issue.Description" class="control-label"></label>
+                            <input asp-for="Issue.Description" class="form-control" />
+                            <span asp-validation-for="Issue.Description" class="text-danger"></span>
                         </div>
+
+                        <div class="form-group">
+
+                            <label asp-for="Issue.AddUsers" class="control-label">Assign Users To Project</label>
+                            <select asp-for="Issue.AddUsers" multiple class="form-control" style="width: 100%;">
+                                @foreach (var item in Model.UsersNotAssignedList)
+                                {
+                                    <option value="@item.ID">@item.UserName</option>
+                                }
+                            </select>
+                            <br />
+                            <label asp-for="Issue.RemoveUsers" class="control-label">Remove Users From Project</label>
+                            <select asp-for="Issue.RemoveUsers" multiple class="form-control" style="width: 100%;">
+                                @foreach (var item in Model.UsersAssignedList)
+                                {
+                                    <option value="@item.ID">@item.UserName</option>
+                                }
+                            </select>
+                            <br />
+                            <button type="submit" class="btn btn-danger btn-block">Submit</button>
+                        </div>
+
+
+
+
+
+
+
+
                         <div class="form-group">
                             <input type="submit" value="Save" class="btn btn-primary" />
                         </div>

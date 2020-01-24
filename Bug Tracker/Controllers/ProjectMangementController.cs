@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections;
 using BugTrackerDataAccess.ViewModel;
 using System;
+using Newtonsoft.Json;
 
 namespace Bug_Tracker.Controllers
 {
@@ -335,14 +336,44 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<ActionResult> UpdateIssue(string IDCode)
         {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
             Issue issue = await _issueRepository.GetIssue(IDCode);
+            List<User> UsersNotAssignedList = new List<User>();
+            List<User> UsersAssignedList = new List<User>();
+            var allUsers = await _userRepository.GetAllUsers();
+            List<string> AssignedUsersID = new List<string>();
 
-            return View("UpdateIssue", issue);
+
+            // Loop through all the current users assigned and add there user objects to 'UsersAssignedList' 
+            foreach (var user in issue.Users)
+            {
+                string ID = user.Split(':')[0];
+                UsersAssignedList.Add(await _userRepository.GetUser(ID));
+                AssignedUsersID.Add(ID);
+            }
+
+
+
+            // Loop through all the user objects, if they are not in the 'UsersAssignedList', then add them to 'UsersNotAssignedList'
+            foreach (var user in allUsers)
+            {
+                if (!AssignedUsersID.Contains(user.ID))
+                {
+                    UsersNotAssignedList.Add(user);
+                }
+            }
+
+            
+
+            model.UsersAssignedList = UsersAssignedList;
+            model.UsersNotAssignedList = UsersNotAssignedList;
+            model.Issue = issue;
+            return View("UpdateIssue", model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter")] Issue issue)
+        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers")] Issue issue)
         {
             var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
             var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
