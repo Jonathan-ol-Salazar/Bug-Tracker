@@ -50,16 +50,20 @@ namespace Bug_Tracker.Controllers
 
 
 
+            if (currentUser.Issues == null)
+            {
+                currentUser.Issues = new List<string>();
+            }
 
             foreach (var issue in currentUser.Issues)
             {
                 string issueIDCode = issue.Split(':')[0].Replace("\"", "");
-                //issueIDCode = issueIDCode.Replace("\"", "");
-
                 IssueList.Add(await _issueRepository.GetIssue(issueIDCode));
 
 
             }
+
+
 
 
             if (model.IssueList == null)
