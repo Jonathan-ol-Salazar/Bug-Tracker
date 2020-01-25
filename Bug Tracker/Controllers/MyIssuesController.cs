@@ -45,33 +45,30 @@ namespace Bug_Tracker.Controllers
             // Model for view
             MyIssuesViewModel model = new MyIssuesViewModel();
 
-            var AllIssues = await _issueRepository.GetAllIssues();
+
             var currentUser = await _userRepository.GetUser(userId);
 
 
 
 
-            foreach (var issue in AllIssues)
+            foreach (var issue in currentUser.Issues)
             {
-                if (issue.AssignedUsers.Contains(currentUser))
-                {
-                    IssueList.Add(issue);
-                }
+                string issueIDCode = issue.Split(':')[0].Replace("\"", "");
+                //issueIDCode = issueIDCode.Replace("\"", "");
+
+                IssueList.Add(await _issueRepository.GetIssue(issueIDCode));
+
+
             }
 
 
-            // Get all issues
-            // Check if issues are assigned to current user 
-            // if it is, store in list for model
+            if (model.IssueList == null)
+            {
+                model.IssueList = new List<Issue>();
 
+            }
 
-
-
-
-
-            model.IssueList = new List<Issue>();
-            model.IssueList = AllIssues;
-            //model.IssueList = IssueList;
+            model.IssueList = IssueList;
             return View(model);
         }
 
