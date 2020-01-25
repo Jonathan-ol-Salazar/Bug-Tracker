@@ -7,7 +7,16 @@ namespace BugTrackerDataAccess.ViewModel
 {
     public class AccountViewModel
     {
-        public IEnumerable<Issue> IssueList { get; set; }
+        // List of issues
+        //public IEnumerable<Issue> IssueList { get; set; }
+
+
+        //public IEnumerable<Project> ProjectList { get; set; }
+
+
+        public User User { get; set; }
+
+
 
     }
 }

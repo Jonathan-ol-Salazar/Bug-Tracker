@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using BugTrackerDataAccess.Models;
 using BugTrackerDataAccess.Repositories;
+using BugTrackerDataAccess.ViewModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -26,19 +27,6 @@ namespace Bug_Tracker.Controllers
             _issueRepository = issueRepository;
 
         }
-
-        //private readonly RoleManager<IdentityRole<int>> _roleManager;
-        //public AccountController(RoleManager<IdentityRole<int>> roleManager)
-        //{
-        //    _roleManager = roleManager;
-        //}
-
-        //[HttpGet]
-        //public IActionResult CreateRole()
-        //{
-        //    return View();
-        //}
-
 
         public async Task Login(string returnUrl = "/")
         {
@@ -80,7 +68,11 @@ namespace Bug_Tracker.Controllers
             string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var currentUser = await _userRepository.GetUser(userId);
 
-            return View(currentUser);
+            AccountViewModel model = new AccountViewModel();
+
+            model.User = currentUser;
+
+            return View(model);
 
         }
 
