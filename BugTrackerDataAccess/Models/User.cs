@@ -45,6 +45,10 @@ namespace BugTrackerDataAccess.Models
         //[Required]
         public List<string> Projects { get; set; }
 
+        [BsonElement]
+        //[Required]
+        public List<string> Issues { get; set; }
+
 
         [BsonElement]
    //     [Required]
