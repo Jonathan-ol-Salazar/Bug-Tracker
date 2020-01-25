@@ -1,4 +1,4 @@
-﻿@model BugTrackerDataAccess.Models.Issue
+﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 
 @{
     ViewData["Title"] = "CreateIssue";
@@ -57,45 +57,47 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <div class="form-group">
-                            <select id="Submitter" asp-for="Submitter">
-                                <option value="@User.Identity.Name" selected="selected">@Model.Submitter</option>
+                            <select id="Submitter" asp-for="@Model.Issue.Submitter">
+                                <option value="@User.Identity.Name" selected="selected">@Model.Issue.Submitter</option>
                             </select>
-                            <select id="Project" asp-for="ProjectIDCode">
-                                <option value="@Model.ProjectIDCode" selected="selected">@Model.ProjectIDCode</option>
+                            <select id="Project" asp-for="@Model.Issue.ProjectIDCode">
+                                <option value="@Model.Issue.ProjectIDCode" selected="selected">@Model.Issue.ProjectIDCode</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label asp-for="IDCode" class="control-label"></label>
-                            <input asp-for="IDCode" class="form-control" />
-                            <span asp-validation-for="IDCode" class="text-danger"></span>
+                            <label asp-for="@Model.Issue.IDCode" class="control-label"></label>
+                            <input asp-for="@Model.Issue.IDCode" class="form-control" />
+                            <span asp-validation-for="@Model.Issue.IDCode" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Title" class="control-label"></label>
-                            <input asp-for="Title" class="form-control" />
-                            <span asp-validation-for="Title" class="text-danger"></span>
+                            <label asp-for="@Model.Issue.Title" class="control-label"></label>
+                            <input asp-for="@Model.Issue.Title" class="form-control" />
+                            <span asp-validation-for="@Model.Issue.Title" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Status" class="control-label"></label>
-                            <input asp-for="Status" class="form-control" />
-                            <span asp-validation-for="Status" class="text-danger"></span>
-                        </div>
-                        @*<div class="form-group">
-                            <label asp-for="Submitter" class="control-label"></label>
-                            <input asp-for="Submitter" value=@User.Identity.Name class="form-control" />
-                            <span asp-validation-for="Submitter" class="text-danger"></span>
-                        </div>*@
-                        <div class="form-group">
-                            <label asp-for="Description" class="control-label"></label>
-                            <input asp-for="Description" class="form-control" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <label asp-for="@Model.Issue.Status" class="control-label"></label>
+                            <input asp-for="@Model.Issue.Status" class="form-control" />
+                            <span asp-validation-for="@Model.Issue.Status" class="text-danger"></span>
                         </div>
 
-                        @*<div class="form-group">
-                            <label asp-for="Project" class="control-label"></label>
-                            <input asp-for="Project" class="form-control" />
-                            <span asp-validation-for="Project" class="text-danger"></span>
-                        </div>*@
+                        <div class="form-group">
+                            <label asp-for="@Model.Issue.Description" class="control-label"></label>
+                            <input asp-for="@Model.Issue.Description" class="form-control" />
+                            <span asp-validation-for="@Model.Issue.Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Issue.AddUsers" class="control-label">Assign Users To Issue</label>
+                            <select asp-for="Issue.AddUsers" multiple class="form-control" style="width: 100%;">
+                                @foreach (var item in Model.UserList)
+                                {
+                                    <option value="@item.ID">@item.UserName</option>
+                                }
+                            </select>
+
+                        </div>
+
                         <div class="form-group">
                             <input type="submit" value="Create" class="btn btn-primary" />
                         </div>
