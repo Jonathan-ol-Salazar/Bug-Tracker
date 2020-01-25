@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BugTrackerDataAccess.Models;
+using BugTrackerDataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,19 @@ namespace Bug_Tracker.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
+
+        private readonly IUserRepository _userRepository;
+        private readonly IProjectRepository _projectRepository;
+        private readonly IIssueRepository _issueRepository;
+
+        public AccountController(IUserRepository userRepository, IProjectRepository projectRepository, IIssueRepository issueRepository)
+        {
+            _userRepository = userRepository;
+            _projectRepository = projectRepository;
+            _issueRepository = issueRepository;
+
+        }
+
         //private readonly RoleManager<IdentityRole<int>> _roleManager;
         //public AccountController(RoleManager<IdentityRole<int>> roleManager)
         //{
@@ -47,7 +61,7 @@ namespace Bug_Tracker.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         //[Authorize]
         public IActionResult Profile()
         {
@@ -57,6 +71,17 @@ namespace Bug_Tracker.Controllers
                 Email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
                 //ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            // GETTING AUTH0 USER DETAILS OF CURRENT SIGNED IN USER
+            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _userRepository.GetUser(userId);
+
+            return View(currentUser);
+
         }
 
 
