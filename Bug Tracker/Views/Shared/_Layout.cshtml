@@ -139,7 +139,7 @@
                         @*<span class="far fa-user" alt="User Image" style="color:aqua"></span>*@
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">@User.Identity.Name</a>
+                        <a href="@Url.Action("Index", "Account", new { })" class="d-block">@User.Identity.Name</a>
                     </div>
                 </div>
 
@@ -148,8 +148,7 @@
                 <nav class="mt-2">           
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-                        with font-awesome or any other icon font library -->
-
+    with font-awesome or any other icon font library -->
                         @*<li class="nav-header">ISSUES</li>*@
 
                         <li class="nav-item has-treeview">
@@ -182,22 +181,43 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="../widgets.html" class="nav-link">
-                                <i class="nav-icon fas fa-lock-open"></i>
+                            <a href="@Url.Action("Index", "UserManagement", new {})" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
                                 <p>
-                                    Open
+                                    User Management
                                 </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="../widgets.html" class="nav-link">
-                                <i class="nav-icon fas fa-lock"></i>
+                            <a href="@Url.Action("Index", "ProjectManagement", new {})" class="nav-link">
+                                <i class="nav-icon fas fa-sitemap"></i>
                                 <p>
-                                    Closed
+                                    Project Management
                                 </p>
                             </a>
                         </li>
-                        @Html.ActionLink("User Management","Index", "UserManagement")
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "MyProjects", new {})" class="nav-link">
+                                <i class="nav-icon fas fa-clipboard-list"></i>
+                                <p>
+                                    My Projects
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Index", "MyIssues", new {})" class="nav-link">
+                                <i class="nav-icon fas fa-tasks"></i>
+                                <p>
+                                    My Issues
+                                </p>
+                            </a>
+                        </li>
+                        @*@Html.ActionLink("Account", "Index", "Account")
+                        @Html.ActionLink("User Management", "Index", "UserManagement")
+                        @Html.ActionLink("Project Management", "Index", "ProjectManagement")
+                        @Html.ActionLink("My Projects", "Index", "MyProjects")
+                        @Html.ActionLink("My Issues", "Index", "MyIssues")*@
+
                         <li class="nav-header">MANAGEMENT</li>
 
                         <li class="nav-item">

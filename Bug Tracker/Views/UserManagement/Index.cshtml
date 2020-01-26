@@ -133,11 +133,11 @@
                                         <select asp-for="User.Projects" class="duallistbox" multiple="multiple" style="width: 100%;">
                                             @foreach (var item in Model.ProjectList)
                                             {
-                                                <option>@item.ProjectID</option>
+                                                <option>@item.IDCode</option>
                                             }
                                         </select>
                                     </div>
-</div>
+                                </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Submit</button>

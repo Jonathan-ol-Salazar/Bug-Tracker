@@ -3,6 +3,12 @@ using MongoDB.Bson.Serialization.Attributes;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+
 
 namespace BugTrackerDataAccess.Models
 {
@@ -45,13 +51,56 @@ namespace BugTrackerDataAccess.Models
         //[Required]
         public List<string> Projects { get; set; }
 
+        [BsonElement]
+        //[Required]
+        public List<string> Issues { get; set; }
+
 
         [BsonElement]
    //     [Required]
         public int NumProjects { get; set; }
 
+        [BsonElement]
+        //     [Required]
+        public string DOB { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string About { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string Location { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string Skills { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string Education { get; set; }
+
+        [BsonElement]
+
+        public string AccountImage { get; set; }
+
+        [BsonElement]
+
+        public List<string> User_Metadata { get; set; }
+
+        [BsonElement]
+
+        public byte[] AccountPicture { get; set; }
 
 
-        //public string ProfileImage { get; set; }
+
     }
+
+
+
+
+
+
+
+
 }

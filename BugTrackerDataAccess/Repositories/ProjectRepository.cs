@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BugTrackerDataAccess.Repositories
@@ -30,11 +31,11 @@ namespace BugTrackerDataAccess.Repositories
 
         public async Task<Project> GetProject(string id)
         {
-            FilterDefinition<Project> filter = Builders<Project>.Filter.Eq(x => x.ProjectID, id);
+            FilterDefinition<Project> filter = Builders<Project>.Filter.Eq(x => x.IDCode, id);
             return await _context.Projects.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task Create(Project project)
+        public async Task AddProject(Project project)
         {
             await _context.Projects.InsertOneAsync(project);
         }
@@ -47,7 +48,13 @@ namespace BugTrackerDataAccess.Repositories
 
         public async Task<bool> Delete(List<Project> project)
         {
-            var filter = new BsonDocument("project_id", new BsonDocument("$in", new BsonArray(project)));
+            var ids = project.Select(d => d.Id);
+
+            var filter = Builders<Project>.Filter.In(d => d.Id, ids);
+
+
+            //var filter = new BsonDocument("IDCode", new BsonDocument("$in", new BsonArray(project)));
+
 
             DeleteResult deleteResult = await _context.Projects.DeleteManyAsync(filter);
 
@@ -72,7 +79,7 @@ namespace BugTrackerDataAccess.Repositories
         // Selecting Projects 
         Task<Project> GetProject(string id);
 
-        Task Create(Project project);
+        Task AddProject(Project project);
         // 'Submit' button
         Task<bool> Update(Project project);
         // 'Delete' button

@@ -1,0 +1,117 @@
+﻿@model BugTrackerDataAccess.Models.Project
+
+@{
+    ViewData["Title"] = "UpdateProjectDetails";
+}
+
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdminLTE 3 | DataTables</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <!-- jQuery -->
+    @*<script src="~/AdminLTE_theme/plugins/jquery/jquery.min.js"></script>*@
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
+
+</head>
+<body class="hold-transition sidebar-mini">
+
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Edit Project Details</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Project Manager</li>
+                            <li class="breadcrumb-item active">@Model.IDCode</li>
+                            <li class="breadcrumb-item active">Edit</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+            <h4>@Model.IDCode</h4>
+            <hr />
+            <div class="row">
+                <div class="col-md-4">
+                    <form asp-action="UpdateProjectDetails">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <select id="IDCode" asp-for="IDCode">
+                                <option value="@Model.IDCode" selected="selected">@Model.IDCode</option>
+                            </select>
+                            <select id="Name" asp-for="Name">
+                                <option value="@Model.Name" selected="selected">@Model.Name</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label asp-for="ProjectManagerUserID" class="control-label">Add a Project Manager</label>
+                            <select asp-for="ProjectManagerUserID" multiple class="form-control" style="width: 100%;">                                
+                                @foreach (var item in Model.ProjectManagerList)
+                                {
+                                    <option value="@item.ID">@item.UserName, @item.ID</option>
+                                }
+                            </select>                           
+                        </div>
+
+
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- page script -->
+    <script>
+        $(document).ready(function () {
+
+            var IDCode = document.getElementById("IDCode");
+            IDCode.style.display = "none";
+
+            var Name = document.getElementById("Name");
+            Name.style.display = "none";
+        });
+
+
+    </script>
+</body>
+</html>

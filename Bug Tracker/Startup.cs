@@ -48,11 +48,14 @@ namespace Bug_Tracker
 
             // MongoDB COLLECTIONS
             // Users
-            services.AddTransient<IUserContext, UserContext>();
+            services.AddTransient<IUserContext, Context>();
             services.AddTransient<IUserRepository, UserRepository>();
-            // Projects
-            services.AddTransient<IProjectContext, ProjectContext>();
+            // Projects  
+            services.AddTransient<IProjectContext, Context>();
             services.AddTransient<IProjectRepository, ProjectRepository>();
+            // Issues
+            services.AddTransient<IIssueContext, Context>();
+            services.AddTransient<IIssueRepository, IssueRepository>();
 
 
             // AUTH0 SETUP
