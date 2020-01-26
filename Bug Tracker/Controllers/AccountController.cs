@@ -113,6 +113,11 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                
+                // CONVERT JPG TO A BYTE ARRAY
+                //byte[] binaryContent = File.ReadAllBytes(user.AccountPicture);
+                //byte[] binaryContent = System.IO.File.ReadAllBytes(user.AccountPicture);
+
 
                 // Updating MongoDB
                 var userFromDb = await _userRepository.GetUser(user.ID);

@@ -3,6 +3,12 @@ using MongoDB.Bson.Serialization.Attributes;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+
 
 namespace BugTrackerDataAccess.Models
 {
@@ -81,6 +87,11 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
 
         public List<string> User_Metadata { get; set; }
+
+        [BsonElement]
+
+        public byte[] AccountPicture { get; set; }
+
 
 
     }
