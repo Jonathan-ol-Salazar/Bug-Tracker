@@ -109,29 +109,54 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateAccount([Bind(include: "ID, Email, About, Skills, Education, Location, DOB")] User user)
+        public async Task<ActionResult> UpdateAccount([Bind(include: "ID, Email, AccountImage, About, Skills, Education, Location, DOB")] User user)
         {
             if (ModelState.IsValid)
             {
+
+                // Updating MongoDB
                 var userFromDb = await _userRepository.GetUser(user.ID);
                 if (userFromDb == null)
                 {
                     return new NotFoundResult();
                 }
+
+                // Updating Auth0
+                string data = "";
+                data += "\"DOB\": \"" + user.DOB + "\",";
+                data += "\"about\": \"" + user.About + "\",";
+                data += "\"location\": \"" + user.Location + "\",";
+                data += "\"skills\": \"" + user.Skills + "\",";
+                data += "\"education\": \"" + user.Education + "\"";
+
+
                 user.Id = userFromDb.Id;
                 user.UserName = userFromDb.UserName;
                 user.Role = userFromDb.Role;
                 user.RoleID = userFromDb.RoleID;
                 user.Projects = userFromDb.Projects;
                 user.Issues = userFromDb.Issues;
-                user.NumProjects = userFromDb.NumProjects;
+                user.NumProjects = userFromDb.NumProjects;               
                 
 
-
-
-
-
                 await _userRepository.Update(user);
+
+                //// Updating Auth0
+                //string data; 
+                //foreach (var item in )
+
+
+                // Use Auth0 API to add Issue to user metadata
+                string authorizationValue = "Bearer " + GetAuthorizationToken();
+                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID;
+                var client = new RestClient(baseURL);
+                var request = new RestRequest(Method.PATCH);
+                request.AddHeader("authorization", authorizationValue);
+                request.AddHeader("content-type", "application/json");
+                request.AddParameter("application/json", "{\"user_metadata\": {" + data + "}}", ParameterType.RequestBody);
+                IRestResponse response = client.Execute(request);
+
+
 
             }
             return RedirectToAction("Index");
@@ -139,24 +164,6 @@ namespace Bug_Tracker.Controllers
 
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "ID, UserName, Email, Role")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                var userFromDb = await _userRepository.GetUser(user.ID);
-                if (userFromDb == null)
-                {
-                    return new NotFoundResult();
-                }
-                user.Id = userFromDb.Id;
-                await _userRepository.Update(user);
-                TempData["Message"] = "Customer Updated Successfully";
-
-            }
-            return RedirectToAction("Index");
-        }
 
 
 

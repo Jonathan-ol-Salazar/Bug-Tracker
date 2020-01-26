@@ -74,8 +74,14 @@ namespace BugTrackerDataAccess.Models
         //     [Required]
         public string Education { get; set; }
 
+        [BsonElement]
 
-        //public string ProfileImage { get; set; }
+        public string AccountImage { get; set; }
+
+        [BsonElement]
+
+        public List<string> User_Metadata { get; set; }
+
 
     }
 
