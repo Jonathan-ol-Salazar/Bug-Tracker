@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace Bug_Tracker.Controllers
 {
@@ -20,6 +22,7 @@ namespace Bug_Tracker.Controllers
         private readonly IProjectRepository _projectRepository;
         private readonly IIssueRepository _issueRepository;
 
+
         public AccountController(IUserRepository userRepository, IProjectRepository projectRepository, IIssueRepository issueRepository)
         {
             _userRepository = userRepository;
@@ -30,13 +33,13 @@ namespace Bug_Tracker.Controllers
 
         public async Task Login(string returnUrl = "/")
         {
-            
+
             await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
 
-            
+
         }
 
-       
+
         public async Task Logout()
         {
             await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
@@ -65,8 +68,8 @@ namespace Bug_Tracker.Controllers
         public async Task<IActionResult> Index()
         {
             // GETTING AUTH0 USER DETAILS OF CURRENT SIGNED IN USER
-            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var currentUser = await _userRepository.GetUser(userId);
+            string userID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _userRepository.GetUser(userID);
 
             AccountViewModel model = new AccountViewModel();
 
@@ -75,6 +78,90 @@ namespace Bug_Tracker.Controllers
             return View(model);
 
         }
+
+        public string GetAuthorizationToken()
+        {
+            // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+            var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("content-type", "application/x-www-form-urlencoded");
+            request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+
+            // Parsing into JSON 
+            var response2dict = JObject.Parse(response.Content);
+            // Retrieving Access Token
+            var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+
+            return Auth0ManagementAPI_AccessToken;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> UpdateAccount(string ID)
+        {
+            //AccountViewModel model = new AccountViewModel();
+
+            User user = await _userRepository.GetUser(ID);
+
+            return View("UpdateAccount", user);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateAccount([Bind(include: "ID, Email, About, Skills, Education, Location, DOB")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                var userFromDb = await _userRepository.GetUser(user.ID);
+                if (userFromDb == null)
+                {
+                    return new NotFoundResult();
+                }
+                user.Id = userFromDb.Id;
+                user.UserName = userFromDb.UserName;
+                user.Role = userFromDb.Role;
+                user.RoleID = userFromDb.RoleID;
+                user.Projects = userFromDb.Projects;
+                user.Issues = userFromDb.Issues;
+                user.NumProjects = userFromDb.NumProjects;
+                
+
+
+
+
+
+                await _userRepository.Update(user);
+
+            }
+            return RedirectToAction("Index");
+
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Update([Bind(include: "ID, UserName, Email, Role")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                var userFromDb = await _userRepository.GetUser(user.ID);
+                if (userFromDb == null)
+                {
+                    return new NotFoundResult();
+                }
+                user.Id = userFromDb.Id;
+                await _userRepository.Update(user);
+                TempData["Message"] = "Customer Updated Successfully";
+
+            }
+            return RedirectToAction("Index");
+        }
+
+
+
+
+
 
 
     }
