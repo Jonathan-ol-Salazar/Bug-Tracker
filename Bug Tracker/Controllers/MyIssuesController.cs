@@ -37,7 +37,7 @@ namespace Bug_Tracker.Controllers
         public async Task<IActionResult> Index()
         {
             // GETTING AUTH0 USER DETAILS OF CURRENT SIGNED IN USER
-            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            string userID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
 
             List<Issue> IssueList = new List<Issue>();
@@ -46,7 +46,7 @@ namespace Bug_Tracker.Controllers
             MyIssuesViewModel model = new MyIssuesViewModel();
 
 
-            var currentUser = await _userRepository.GetUser(userId);
+            var currentUser = await _userRepository.GetUser(userID);
 
 
 
