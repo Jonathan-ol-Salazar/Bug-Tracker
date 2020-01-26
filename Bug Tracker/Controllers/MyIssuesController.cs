@@ -16,14 +16,14 @@ using Nancy.Json;
 
 namespace Bug_Tracker.Controllers
 {
-    public class MyProjectsController : Controller
+    public class MyIssuesController : Controller
     {
 
         private readonly IUserRepository _userRepository;
         private readonly IProjectRepository _projectRepository;
         private readonly IIssueRepository _issueRepository;
 
-        public MyProjectsController(IUserRepository userRepository, IProjectRepository projectRepository, IIssueRepository issueRepository)
+        public MyIssuesController(IUserRepository userRepository, IProjectRepository projectRepository, IIssueRepository issueRepository)
         {
             _userRepository = userRepository;
             _projectRepository = projectRepository;
@@ -32,48 +32,49 @@ namespace Bug_Tracker.Controllers
         }
 
 
+
         [HttpGet]
-        public async Task<IActionResult> Index(Project Project = null)
+        public async Task<IActionResult> Index()
         {
-
             // GETTING AUTH0 USER DETAILS OF CURRENT SIGNED IN USER
-            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            string userID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
 
-            List<Project> ProjectList = new List<Project>();
+            List<Issue> IssueList = new List<Issue>();
 
             // Model for view
-            MyProjectsViewModel model = new MyProjectsViewModel();
+            MyIssuesViewModel model = new MyIssuesViewModel();
 
 
-            var currentUser = await _userRepository.GetUser(userId);
+            var currentUser = await _userRepository.GetUser(userID);
 
 
 
-
-            foreach (var project in currentUser.Projects)
+            if (currentUser.Issues == null)
             {
-                string projectIDCode = project.Split(':')[0].Replace("\"", "");
-                //projectIDCode = projectIDCode.Replace("\"", "");
+                currentUser.Issues = new List<string>();
+            }
 
-                ProjectList.Add(await _projectRepository.GetProject(projectIDCode));
+            foreach (var issue in currentUser.Issues)
+            {
+                string issueIDCode = issue.Split(':')[0].Replace("\"", "");
+                IssueList.Add(await _issueRepository.GetIssue(issueIDCode));
 
 
             }
 
 
-            if (model.ProjectList == null)
+
+
+            if (model.IssueList == null)
             {
-                model.ProjectList = new List<Project>();
+                model.IssueList = new List<Issue>();
 
             }
 
-            model.ProjectList = ProjectList;
+            model.IssueList = IssueList;
             return View(model);
-
-
         }
-
 
 
 
