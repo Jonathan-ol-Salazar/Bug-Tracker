@@ -1,7 +1,7 @@
 ﻿@model BugTrackerDataAccess.ViewModel.AccountViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Account";
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -34,7 +34,7 @@
                         <div class="card-body box-profile">
                             <div class="text-center">
                                 <img class="profile-user-img img-fluid img-circle"
-                                     src="https://s.gravatar.com/avatar/91e888d365c4912a3d727477c32acf80?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fpo.png"
+                                     src=@Model.User.AccountImage
                                      alt="User profile picture">
                             </div>
 

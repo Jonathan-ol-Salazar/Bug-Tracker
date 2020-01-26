@@ -1,7 +1,7 @@
 ﻿@model BugTrackerDataAccess.Models.User
 
 @{
-    ViewData["Title"] = "UpdateAccount";
+    ViewData["Title"] = "Update Account";
 }
 
 
@@ -32,12 +32,14 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Account</h1>
+                        <h1>Update Account</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active">Account</li>
+                            <li class="breadcrumb-item active">Edit Account</li>
+
                         </ol>
                     </div>
                 </div>
@@ -49,67 +51,92 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">
-                        <form asp-action="UpdateAccount">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="card card-dark">
+                            <div class="card-header">
+                                <h3 class="card-title">Account Details</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+
+                                <form asp-action="UpdateAccount">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 
-                            @*PRE-SELECTED ATTRIBUTES TO SELECT CURRENT USER*@
-                            <div class="form-group">
-                                <select id="ID" asp-for="@Model.ID">
-                                    <option value="@Model.ID" selected="selected"></option>
-                                </select>
-                            </div>
+                                    @*PRE-SELECTED ATTRIBUTES TO SELECT CURRENT USER*@
+                                    <div class="form-group">
+                                        <select id="ID" asp-for="@Model.ID">
+                                            <option value="@Model.ID" selected="selected"></option>
+                                        </select>
+                                    </div>
 
 
-                            <div class="form-group">
-                                <label asp-for="AccountImage" class="control-label"></label>
-                                <input asp-for="AccountImage" class="form-control" />
-                                <span asp-validation-for="AccountImage" class="text-danger"></span>
+                                    <div class="form-group">
+                                        <label asp-for="AccountImage" class="control-label">Account Image</label>
+                                        <input asp-for="AccountImage" class="form-control" />
+                                        <span asp-validation-for="AccountImage" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Email" class="control-label"></label>
+                                        <input asp-for="Email" class="form-control" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="DOB" class="control-label"></label>
+                                        <input asp-for="DOB" class="form-control" />
+                                        <span asp-validation-for="DOB" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="About" class="control-label"></label>
+                                        <input asp-for="About" class="form-control" />
+                                        <span asp-validation-for="About" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Location" class="control-label"></label>
+                                        <input asp-for="Location" class="form-control" />
+                                        <span asp-validation-for="Location" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Skills" class="control-label"></label>
+                                        <input asp-for="Skills" class="form-control" />
+                                        <span asp-validation-for="Skills" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Education" class="control-label"></label>
+                                        <input asp-for="Education" class="form-control" />
+                                        <span asp-validation-for="Education" class="text-danger"></span>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <input type="submit" value="Save" class="btn btn-primary" />
+                                    </div>
+
+                                    <div>
+                                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back to List</a>
+                                    </div>
+
+
+
+                                </form>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Email" class="control-label"></label>
-                                <input asp-for="Email" class="form-control" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="DOB" class="control-label"></label>
-                                <input asp-for="DOB" class="form-control" />
-                                <span asp-validation-for="DOB" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="About" class="control-label"></label>
-                                <input asp-for="About" class="form-control" />
-                                <span asp-validation-for="About" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Location" class="control-label"></label>
-                                <input asp-for="Location" class="form-control" />
-                                <span asp-validation-for="Location" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Skills" class="control-label"></label>
-                                <input asp-for="Skills" class="form-control" />
-                                <span asp-validation-for="Skills" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Education" class="control-label"></label>
-                                <input asp-for="Education" class="form-control" />
-                                <span asp-validation-for="Education" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" value="Save" class="btn btn-primary" />
-                            </div>
-                        </form>
+                        </div>
+
+                        
+
                     </div>
+
                 </div>
 
-                <div>
-                    <a asp-action="Index">Back to List</a>
-                </div>
-
-
-            </div><!-- /.container-fluid -->
-
+            </div>
+            <!-- /.container-fluid -->
 
         </section>
         <!-- /.content -->
