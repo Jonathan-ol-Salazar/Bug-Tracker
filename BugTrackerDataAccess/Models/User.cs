@@ -54,6 +54,25 @@ namespace BugTrackerDataAccess.Models
    //     [Required]
         public int NumProjects { get; set; }
 
+        [BsonElement]
+        //     [Required]
+        public string DOB { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string About { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string Location { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string Skills { get; set; }
+
+        [BsonElement]
+        //     [Required]
+        public string Education { get; set; }
 
 
         //public string ProfileImage { get; set; }
