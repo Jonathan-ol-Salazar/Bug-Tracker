@@ -1,6 +1,6 @@
 ﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 @{
-    ViewData["Title"] = "My Projects";
+    ViewData["Title"] = "Delete Projects";
 }
 
 
@@ -75,12 +75,13 @@
                 <div class="row mb-2">
                     <div class="col-sm-6">
 
-                        <h1>My Projects</h1>
+                        <h1>Delete Projects</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">MY Projects</li>
+                            <li class="breadcrumb-item active">Project Management</li>
+                            <li class="breadcrumb-item active">Delete Projects</li>
                         </ol>
                     </div>
                 </div>
@@ -92,9 +93,9 @@
                 <!-- /.row -->
                 <div class="row">
                     <div class="col-4">
-                        <div class="card card-primary">
+                        <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Details</h3>
+                                <h3 class="card-title">Select Projects</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                         <i class="fas fa-minus"></i>
@@ -106,9 +107,9 @@
                             </div>
                             <div class="card-body">
                                 <form asp-action="DeleteProjects">
-                                    <div class="form-group">                                   
+                                    <div class="form-group">
 
-                                        <label asp-for="@Model.ProjectsSelected" class="control-label">Assign Users To Project</label>
+                                        <label asp-for="@Model.ProjectsSelected" class="control-label">Select Projects To Be Deleted</label>
                                         <select asp-for="@Model.ProjectsSelected" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.ProjectList)
                                             {
@@ -116,9 +117,14 @@
                                             }
                                         </select>
 
-                                        <button type="submit" class="btn btn-success btn-block">Select</button>
-
                                     </div>
+
+                                    <div class="form-group">
+                                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
+                                        <input type="submit" value="Select" class="btn btn-danger" />
+                                    </div>
+
+
                                 </form>
                                
                             </div>
@@ -128,9 +134,9 @@
 
 
                     <div class="col-8">
-                        <div class="card card-success">
+                        <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Assigned Users</h3>
+                                <h3 class="card-title">Project Database</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                         <i class="fas fa-minus"></i>

@@ -1,6 +1,6 @@
 ﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 @{
-    ViewData["Title"] = "My Projects";
+    ViewData["Title"] = "Delete Projects Confirmation";
 }
 
 
@@ -16,32 +16,14 @@
 
 
 
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="~/AdminLTE_theme/plugins/fontawesome-free/css/all.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-
-    <!-- Theme style -->
-    <link rel="stylesheet" href="~/AdminLTE_theme/dist/css/adminlte.min.css">
-    <!-- Google Font: Source Sans Pro -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-
 
     <!-- jQuery -->
     @*<script src="~/AdminLTE_theme/plugins/jquery/jquery.min.js"></script>*@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
-
-
-    <!-- Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js" defer></script>
-
+        
 
     <!-- DataTables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
@@ -52,14 +34,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous" defer></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous" defer></script>
 
-    <!-- Bootstrap 4 -->
-    @*<script src="~/AdminLTE_theme/plugins/bootstrap/js/bootstrap.bundle.min.js" defer></script>*@
-
-
-
-    <!-- DuallistBox -->
-    <link rel="stylesheet" type="text/css" href=" https://cdnjs.cloudflare.com/ajax/libs/bootstrap4-duallistbox/4.0.1/bootstrap-duallistbox.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap4-duallistbox/4.0.1/jquery.bootstrap-duallistbox.min.js" defer></script>
 
 
 
@@ -75,12 +49,15 @@
                 <div class="row mb-2">
                     <div class="col-sm-6">
 
-                        <h1>My Projects</h1>
+                        <h1>Delete Projects Confirmation</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">MY Projects</li>
+                            <li class="breadcrumb-item active">Project Management</li>
+                            <li class="breadcrumb-item active">Delete Projects</li>
+                            <li class="breadcrumb-item active">Delete Projects Confirmation</li>
+
                         </ol>
                     </div>
                 </div>
@@ -91,58 +68,8 @@
             <div class="container-fluid">
                 <!-- /.row -->
                 <div class="row">
-                    <div class="col-4">
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Are You Sure You Want To Delete The Following Projects?</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <form asp-action="ConfirmDeleteProject">
-                                    <div class="form-group">
-
-                                        @*<select id="selectedProject" asp-for="Project.IDCode">
-                    <option value="@Model.Project.IDCode" selected></option>
-                </select>*@
-
-
-
-
-                                        <label asp-for="@Model.ProjectsSelected" class="control-label">Assign Users To Project</label>
-                                        <select id="selectedProject" asp-for="@Model.ProjectsSelected" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.ProjectList)
-                                            {
-                                                <option value="@item.IDCode" selected></option>
-                                            }
-                                        </select>
-
-                                        <button type="submit" class="btn btn-success btn-block">Select</button>
-                                <button type="submit" class="btn btn-success btn-block">Select</button>
-
-                                    </div>
-                                </form>
-
-                                <form asp-action="ConfirmDeleteProject">
-                                    <input type="submit" value="Delete" class="btn btn-danger" /> |
-                                    <a asp-action="Index">Back to List</a>
-                                </form>
-                                @*<button type="submit">Delete</button>*@
-
-                            </div>
-                            <!-- /.card-header -->
-                        </div>
-                    </div>
-
-
-                    <div class="col-8">
-                        <div class="card card-success">
+                    <div class="col-12">
+                        <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Assigned Users</h3>
                                 <div class="card-tools">
@@ -188,6 +115,27 @@
                                         }
                                     </tbody>
                                 </table>
+
+
+                                @*PRE-SELECTED PROJECTS TO DELETE FROM PREVIOUS PAGE 'DeleteProjects'*@
+                                <form asp-action="ConfirmDeleteProject">
+                                    <div class="form-group">                                       
+                                        <select id="SelectedProject" asp-for="@Model.ProjectsSelected" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.ProjectList)
+                                            {
+                                                <option value="@item.IDCode" selected></option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
+                                        <input type="submit" value="Save" class="btn btn-danger" />
+                                    </div>
+                                </form>
+
+
+
                             </div>
                             <!-- /.card-body -->
                         </div>
@@ -204,11 +152,11 @@
     <!-- page script -->
     <script>
         $(document).ready(function () {
-            $("#IssuesTable").DataTable();
+
             $("#ProjectsTable").DataTable();
 
-            //var SelectedProject = document.getElementById("selectedProject");
-            //SelectedProject.style.display = "none";
+            var SelectedProject = document.getElementById("SelectedProject");
+            SelectedProject.style.display = "none";
 
         });
 
@@ -217,77 +165,3 @@
 </body>
 </html>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@*@model BugTrackerDataAccess.Models.Project
-
-    @{
-        ViewData["Title"] = "DeleteProjects";
-    }
-
-    <h1>DeleteProjects</h1>
-
-    <h3>Are you sure you want to delete this?</h3>
-    <div>
-        <h4>Project</h4>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.IDCode)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.IDCode)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Name)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Name)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Description)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ProjectManagerUserID)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ProjectManagerUserID)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Created)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Created)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Updated)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Updated)
-            </dd>
-        </dl>
-
-        <form asp-action="DeleteProjects">
-            <input type="submit" value="Delete" class="btn btn-danger" /> |
-            <a asp-action="Index">Back to List</a>
-        </form>
-    </div>*@

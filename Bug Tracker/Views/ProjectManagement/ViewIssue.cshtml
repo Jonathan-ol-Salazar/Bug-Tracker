@@ -1,70 +1,8 @@
 ﻿@model BugTrackerDataAccess.Models.Issue
 
 @{
-    ViewData["Title"] = "ViewIssue";
+    ViewData["Title"] = "View Issue";
 }
-
-@*<h1>ViewIssue</h1>
-
-<div>
-    <h4>Issue</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IDCode)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IDCode)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Submitter)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Submitter)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProjectIDCode)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ProjectIDCode)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
-</div>*@
-
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -73,12 +11,17 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Blank Pagee</h1>
+                    <h1>Issue: @Model.IDCode | @Model.Title</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Blank Page</li>
+                        <li class="breadcrumb-item active">Project Management</li>
+                        <li class="breadcrumb-item active">@Model.ProjectIDCode</li>
+                        <li class="breadcrumb-item active">View Issue</li>
+                        <li class="breadcrumb-item active">@Model.IDCode</li>
+
+
                     </ol>
                 </div>
             </div>
@@ -87,64 +30,86 @@
 
     <!-- Main content -->
     <section class="content">
-        <div>
-            <h4>Issue</h4>
-            <hr />
-            <dl class="row">
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.IDCode)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.IDCode)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Title)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Title)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Status)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Status)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Submitter)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Submitter)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Description)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Description)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Created)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Created)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Updated)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Updated)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.ProjectIDCode)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ProjectIDCode)
-                </dd>
-            </dl>
-        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
 
-        <div>
-            @Html.ActionLink("Edit", "UpdateIssue", new {IDCode = Model.IDCode }) |
-            <a asp-action="Index">Back to List</a>
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h3 class="card-title">Issue Details</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.IDCode)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.IDCode)
+                            </dd>
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.Title)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Title)
+                            </dd>
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.Status)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Status)
+                            </dd>
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.Submitter)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Submitter)
+                            </dd>
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.Description)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Description)
+                            </dd>
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.Created)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Created)
+                            </dd>
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.Updated)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Updated)
+                            </dd>
+                            <dt class="col-sm-10">
+                                @Html.DisplayNameFor(model => model.ProjectIDCode)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.ProjectIDCode)
+                            </dd>
+                            </dl>
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
+                        <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {  IDCode = Model.IDCode })" class="btn btn btn-primary">
+                            Update
+                        </a>
+                        @*@Html.ActionLink("Edit", "UpdateIssue", new { IDCode = Model.IDCode }) |*@
+
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
     <!-- /.content -->
