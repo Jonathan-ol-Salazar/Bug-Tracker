@@ -15,5 +15,9 @@ namespace BugTrackerDataAccess.ViewModel
 
         public Issue Issue { get; set; }
 
+        public IEnumerable<User> UsersNotAssignedList { get; set; }
+        public IEnumerable<User> UsersAssignedList { get; set; }
+
+
     }
 }
