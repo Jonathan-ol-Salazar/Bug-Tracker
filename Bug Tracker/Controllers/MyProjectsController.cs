@@ -112,7 +112,7 @@ namespace Bug_Tracker.Controllers
             }
 
 
-            project.ProjectManagerList = ProjectManagerList;
+            model.ProjectManagerList = ProjectManagerList;
 
 
             model.UserList = AllUsers;

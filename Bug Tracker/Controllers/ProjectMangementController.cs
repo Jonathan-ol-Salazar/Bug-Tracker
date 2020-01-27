@@ -400,9 +400,7 @@ namespace Bug_Tracker.Controllers
             }
 
 
-            project.ProjectManagerList = ProjectManagerList;
-
-
+            model.ProjectManagerList = ProjectManagerList;
             model.UserList = AllUsers;
             model.Project = project;
 
@@ -419,7 +417,9 @@ namespace Bug_Tracker.Controllers
             {
                 var userFromDb = await _userRepository.GetUser(project.ProjectManagerUserID);
 
-                project.ProjectManagerUserID = project.ProjectManagerUserID;
+                project.ProjectManagerUserID = userFromDb.ID;
+                project.ProjectManagerUserName = userFromDb.UserName;
+
                 project.Created = DateTime.UtcNow.ToString();
                 project.Issues = new List<string>();
                 project.Updated = project.Created;
@@ -576,9 +576,10 @@ namespace Bug_Tracker.Controllers
                 // Remove all users from project before deleting the project 
                 if (project.DeleteProject == true)
                 {
-                    foreach (var selectedUser in project.AssignedUsers)
+                    foreach (var selectedUser in project.Users)
                     {
-                        await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+                        User User = await _userRepository.GetUser(selectedUser);
+                        await AddorRmove("Remove", "Project", User, project, null, Auth0ManagementAPI_AccessToken);
 
                     }
                 }
