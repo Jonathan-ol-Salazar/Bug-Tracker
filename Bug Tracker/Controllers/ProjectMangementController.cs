@@ -589,56 +589,65 @@ namespace Bug_Tracker.Controllers
             if (use == "Project")
             {
                 var projectFromDb = await _projectRepository.GetProject(selectedProject.IDCode);
-                List<User> AssignedUsers = new List<User>();
+                List<string> projectUsers = new List<string>();
+                List<string> userProjects = new List<string>();
 
-                // If 'AssignedUsers' is empty, initialize with empty list. Else, retrive list to be updated
-                if (projectFromDb.AssignedUsers == null)
+                // If 'Users' is empty, initialize with empty list. Else, retrive list to be updated
+                if (projectFromDb.Users == null)
                 {
                     // Initialize
-                    projectFromDb.AssignedUsers = AssignedUsers;
+                    projectFromDb.Users = projectUsers;
                 }
                 else
                 {
                     // Retrive to be updated
-                    AssignedUsers = projectFromDb.AssignedUsers;
+                    projectUsers = projectFromDb.Users;
+                }
+
+                // If 'Projects' is empty, initialize with empty list. Else, retrive list to be updated
+                if (userFromDb.Projects == null)
+                {
+                    // Initialize
+                    userFromDb.Projects = userProjects;
+                }
+                else
+                {
+                    // Retrive to be updated
+                    userProjects = userFromDb.Projects;
                 }
 
 
-
-                string stringProject = "";
-                string selectedProjectJSON = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Name + "\"";
+                string projectIDName = projectFromDb.IDCode + ": " + projectFromDb.Name;
+                // AUTH0 FORMAT
+                //string projectIDName = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Title + "\"";
 
                 if (AddorRemove == "Add")
                 {
-                    AssignedUsers.Add(userFromDb);
 
-                    stringProject = string.Join(",", userFromDb.Projects);
-                    if (userFromDb.Projects.Count != 0)
-                    {
-                        stringProject += ",";
-                    }
-                    stringProject += selectedProjectJSON;
+                    userProjects.Add(projectIDName);
+                    projectUsers.Add(userFromDb.ID);
+
                 }
                 else if (AddorRemove == "Remove")
                 {
-                    AssignedUsers.Remove(userFromDb);
-
-
-                    List<string> projectList = new List<string>();
-                    foreach (var project in userFromDb.Projects)
-                    {
-                        if (project != selectedProjectJSON)
-                        {
-                            projectList.Add(project);
-                        }
-                        stringProject = string.Join(",", projectList);
-                    }
+                    userProjects.Remove(projectIDName);
+                    projectUsers.Remove(userFromDb.ID);    
                 }
 
-                projectFromDb.AssignedUsers = AssignedUsers;
-                await _projectRepository.Update(projectFromDb);
+                projectFromDb.Users = projectUsers;
+                userFromDb.Projects = userProjects;
 
-                data = "{ \"projects\": {" + stringProject + "}}}";
+                await _projectRepository.Update(projectFromDb);
+                await _userRepository.Update(userFromDb);
+                
+
+
+                // Updating MongoDB
+
+
+
+
+
 
             }
             else if (use == "Issue")
@@ -774,6 +783,10 @@ namespace Bug_Tracker.Controllers
             //{
             //    return null; // return project
             //}
+
+
+
+
 
             return await GetProjectById(selectedProject);
 
