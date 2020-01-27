@@ -42,7 +42,6 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
                         @*Button for new issue*@
@@ -110,8 +109,6 @@
                                                 <td>@item.Created</td>
                                                 <td>@item.Updated</td>
                                                 <td>
-                                                    @*@Html.ActionLink("Update", "Update", new { IDCode = item.IDCode })
-                                                    @Html.ActionLink("View", "ViewIssue", new { IDCode = item.IDCode })*@
                                                     <a href="@Url.Action("UpdateIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
                                                         Update
                                                     </a>
