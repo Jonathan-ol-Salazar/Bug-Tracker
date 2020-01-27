@@ -327,7 +327,7 @@ namespace Bug_Tracker.Controllers
 
                 }
 
-                await _issueRepository.Update(issue);
+                //await _issueRepository.Update(issue);
                 //await AddorRmove("Update", "Issue", issue, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
 

@@ -131,9 +131,11 @@ namespace Bug_Tracker.Controllers
             {
                 var userFromDb = await _userRepository.GetUser(project.ProjectManagerUserID);
 
-                project.ProjectManagerUserID = project.ProjectManagerUserID;
-                project.Created = DateTime.UtcNow.ToString();
+                project.ProjectManagerUserID = userFromDb.ID;
+                project.ProjectManagerUserName = userFromDb.UserName;
 
+                project.Created = DateTime.UtcNow.ToString();
+                project.Issues = new List<string>();
                 project.Updated = project.Created;
 
 
