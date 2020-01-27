@@ -11,6 +11,7 @@ using System.Collections;
 using BugTrackerDataAccess.ViewModel;
 using System;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Bug_Tracker.Controllers
 {
@@ -101,158 +102,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-            //foreach (var userAuth0 in usersAuth0)
-            //{
-            //    // ArrayList to store all user assigned projects
-            //    List<string> Projects = new List<string>();
-            //    List<string> Issues = new List<string>();
-
-
-            //    //var Projects = new ArrayList();
-            //    if (userAuth0.SelectToken("app_metadata").SelectToken("projects").First != null)
-            //    {
-            //        // Foreach loop to add all projects for Projects ArrayList
-            //        foreach (var project in userAuth0.SelectToken("app_metadata").SelectToken("projects"))
-            //        {
-            //            //project.SelectToken("app_metadata").SelectToken("projects");
-            //            string projectString = project.ToString();
-            //            Projects.Add(projectString);
-
-
-
-            //        }
-            //    }
-
-            //    if (userAuth0.SelectToken("app_metadata").SelectToken("issues").First != null)
-            //    {
-            //        // Foreach loop to add all projects for Projects ArrayList
-            //        foreach (var issue in userAuth0.SelectToken("app_metadata").SelectToken("issues"))
-            //        {
-            //            //project.SelectToken("app_metadata").SelectToken("projects");
-            //            string issueString = issue.ToString();
-            //            Issues.Add(issueString);
-
-
-
-            //        }
-            //    }
-
-            //    // GETTING ROLES ASSIGNED TO USER FROM AUTH0
-            //    baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userAuth0.SelectToken("user_id").ToString() + "/roles";
-            //    client = new RestClient(baseURL);
-            //    response = client.Execute(request);
-            //    JArray userRolesAuth0 = JArray.Parse(response.Content);
-
-
-
-            //    var user = new User();
-
-
-            //    user.ID = userAuth0.SelectToken("user_id").ToString();
-            //    user.UserName = userAuth0.SelectToken("name").ToString();
-            //    user.Email = userAuth0.SelectToken("email").ToString();
-            //    user.Role = userRolesAuth0.First.SelectToken("name").ToString();
-            //    user.RoleID = userRolesAuth0.First.SelectToken("id").ToString();
-            //    user.Projects = Projects;
-            //    user.NumProjects = Projects.Count;
-            //    user.Issues = Issues;
-
-
-            //    AllUsers.Add(user);
-
-            //    if (user.Role == "Project Manager")
-            //    {
-            //        ProjectManagerList.Add(user);
-            //    }
-
-            //    //if (Project.IDCode != null)
-            //    //{
-
-            //        //foreach (var user in AllUsers)
-            //        //{
-            //            //if (user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
-            //            //{
-            //            //    UsersAssignedList.Add(user);
-
-            //            //}
-            //            //else
-            //            //{
-            //            //    UsersNotAssignedList.Add(user);
-            //            //}
-            //    //}
-            //    //}
-
-            //    foreach (var project in Projects) 
-
-
-            //    {
-
-            //        // Get IDCode from result above "IDCode" :"Name"                        
-            //        string projectIDCode = string.Empty;
-
-            //        if (!string.IsNullOrEmpty(project))
-            //        {
-            //            projectIDCode = project.Split(':')[0];
-            //            projectIDCode = projectIDCode.Replace("\"", "");
-            //        }
-
-            //        // Get Project
-            //        var projectFromDb = await _projectRepository.GetProject(projectIDCode);
-
-            //        // THIS IS TO CHECK IF PROJECTS EXISTS, REMOVE THIS AFTER YOU HAVE CLEANED THE USERS ASSIGNED PROJECTS METADATA
-            //        if (projectFromDb != null)
-            //        {
-            //            // this needs to be removed too
-            //            if (projectFromDb.AssignedUsers == null)
-            //            {
-            //                projectFromDb.AssignedUsers = new List<User>();
-            //            }
-
-            //            List<User> usersToBeAdded = new List<User>();
-            //            // Check if user is in Project 
-            //            foreach (var assignedUser in projectFromDb.AssignedUsers)
-            //            {
-            //                // if not, add user to list of 'Assigned Users'
-            //                if (assignedUser.ID != user.ID)
-            //                {
-            //                    usersToBeAdded.Add(user);
-            //                }
-            //            }
-
-            //            projectFromDb.AssignedUsers = usersToBeAdded;
-
-            //            await _projectRepository.Update(projectFromDb);
-
-
-            //        }
-            //    }
-
-
-
-            //}
-            // Adding all the users with 'Project Manager' role to list
-            //Project.ProjectManagerList = ProjectManagerList;
-
-
-            // Add all users from Auth0 to MongoDB 'Users' collection
-            //await _userRepository.AddUsers(AllUsers);
-
-
-            //if (Project.IDCode != null)
-            //{
-            //    foreach (var user in AllUsers)
-            //    {
-            //        if (user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
-            //        {
-            //            UsersAssignedList.Add(user);
-
-            //        }
-            //        else
-            //        {
-            //            UsersNotAssignedList.Add(user);
-            //        }
-            //    }
-            //}
+            
 
             //  Project.AssignedUsers = UsersAssignedList;
 
@@ -267,21 +117,26 @@ namespace Bug_Tracker.Controllers
 
             if (Project.IDCode != null)
             {
-                foreach (var user in AllUsers)
+
+
+                List<string> AllUsersString = new List<string>();
+
+                foreach(var user in AllUsers)
                 {
-                    if (!user.Projects.Contains("\"" + Project.IDCode + "\": \"" + Project.Name + "\""))
-                    {
-                        UsersNotAssignedList.Add(user);
-
-                    }
-                    else
-                    {
-                        UsersAssignedList.Add(user);
-
-                    }
-
+                    AllUsersString.Add(user.ID);
                 }
 
+
+
+                foreach (var user in Project.Users)
+                {
+                    UsersAssignedList.Add(await _userRepository.GetUser(user));
+                }
+
+                //UsersNotAssignedList = AllUsersString.RemoveAll(Project.Users).ToList();
+                List<User> AllUsersList = AllUsers.ToList();
+                AllUsersList.RemoveAll(x => UsersAssignedList.Any(y => y.ID == x.ID));
+                UsersNotAssignedList = AllUsersList;
                 //UsersAssignedList = Project.AssignedUsers;
 
 
@@ -289,6 +144,7 @@ namespace Bug_Tracker.Controllers
                 {
                     Project.Issues = new List<Issue>();
                 }
+
 
             }
 
