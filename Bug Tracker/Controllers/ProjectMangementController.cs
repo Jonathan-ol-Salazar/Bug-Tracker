@@ -616,6 +616,70 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index", project);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateProjectAssignment([Bind(include: "AddUsers, RemoveUsers, IDCode")] Project project)
+        {
+            if (ModelState.IsValid)
+            {
+                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
+                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
+                IRestResponse response = client.Execute(request);
+
+                // Parsing into JSON 
+                var response2dict = JObject.Parse(response.Content);
+                // Retrieving Access Token
+                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
+
+
+                // Adding users to project
+                if (project.AddUsers != null)
+                {
+                    for (int i = 0; i < project.AddUsers.Count; i++)
+                    {
+                        User selectedUser = new User();
+                        selectedUser.ID = project.AddUsers[i];
+
+                        await AddorRmove("Add", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+                    }
+                }
+
+                // Removing users from project
+                if (project.RemoveUsers != null)
+                {
+                    for (int i = 0; i < project.RemoveUsers.Count; i++)
+                    {
+                        User selectedUser = new User();
+                        selectedUser.ID = project.RemoveUsers[i];
+
+                        await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+
+                    }
+                }
+
+                // Remove all users from project before deleting the project 
+                if (project.DeleteProject == true)
+                {
+                    foreach (var selectedUser in project.AssignedUsers)
+                    {
+                        await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+
+                    }
+                }
+
+            }
+
+            return await GetProjectById(project);
+        }
+
+
+
+
+
+
 
         // add param for issue or project
         public async Task<ActionResult> AddorRmove(string AddorRemove, string use, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
@@ -823,65 +887,7 @@ namespace Bug_Tracker.Controllers
 
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateProjectAssignment([Bind(include: "AddUsers, RemoveUsers, IDCode")] Project project)
-        {
-            if (ModelState.IsValid)
-            {
-                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
-                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/x-www-form-urlencoded");
-                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
-
-                // Parsing into JSON 
-                var response2dict = JObject.Parse(response.Content);
-                // Retrieving Access Token
-                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
-
-
-                // Adding users to project
-                if (project.AddUsers != null)
-                {
-                    for (int i = 0; i < project.AddUsers.Count; i++)
-                    {
-                        User selectedUser = new User();
-                        selectedUser.ID = project.AddUsers[i];
-
-                        await AddorRmove("Add", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
-                    }
-                }
-
-                // Removing users from project
-                if (project.RemoveUsers != null)
-                {
-                    for (int i = 0; i < project.RemoveUsers.Count; i++)
-                    {
-                        User selectedUser = new User();
-                        selectedUser.ID = project.RemoveUsers[i];
-
-                        await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
-
-                    }
-                }
-
-                // Remove all users from project before deleting the project 
-                if (project.DeleteProject == true)
-                {
-                    foreach (var selectedUser in project.AssignedUsers)
-                    {
-                        await AddorRmove("Remove", "Project", selectedUser, project, null , Auth0ManagementAPI_AccessToken);
-
-                    }
-                }
-
-            }
-
-            return await GetProjectById(project);
-        }
-
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
