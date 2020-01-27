@@ -251,24 +251,25 @@ namespace Bug_Tracker.Controllers
             }
 
 
-            // UPDATING 'Projects' collection
-            Issue issueOld = null;
-            int indexUpdate = -1;
-            foreach (var issueExisting in projectFromDb.Issues)
-            {
-                if (issueExisting.Id == issue.Id)
-                {
-                    issueOld = issueExisting;
-                    indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
-                    break;
-                }
-            }
-            if (indexUpdate != -1)
-            {
-                projectFromDb.Issues[indexUpdate] = issue;
-                await _projectRepository.Update(projectFromDb);
+            //// UPDATING 'Projects' collection
+            //Issue issueOld = null;
+            //int indexUpdate = -1;
+            //foreach (var issueExisting in projectFromDb.Issues)
+            //{
 
-            }
+            //    if (issueExisting.Id == issue.Id)
+            //    {
+            //        issueOld = issueExisting;
+            //        indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
+            //        break;
+            //    }
+            //}
+            //if (indexUpdate != -1)
+            //{
+            //    projectFromDb.Issues[indexUpdate] = issue;
+            //    await _projectRepository.Update(projectFromDb);
+
+            //}
 
             return RedirectToAction("Index");
         }

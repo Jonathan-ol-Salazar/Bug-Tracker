@@ -25,7 +25,7 @@ namespace BugTrackerDataAccess.Models
         public List<string> Users { get; set; }
 
         [BsonElement]
-        public List<Issue> Issues { get; set; }
+        public List<string> Issues { get; set; }
 
         [BsonElement]
         public List<string> AddUsers { get; set; }

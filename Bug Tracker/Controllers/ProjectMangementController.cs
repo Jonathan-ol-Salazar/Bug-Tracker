@@ -69,7 +69,7 @@ namespace Bug_Tracker.Controllers
             if (Project == null)
             {
                 Project = new Project();
-                Project.Issues = IssueList;
+                //Project.Issues = IssueList;
             }
 
             //// ACCESS TOKEN FOR AUTH0 MANAGEMENT API
@@ -141,12 +141,14 @@ namespace Bug_Tracker.Controllers
                 AllUsersList.RemoveAll(x => UsersAssignedList.Any(y => y.ID == x.ID));
                 UsersNotAssignedList = AllUsersList;
 
-
-
-                if (Project.Issues == null)
+                foreach (var issue in Project.Issues)
                 {
-                    Project.Issues = new List<Issue>();
+                    //var x = issue.Split(':')[0];
+                    //x.Replace("\"", "");
+                    IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", "")));
                 }
+
+            
 
 
 
@@ -161,7 +163,7 @@ namespace Bug_Tracker.Controllers
             model.ProjectList = await _projectRepository.GetAllProjects();
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
-
+            model.IssueList = IssueList;
 
 
             model.Project = Project;
@@ -218,19 +220,18 @@ namespace Bug_Tracker.Controllers
 
                 await _issueRepository.AddIssue(issue);
 
+                var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
+                
+                selectedProject.Issues.Add(issue.IDCode + ": " + issue.Title);
 
-                TempData["Message"] = "User Createed Successfully";
-            }
+                await _projectRepository.Update(selectedProject);
 
-            var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
+                foreach (var user in issue.AddUsers)
+                {
+                    var User = await _userRepository.GetUser(user);
+                    await AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
-
-
-            foreach (var user in issue.AddUsers)
-            {
-                var User = await _userRepository.GetUser(user);
-                await AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
+                }
             }
 
             return RedirectToAction("Index", await _projectRepository.GetProject(issue.ProjectIDCode));
@@ -341,23 +342,23 @@ namespace Bug_Tracker.Controllers
 
 
             // UPDATING 'Projects' collection
-            Issue issueOld = null;
-            int indexUpdate = -1;
-            foreach (var issueExisting in projectFromDb.Issues)
-            {
-                if (issueExisting.Id == issue.Id)
-                {
-                    issueOld = issueExisting;
-                    indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
-                    break;
-                }
-            }
-            if (indexUpdate != -1)
-            {
-                projectFromDb.Issues[indexUpdate] = issue;
-                await _projectRepository.Update(projectFromDb);
+            //Issue issueOld = null;
+            //int indexUpdate = -1;
+            //foreach (var issueExisting in projectFromDb.Issues)
+            //{
+            //    if (issueExisting.Id == issue.Id)
+            //    {
+            //        issueOld = issueExisting;
+            //        indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
+            //        break;
+            //    }
+            //}
+            //if (indexUpdate != -1)
+            //{
+            //    projectFromDb.Issues[indexUpdate] = issue;
+            //    await _projectRepository.Update(projectFromDb);
 
-            }
+            //}
 
             return RedirectToAction("Index", projectFromDb);
         }
@@ -420,7 +421,7 @@ namespace Bug_Tracker.Controllers
 
                 project.ProjectManagerUserID = project.ProjectManagerUserID;
                 project.Created = DateTime.UtcNow.ToString();
-
+                project.Issues = new List<string>();
                 project.Updated = project.Created;
 
 
@@ -660,123 +661,108 @@ namespace Bug_Tracker.Controllers
                 await _userRepository.Update(userFromDb);
                 
 
-
-                
-
-
-
-
-
-
             }
             else if (use == "Issue")
             {
-                List<string> Users = new List<string>();
-                string userIDName = selectedUser.ID + ": " + selectedUser.UserName;// + userFromDb.ToString();
+                var issueFromDb = await _issueRepository.GetIssue(selectedIssue.IDCode);
+                List<string> issueUsers = new List<string>();
+                List<string> userIssues = new List<string>();
+                List<string> projectIssues = new List<string>();
 
-                // If 'AssignedUsers' is empty, initialize with empty list. Else, retrive list to be updated
-                if (selectedIssue.Users == null)
+
+                // If 'Users' is empty, initialize with empty list. Else, retrive list to be updated
+                if (issueFromDb.Users == null)
                 {
                     // Initialize
-                    selectedIssue.Users = Users;
+                    issueFromDb.Users = issueUsers;
                 }
                 else
                 {
                     // Retrive to be updated
-                    Users = selectedIssue.Users;
+                    issueUsers = issueFromDb.Users;
+                }
+
+                // If 'Issues' is empty, initialize with empty list. Else, retrive list to be updated
+                if (userFromDb.Issues == null)
+                {
+                    // Initialize
+                    userFromDb.Issues = userIssues;
+                }
+                else
+                {
+                    // Retrive to be updated
+                    userIssues = userFromDb.Issues;
                 }
 
 
-
-                string stringIssue = "";
-                string selectedIssueJSON = "\"" + selectedIssue.IDCode + "\": \"" + selectedIssue.Title + "\"";
+                string issueIDName = issueFromDb.IDCode + ": " + issueFromDb.Title;
+                // Auth0 format
+                //string selectedIssueJSON = "\"" + selectedIssue.IDCode + "\": \"" + selectedIssue.Title + "\"";
 
 
 
                 if (AddorRemove == "Add")
                 {
-                    Users.Add(userIDName);
-
-                    stringIssue = string.Join(",", userFromDb.Issues);
-                    if (userFromDb.Issues.Count != 0)
-                    {
-                        stringIssue += ",";
-                    }
-                    stringIssue += selectedIssueJSON;
+                    issueUsers.Add(userFromDb.ID);
+                    userIssues.Add(issueIDName);
                 }
                 else if (AddorRemove == "Remove")
                 {
-                    Users.Remove(userIDName);
-
-
-                    List<string> issuetList = new List<string>();
-                    foreach (var Issue in userFromDb.Issues)
-                    {
-                        if (Issue != selectedIssueJSON)
-                        {
-
-                            issuetList.Add(Issue);
-                        }
-                        stringIssue = string.Join(",", issuetList);
-                    }
-                }
-                else if (AddorRemove == "Update")
-                {
-                    //issue
+                    issueUsers.Remove(userFromDb.ID);
+                    userIssues.Remove(issueIDName);
                 }
 
+                issueFromDb.Users = issueUsers;
+                userFromDb.Issues = userIssues;
 
-
-                selectedIssue.Users = Users;
-                await _issueRepository.Update(selectedIssue);
-
-
-
-
-
-                data = "{ \"issues\": {" + stringIssue + "}}}";
-
-
-                // If the selected project has a 'null' value for 'Issues' initialize it with a blank list
-                if (selectedProject.Issues == null)
-                {
-                    selectedProject.Issues = new List<Issue>();
-                }
-
-                List<Issue> issueForProject = new List<Issue>();
-
-                int counter = 0;
-                bool issueExists = false;
-                foreach (var issue in selectedProject.Issues)
-                {
-                    if (issue.IDCode == selectedIssue.IDCode)
-                    {
-                        issueExists = true;
-                        break;
-                    }
-                    counter++;
-
-                }
-
-                issueForProject = selectedProject.Issues;
-
-
-                if (issueExists == true)
-                {
-                    issueForProject[counter].Users = Users;
-                }
-                else
-                {
-                    issueForProject.Add(selectedIssue);
-                }
-
-                selectedProject.Issues = issueForProject;
+                await _issueRepository.Update(issueFromDb);
+                await _userRepository.Update(userFromDb);             
 
 
 
-                // Add the issue to the project and update the database
-                //selectedProject.Issues = 
-                await _projectRepository.Update(selectedProject);
+      
+
+
+                //// If the selected project has a 'null' value for 'Issues' initialize it with a blank list
+                //if (selectedProject.Issues == null)
+                //{
+                //    selectedProject.Issues = new List<Issue>();
+                //}
+
+                //List<Issue> issueForProject = new List<Issue>();
+
+                //int counter = 0;
+                //bool issueExists = false;
+                //foreach (var issue in selectedProject.Issues)
+                //{
+                //    if (issue.IDCode == selectedIssue.IDCode)
+                //    {
+                //        issueExists = true;
+                //        break;
+                //    }
+                //    counter++;
+
+                //}
+
+                //issueForProject = selectedProject.Issues;
+
+
+                //if (issueExists == true)
+                //{
+                //    issueForProject[counter].Users = Users;
+                //}
+                //else
+                //{
+                //    issueForProject.Add(selectedIssue);
+                //}
+
+                //selectedProject.Issues = issueForProject;
+
+
+
+                //// Add the issue to the project and update the database
+                ////selectedProject.Issues = 
+                //await _projectRepository.Update(selectedProject);
 
 
 

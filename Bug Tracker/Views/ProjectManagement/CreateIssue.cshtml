@@ -108,7 +108,7 @@
                                         <select asp-for="@Model.Issue.AddUsers" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UserList)
                                             {
-                                                <option value="@item.ID">@item.UserName</option>
+                                                <option value="@item.ID">@item.ID | @item.UserName</option>
                                             }
                                         </select>
                                     </div>

@@ -226,7 +226,7 @@
                                         <select asp-for="Project.RemoveUsers" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UsersAssignedList)
                                             {
-                                                <option value="@item.ID">@item.UserName</option>
+                                            <option value="@item.ID">@item.ID | @item.UserName</option>
                                             }
                                         </select>
                                         <br />
@@ -268,7 +268,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.Project.Issues)
+                                        @foreach (var item in Model.IssueList)
                                         {
                                             <tr>
                                                 <td>@item.IDCode</td>
