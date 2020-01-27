@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Bug_Tracker.Controllers;
 
 namespace Bug_Tracker
 {
@@ -56,6 +57,9 @@ namespace Bug_Tracker
             // Issues
             services.AddTransient<IIssueContext, Context>();
             services.AddTransient<IIssueRepository, IssueRepository>();
+
+            // ProjectManagement Controller to be injected
+            services.AddTransient<ProjectManagementController>();
 
 
             // AUTH0 SETUP

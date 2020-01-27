@@ -1,4 +1,4 @@
-﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
+﻿@model BugTrackerDataAccess.ViewModel.MyIssuesViewModel
 
 @{
     ViewData["Title"] = "Create New Issue";
@@ -76,9 +76,9 @@
                                         <select id="Submitter" asp-for="@Model.Issue.Submitter">
                                             <option value="@User.Identity.Name" selected="selected">@Model.Issue.Submitter</option>
                                         </select>
-                                        <select id="Project" asp-for="@Model.Issue.ProjectIDCode">
-                                            <option value="@Model.Issue.ProjectIDCode" selected="selected">@Model.Issue.ProjectIDCode</option>
-                                        </select>
+                                        @*<select id="Project" asp-for="@Model.Issue.ProjectIDCode">
+                                                <option value="@Model.Issue.ProjectIDCode" selected="selected">@Model.Issue.ProjectIDCode</option>
+                                            </select>*@
                                     </div>
 
                                     <div class="form-group">
@@ -114,22 +114,35 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label asp-for="@Model.Issue.ProjectIDCode" class="control-label">Assign Users To Issue</label>
+                                        <select asp-for="@Model.Issue.ProjectIDCode" class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.ProjectList)
+                                            {
+                                                <option value="@item.IDCode">@item.IDCode</option>
+
+                                            }
+                                        </select>
+                                    </div>
+
+
+
+                                    <div class="form-group">
                                         <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
                                         <input type="submit" value="Save" class="btn btn-primary" />
                                     </div>
 
                                     @*<div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
-        </div>
+                                            <input type="submit" value="Create" class="btn btn-primary" />
+                                        </div>
 
-        <div>
-            <a asp-action="Index" class="btn btn-sm btn-secondary">Back to List</a>
-        </div>*@
+                                        <div>
+                                            <a asp-action="Index" class="btn btn-sm btn-secondary">Back to List</a>
+                                        </div>*@
 
                                 </form>
                             </div>
-                        </div>                 
-                    </div>                   
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -143,8 +156,8 @@
             var Submitter = document.getElementById("Submitter");
             Submitter.style.display = "none";
 
-            var Project = document.getElementById("Project");
-            Project.style.display = "none";
+            //var Project = document.getElementById("Project");
+            //Project.style.display = "none";
         });
 
 
