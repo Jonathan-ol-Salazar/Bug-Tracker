@@ -32,5 +32,9 @@ namespace BugTrackerDataAccess.ViewModel
         
         public List<string> ProjectsSelected { get; set; }
 
+
+        public List<User> ProjectManagerList { get; set; }
+
+
     }
 }

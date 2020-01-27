@@ -131,7 +131,7 @@ namespace Bug_Tracker.Controllers
             {
                 var userFromDb = await _userRepository.GetUser(project.ProjectManagerUserID);
 
-                project.ProjectManager = userFromDb;
+                project.ProjectManagerUserID = project.ProjectManagerUserID;
                 project.Created = DateTime.UtcNow.ToString();
 
                 project.Updated = project.Created;

@@ -119,13 +119,17 @@ namespace Bug_Tracker.Controllers
             {
 
 
-                List<string> AllUsersString = new List<string>();
+                //List<string> AllUsersString = new List<string>();
 
-                foreach(var user in AllUsers)
+                //foreach(var user in AllUsers)
+                //{
+                //    AllUsersString.Add(user.ID);
+                //}
+
+                if (Project.Users == null)
                 {
-                    AllUsersString.Add(user.ID);
+                    Project.Users = new List<string>();
                 }
-
 
 
                 foreach (var user in Project.Users)
@@ -133,11 +137,10 @@ namespace Bug_Tracker.Controllers
                     UsersAssignedList.Add(await _userRepository.GetUser(user));
                 }
 
-                //UsersNotAssignedList = AllUsersString.RemoveAll(Project.Users).ToList();
                 List<User> AllUsersList = AllUsers.ToList();
                 AllUsersList.RemoveAll(x => UsersAssignedList.Any(y => y.ID == x.ID));
                 UsersNotAssignedList = AllUsersList;
-                //UsersAssignedList = Project.AssignedUsers;
+
 
 
                 if (Project.Issues == null)
@@ -146,12 +149,12 @@ namespace Bug_Tracker.Controllers
                 }
 
 
+
+
+
+
+
             }
-
-
-
-
-
 
 
 
@@ -415,7 +418,7 @@ namespace Bug_Tracker.Controllers
             {
                 var userFromDb = await _userRepository.GetUser(project.ProjectManagerUserID);
 
-                project.ProjectManager = userFromDb;
+                project.ProjectManagerUserID = project.ProjectManagerUserID;
                 project.Created = DateTime.UtcNow.ToString();
 
                 project.Updated = project.Created;
@@ -474,10 +477,24 @@ namespace Bug_Tracker.Controllers
         [HttpGet]
         public async Task<ActionResult> UpdateProjectDetails(string IDCode)
         {
-            Project project = await _projectRepository.GetProject(IDCode);
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+
+            Project Project = await _projectRepository.GetProject(IDCode);
+            var AllUsers = await _userRepository.GetAllUsers();
+            List<User> ProjectManagerList = new List<User>();
+
+            foreach (var user in AllUsers)
+            {
+                if (user.Role == "Project Manager")
+                {
+                    ProjectManagerList.Add(user);
+                }
+            }
 
 
-            return View("UpdateProjectDetails", project);
+            model.Project = Project;
+            model.ProjectManagerList = ProjectManagerList;
+            return View("UpdateProjectDetails", model);
         }
 
         [HttpPost]
@@ -493,14 +510,16 @@ namespace Bug_Tracker.Controllers
                     return new NotFoundResult();
                 }
                 project.Id = projectFromDb.Id;
-                project.AssignedUsers = project.AssignedUsers;
+                //project.AssignedUsers = project.AssignedUsers;
+                project.Users = projectFromDb.Users;
                 project.Issues = projectFromDb.Issues;
                 //project.AddUsers = projectFromDb.AddUsers;
                 //project.RemoveUsers = projectFromDb.RemoveUsers;
-                project.ProjectManagerList = projectFromDb.ProjectManagerList;
+                //project.ProjectManagerList = projectFromDb.ProjectManagerList;
                 project.Created = projectFromDb.Created;
                 project.Updated = DateTime.UtcNow.ToString();
-                project.ProjectManager = userFromDb;
+                project.ProjectManagerUserID = project.ProjectManagerUserID;
+                project.ProjectManagerUserName = userFromDb.UserName;
 
                 await _projectRepository.Update(project);
                 TempData["Message"] = "Customer Updated Successfully";
@@ -642,7 +661,7 @@ namespace Bug_Tracker.Controllers
                 
 
 
-                // Updating MongoDB
+                
 
 
 
@@ -765,24 +784,17 @@ namespace Bug_Tracker.Controllers
 
             }
 
-            // Use Auth0 API to add Issue to user metadata
-            string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
-            string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
-            var client = new RestClient(baseURL);
-            var request = new RestRequest(Method.PATCH);
-            request.AddHeader("authorization", authorizationValue);
-            request.AddHeader("content-type", "application/json");
-            request.AddParameter("application/json", "{\"app_metadata\": " + data, ParameterType.RequestBody);
-            IRestResponse response = client.Execute(request);
+            //// Use Auth0 API to add Issue to user metadata
+            //string authorizationValue = "Bearer " + Auth0ManagementAPI_AccessToken;
+            //string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID;
+            //var client = new RestClient(baseURL);
+            //var request = new RestRequest(Method.PATCH);
+            //request.AddHeader("authorization", authorizationValue);
+            //request.AddHeader("content-type", "application/json");
+            //request.AddParameter("application/json", "{\"app_metadata\": " + data, ParameterType.RequestBody);
+            //IRestResponse response = client.Execute(request);
 
-            //if (selectedProject != null)
-            //{
-            //    return await GetProjectById(selectedProject);
-            //}
-            //else
-            //{
-            //    return null; // return project
-            //}
+         
 
 
 
