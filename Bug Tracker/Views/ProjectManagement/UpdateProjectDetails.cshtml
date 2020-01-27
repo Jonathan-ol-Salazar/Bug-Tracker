@@ -1,7 +1,7 @@
 ﻿@model BugTrackerDataAccess.Models.Project
 
 @{
-    ViewData["Title"] = "UpdateProjectDetails";
+    ViewData["Title"] = "Update Project Details";
 }
 
 
@@ -33,14 +33,14 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Edit Project Details</h1>
+                        <h1>Update Project Details: @Model.IDCode | @Model.Name</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active">Project Manager</li>
                             <li class="breadcrumb-item active">@Model.IDCode</li>
-                            <li class="breadcrumb-item active">Edit</li>
+                            <li class="breadcrumb-item active">Update</li>
                         </ol>
                     </div>
                 </div>
@@ -49,53 +49,67 @@
 
         <!-- Main content -->
         <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
 
-            <h4>@Model.IDCode</h4>
-            <hr />
-            <div class="row">
-                <div class="col-md-4">
-                    <form asp-action="UpdateProjectDetails">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="card card-dark">
+                            <div class="card-header">
+                                <h3 class="card-title">Project Details</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form asp-action="UpdateProjectDetails">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                        <div class="form-group">
-                            <select id="IDCode" asp-for="IDCode">
-                                <option value="@Model.IDCode" selected="selected">@Model.IDCode</option>
-                            </select>
-                            <select id="Name" asp-for="Name">
-                                <option value="@Model.Name" selected="selected">@Model.Name</option>
-                            </select>
+                                    <div class="form-group">
+                                        <select id="IDCode" asp-for="IDCode">
+                                            <option value="@Model.IDCode" selected="selected">@Model.IDCode</option>
+                                        </select>
+                                        <select id="Name" asp-for="Name">
+                                            <option value="@Model.Name" selected="selected">@Model.Name</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label asp-for="Description" class="control-label"></label>
+                                        <input asp-for="Description" class="form-control" />
+                                        <span asp-validation-for="Description" class="text-danger"></span>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label asp-for="ProjectManagerUserID" class="control-label">Add a Project Manager</label>
+                                        <select asp-for="ProjectManagerUserID" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.ProjectManagerList)
+                                            {
+                                                <option value="@item.ID">@item.UserName, @item.ID</option>
+                                            }
+                                        </select>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <input type="submit" value="Save" class="btn btn-primary" />
+                                    </div>
+
+                                    <div>
+                                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back to List</a>
+                                    </div>
+
+                                </form>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label asp-for="Description" class="control-label"></label>
-                            <input asp-for="Description" class="form-control" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label asp-for="ProjectManagerUserID" class="control-label">Add a Project Manager</label>
-                            <select asp-for="ProjectManagerUserID" multiple class="form-control" style="width: 100%;">                                
-                                @foreach (var item in Model.ProjectManagerList)
-                                {
-                                    <option value="@item.ID">@item.UserName, @item.ID</option>
-                                }
-                            </select>                           
-                        </div>
-
-
-                        <div class="form-group">
-                            <input type="submit" value="Save" class="btn btn-primary" />
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-
-            <div>
-                <a asp-action="Index">Back to List</a>
-            </div>
-
-
         </section>
         <!-- /.content -->
     </div>
