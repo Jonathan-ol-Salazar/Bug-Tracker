@@ -13,7 +13,6 @@ namespace BugTrackerDataAccess.ViewModel
 
         public IEnumerable<Project> ProjectList { get; set; }
 
-
         public Issue Issue { get; set; }
 
     }
