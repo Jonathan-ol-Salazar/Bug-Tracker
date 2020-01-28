@@ -104,9 +104,9 @@
                             <form asp-action="Update">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label asp-for="User.IDArray" class="control-label">User Name</label>
+                                        <label asp-for="@Model.selectedUsers" class="control-label">User Name</label>
                                         @*<select class="form-control select2" data-placeholder="Select a State" style="width: 100%;">*@
-                                        <select asp-for="User.IDArray" multiple class="form-control" style="width: 100%;">
+                                        <select asp-for="@Model.selectedUsers" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UserList)
                                             {
                                                 <option value="@item.ID">@item.UserName</option>
@@ -115,18 +115,18 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label asp-for="User.RoleID" class="control-label">Role</label>
-                                        <select asp-for="User.RoleID" class="form-control" style="width: 100%;">
+                                        <label asp-for="@Model.selectedRole" class="control-label">Role</label>
+                                        <select asp-for="@Model.selectedRole" class="form-control" style="width: 100%;">
                                             @*<option selected="selected">Select a Role</option>*@
                                             <option value="" disabled selected>Please Select A Role</option>
                                             @foreach (var item in Model.RoleList)
                                             {
-                                                <option value="@item.RoleID">@item.RoleName</option>
+                                                <option value="@item.IDCode">@item.Name</option>
                                             }
                                         </select>
                                     </div>
                                     
-                                    <div class="form-group">
+                                    @*<div class="form-group">
                                         <label asp-for="User.Projects" class="control-label">Projects</label>
                                         <select asp-for="User.Projects" class="duallistbox" multiple="multiple" style="width: 100%;">
                                             @foreach (var item in Model.ProjectList)
@@ -134,7 +134,7 @@
                                                 <option>@item.IDCode</option>
                                             }
                                         </select>
-                                    </div>
+                                    </div>*@
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">

@@ -580,7 +580,7 @@ namespace Bug_Tracker.Controllers
         public async Task<ActionResult> AddorRmove(string AddorRemove, string use, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
         {
             // split into two sections - project and issue
-            object data = null;
+            //object data = null;
             var userFromDb = await _userRepository.GetUser(selectedUser.ID);
 
             if (userFromDb == null)

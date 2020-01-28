@@ -57,6 +57,11 @@ namespace Bug_Tracker
             // Issues
             services.AddTransient<IIssueContext, Context>();
             services.AddTransient<IIssueRepository, IssueRepository>();
+            // Roles
+            services.AddTransient<IRoleContext, Context>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+
+
 
             // ProjectManagement Controller to be injected
             services.AddTransient<ProjectManagementController>();
