@@ -148,7 +148,19 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index");
         }
 
-      
+        [HttpGet]
+        //[ActionName("Get")]
+        public async Task<ActionResult> ViewIssue(string IDCode)
+        {
+            var issueFromDb = await _issueRepository.GetIssue(IDCode);
+
+            if (issueFromDb == null)
+            {
+                return new NotFoundResult();
+            }
+            return View("ViewIssue", issueFromDb);
+        }
+
 
 
 

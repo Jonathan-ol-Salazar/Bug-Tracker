@@ -327,7 +327,7 @@ namespace Bug_Tracker.Controllers
 
                 }
 
-                //await _issueRepository.Update(issue);
+                await _issueRepository.Update(issue);
                 //await AddorRmove("Update", "Issue", issue, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
 
@@ -336,38 +336,10 @@ namespace Bug_Tracker.Controllers
 
 
 
-                TempData["Message"] = "User Createed Successfully";
-
-
-                if (projectFromDb.Issues == null)
-                {
-                    projectFromDb.Issues = new List<string>();
-                }
-
-
-
-
             }
 
 
-            // UPDATING 'Projects' collection
-            //Issue issueOld = null;
-            //int indexUpdate = -1;
-            //foreach (var issueExisting in projectFromDb.Issues)
-            //{
-            //    if (issueExisting.Id == issue.Id)
-            //    {
-            //        issueOld = issueExisting;
-            //        indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
-            //        break;
-            //    }
-            //}
-            //if (indexUpdate != -1)
-            //{
-            //    projectFromDb.Issues[indexUpdate] = issue;
-            //    await _projectRepository.Update(projectFromDb);
 
-            //}
 
             return RedirectToAction("Index", projectFromDb);
         }
