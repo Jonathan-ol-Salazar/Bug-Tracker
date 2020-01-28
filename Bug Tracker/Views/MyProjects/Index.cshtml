@@ -51,7 +51,7 @@
                     <div class="col-12">
                         @*Button for new project*@
 
-                        @if (User.IsInRole("User"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                         {
                         <div>
                             <a href="@Url.Action("CreateProject", "MyProjects", new { })" class="btn btn-sm btn-danger">
