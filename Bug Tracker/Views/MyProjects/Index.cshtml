@@ -50,12 +50,15 @@
                 <div class="row">
                     <div class="col-12">
                         @*Button for new project*@
+
+                        @if (User.IsInRole("User"))
+                        {
                         <div>
                             <a href="@Url.Action("CreateProject", "MyProjects", new { })" class="btn btn-sm btn-danger">
                                 Create New Project
                             </a>
                         </div>
-
+                        }
                         <br />
                         <div class="card card-primary">
                             <div class="card-header">

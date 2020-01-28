@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using Nancy.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bug_Tracker.Controllers
 {
@@ -50,6 +51,7 @@ namespace Bug_Tracker.Controllers
             return Auth0ManagementAPI_AccessToken;
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Index(Project Project = null)
         {
@@ -65,8 +67,8 @@ namespace Bug_Tracker.Controllers
 
 
             var currentUser = await _userRepository.GetUser(userId);
-
-
+            string[] rolesArray;
+            var x = User.Claims.ToList();
 
 
             foreach (var project in currentUser.Projects)
