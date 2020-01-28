@@ -338,6 +338,15 @@ namespace Bug_Tracker.Controllers
 
                 TempData["Message"] = "User Createed Successfully";
 
+
+                if (projectFromDb.Issues == null)
+                {
+                    projectFromDb.Issues = new List<string>();
+                }
+
+
+
+
             }
 
 
@@ -665,22 +674,22 @@ namespace Bug_Tracker.Controllers
             }
             else if (use == "Issue")
             {
-                var issueFromDb = await _issueRepository.GetIssue(selectedIssue.IDCode);
+                //var issueFromDb = await _issueRepository.GetIssue(selectedIssue.IDCode);
                 List<string> issueUsers = new List<string>();
                 List<string> userIssues = new List<string>();
                 List<string> projectIssues = new List<string>();
 
 
                 // If 'Users' is empty, initialize with empty list. Else, retrive list to be updated
-                if (issueFromDb.Users == null)
+                if (selectedIssue.Users == null)
                 {
                     // Initialize
-                    issueFromDb.Users = issueUsers;
+                    selectedIssue.Users = issueUsers;
                 }
                 else
                 {
                     // Retrive to be updated
-                    issueUsers = issueFromDb.Users;
+                    issueUsers = selectedIssue.Users;
                 }
 
                 // If 'Issues' is empty, initialize with empty list. Else, retrive list to be updated
@@ -696,7 +705,7 @@ namespace Bug_Tracker.Controllers
                 }
 
 
-                string issueIDName = issueFromDb.IDCode + ": " + issueFromDb.Title;
+                string issueIDName = selectedIssue.IDCode + ": " + selectedIssue.Title;
                 // Auth0 format
                 //string selectedIssueJSON = "\"" + selectedIssue.IDCode + "\": \"" + selectedIssue.Title + "\"";
 
@@ -713,10 +722,10 @@ namespace Bug_Tracker.Controllers
                     userIssues.Remove(issueIDName);
                 }
 
-                issueFromDb.Users = issueUsers;
+                selectedIssue.Users = issueUsers;
                 userFromDb.Issues = userIssues;
 
-                await _issueRepository.Update(issueFromDb);
+                await _issueRepository.Update(selectedIssue);
                 await _userRepository.Update(userFromDb);             
 
 

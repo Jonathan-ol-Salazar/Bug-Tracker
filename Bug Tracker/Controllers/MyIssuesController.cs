@@ -124,169 +124,32 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
 
                 await _issueRepository.AddIssue(issue);
 
+                var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
 
-                TempData["Message"] = "User Createed Successfully";
-            }
+                selectedProject.Issues.Add(issue.IDCode + ": " + issue.Title);
 
-            var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
+                await _projectRepository.Update(selectedProject);
 
+                foreach (var user in issue.AddUsers)
+                {
+                    var User = await _userRepository.GetUser(user);
+                    await _projectManagementController.AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
-
-            foreach (var user in issue.AddUsers)
-            {
-                var User = await _userRepository.GetUser(user);
-                await _projectManagementController.AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
+                }
             }
 
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        public async Task<ActionResult> UpdateIssue(string IDCode)
-        {
-            MyIssuesViewModel model = new MyIssuesViewModel();
-            Issue issue = await _issueRepository.GetIssue(IDCode);
-            List<User> UsersNotAssignedList = new List<User>();
-            List<User> UsersAssignedList = new List<User>();
-            var allUsers = await _userRepository.GetAllUsers();
-            List<string> AssignedUsersID = new List<string>();
+      
 
-
-            // Loop through all the current users assigned and add there user objects to 'UsersAssignedList' 
-            foreach (var user in issue.Users)
-            {
-                string ID = user.Split(':')[0];
-                UsersAssignedList.Add(await _userRepository.GetUser(ID));
-                AssignedUsersID.Add(ID);
-            }
-
-
-
-            // Loop through all the user objects, if they are not in the 'UsersAssignedList', then add them to 'UsersNotAssignedList'
-            foreach (var user in allUsers)
-            {
-                if (!AssignedUsersID.Contains(user.ID))
-                {
-                    UsersNotAssignedList.Add(user);
-                }
-            }
-
-            
-
-            model.UsersAssignedList = UsersAssignedList;
-            model.UsersNotAssignedList = UsersNotAssignedList;
-            model.Issue = issue;
-            return View("UpdateIssue", model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers, Users")] Issue issue)
-        {
-            var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
-            var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
-
-            if (ModelState.IsValid)
-            {
-                // Updating 'Issue' collection
-                if (projectFromDb == null || issueFromDb == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                issue.Id = issueFromDb.Id;
-                issue.Created = issueFromDb.Created;
-                issue.Updated = DateTime.UtcNow.ToString();
-
-                if(issue.Users == null)
-                {
-                    issue.Users = new List<string>();
-                }
-
-                // Adding Users 
-                if (issue.AddUsers != null)
-                {
-                    foreach(var user in issue.AddUsers)
-                    {
-                        var User = await _userRepository.GetUser(user);
-                        //issue.Users.Add((user + ": " + User.UserName));
-                        //await _issueRepository.Update(issue);
-
-                        await _projectManagementController.AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
-                    }
-                }
-
-                // Remove Users
-                if(issue.RemoveUsers != null)
-                {
-                    foreach (var user in issue.RemoveUsers)
-                    {
-                        var User = await _userRepository.GetUser(user);
-                        //issue.Users.Remove(user + ": " + User.UserName);
-                        await _projectManagementController.AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
-                    }
-
-                }
-
-                await _issueRepository.Update(issue);
-                //await AddorRmove("Update", "Issue", issue, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
-
-
-
-
-
-
-                TempData["Message"] = "User Createed Successfully";
-
-            }
-
-
-            //// UPDATING 'Projects' collection
-            //Issue issueOld = null;
-            //int indexUpdate = -1;
-            //foreach (var issueExisting in projectFromDb.Issues)
-            //{
-
-            //    if (issueExisting.Id == issue.Id)
-            //    {
-            //        issueOld = issueExisting;
-            //        indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
-            //        break;
-            //    }
-            //}
-            //if (indexUpdate != -1)
-            //{
-            //    projectFromDb.Issues[indexUpdate] = issue;
-            //    await _projectRepository.Update(projectFromDb);
-
-            //}
-
-            return RedirectToAction("Index");
-        }
-
-
-        [HttpGet]
-        //[ActionName("Get")]
-        public async Task<ActionResult> ViewIssue(string IDCode)
-        {
-            var issueFromDb = await _issueRepository.GetIssue(IDCode);
-
-            if (issueFromDb == null)
-            {
-                return new NotFoundResult();
-            }
-            return View("ViewIssue", issueFromDb);
-        }
 
 
 
