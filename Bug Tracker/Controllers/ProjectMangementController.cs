@@ -831,7 +831,7 @@ namespace Bug_Tracker.Controllers
                 userFromDb.Issues = userIssues;
 
 
-                if (selectedIssue.DeleteIssue == true)
+                if (selectedIssue.DeleteIssue != true)
                 {
                     await _issueRepository.Update(selectedIssue);
                 }
