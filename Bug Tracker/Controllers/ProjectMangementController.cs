@@ -62,7 +62,6 @@ namespace Bug_Tracker.Controllers
 
 
             // Reset MongoDB 'Users' collection            
-            //await _userRepository.ResetUsers();
             Project = await _projectRepository.GetProject(Project.IDCode);
 
 
@@ -72,59 +71,13 @@ namespace Bug_Tracker.Controllers
                 //Project.Issues = IssueList;
             }
 
-            //// ACCESS TOKEN FOR AUTH0 MANAGEMENT API
-            //var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-            //var request = new RestRequest(Method.POST);
-            //request.AddHeader("content-type", "application/x-www-form-urlencoded");
-            //request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-            //IRestResponse response = client.Execute(request);
-
-            //// Parsing into JSON 
-            //var response2dict = JObject.Parse(response.Content);
-            //// Retrieving Access Token
-            //var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
-
-
-
-            //// GETTING ALL USERS
-            //string baseURL = "https://wussubininja.au.auth0.com/api/v2/users";
-            //string authorizationValue = "Bearer " + GetAuthorizationToken();
-            //// Endpoint to get user role
-            //var client = new RestClient(baseURL);
-            //var request = new RestRequest(Method.GET);
-            //// Add Auth0 Management API Access Token 
-            //request.AddHeader("authorization", authorizationValue);
-            //IRestResponse response = client.Execute(request);
-
-            //JArray usersAuth0 = JArray.Parse(response.Content);
+           
             var AllUsers = await _userRepository.GetAllUsers();
             List<User> ProjectManagerList = new List<User>();
 
 
-
-            
-
-            //  Project.AssignedUsers = UsersAssignedList;
-
-            // Add list of 'Project Manager' users to 'Projects' collection
-            // await _projectRepository.Update(Project);
-
-
-            //if (Project.Issues == null)
-            //{
-            //    Project.Issues = IssueList;
-            //}
-
             if (Project.IDCode != null)
-            {
-
-
-                //List<string> AllUsersString = new List<string>();
-
-                //foreach(var user in AllUsers)
-                //{
-                //    AllUsersString.Add(user.ID);
-                //}
+            {               
 
                 if (Project.Users == null)
                 {
@@ -146,20 +99,11 @@ namespace Bug_Tracker.Controllers
                     //var x = issue.Split(':')[0];
                     //x.Replace("\"", "");
                     IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", "")));
-                }
-
-            
-
-
-
-
-
-
+                }         
 
             }
 
-
-
+            
             model.ProjectList = await _projectRepository.GetAllProjects();
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
@@ -182,9 +126,25 @@ namespace Bug_Tracker.Controllers
 
 
 
+        /////////////////////// ISSUES ///////////////////////
 
 
+        // VIEW
 
+        [HttpGet]
+        public async Task<ActionResult> ViewIssue(string IDCode)
+        {
+            var issueFromDb = await _issueRepository.GetIssue(IDCode);
+
+            if (issueFromDb == null)
+            {
+                return new NotFoundResult();
+            }
+            return View("ViewIssue", issueFromDb);
+        }
+
+
+        // CREATE
 
         [HttpGet]
         public async Task<ActionResult> CreateIssue(string ProjectIDCode)
@@ -203,10 +163,6 @@ namespace Bug_Tracker.Controllers
 
             return View("CreateIssue", model);
         }
-
-
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -237,6 +193,8 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index", await _projectRepository.GetProject(issue.ProjectIDCode));
         }
 
+
+        // UPDATE
 
         [HttpGet]
         public async Task<ActionResult> UpdateIssue(string IDCode)
@@ -345,22 +303,24 @@ namespace Bug_Tracker.Controllers
         }
 
 
-        [HttpGet]
-        //[ActionName("Get")]
-        public async Task<ActionResult> ViewIssue(string IDCode)
-        {
-            var issueFromDb = await _issueRepository.GetIssue(IDCode);
 
-            if (issueFromDb == null)
+      
+        
+        /////////////////////// PROJECTS ///////////////////////
+
+
+        public async Task<ActionResult> GetProjectById([Bind(include: "IDCode")] Project project)
+        {
+            var projectFromDb = await _projectRepository.GetProject(project.IDCode);
+            if (projectFromDb == null)
             {
                 return new NotFoundResult();
             }
-            return View("ViewIssue", issueFromDb);
+            return RedirectToAction("Index", projectFromDb);
         }
 
 
-
-
+        // CREATE
 
         [HttpGet]
         public async Task<ActionResult> CreateProject()
@@ -388,8 +348,7 @@ namespace Bug_Tracker.Controllers
             return View("CreateProject", model);
 
         }
-
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID, AddUsers")] Project project)
@@ -419,42 +378,8 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index", project);
         }
 
-
-
-
-        //[HttpGet]
-        //[ActionName("Get")]
-        public async Task<ActionResult> GetProjectById([Bind(include: "IDCode")] Project project)
-        {
-            var projectFromDb = await _projectRepository.GetProject(project.IDCode);
-            if (projectFromDb == null)
-            {
-                return new NotFoundResult();
-            }
-            return RedirectToAction("Index", projectFromDb);
-        }
-
-
-        [HttpGet]
-        public ActionResult Create()
-        {
-            return View("Create", new User());
-        }
-
-        //[Authorize(Roles = "Admin")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(include: "UserID, UserName, Email, Role")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                await _userRepository.Create(user);
-                TempData["Message"] = "User Createed Successfully";
-
-            }
-            return RedirectToAction("Index");
-        }
-
+        
+        // UPDATE 
 
         [HttpGet]
         public async Task<ActionResult> UpdateProjectDetails(string IDCode)
@@ -528,34 +453,35 @@ namespace Bug_Tracker.Controllers
                 // Retrieving Access Token
                 var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
 
-
-                // Adding users to project
-                if (project.AddUsers != null)
-                {
-                    for (int i = 0; i < project.AddUsers.Count; i++)
-                    {
-                        User selectedUser = new User();
-                        selectedUser.ID = project.AddUsers[i];
-
-                        await AddorRmove("Add", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
-                    }
-                }
-
-                // Removing users from project
-                if (project.RemoveUsers != null)
-                {
-                    for (int i = 0; i < project.RemoveUsers.Count; i++)
-                    {
-                        User selectedUser = new User();
-                        selectedUser.ID = project.RemoveUsers[i];
-
-                        await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
-
-                    }
-                }
-
                 // Remove all users from project before deleting the project 
-                if (project.DeleteProject == true)
+                if (project.DeleteProject != true)
+                {
+                    // Adding users to project
+                    if (project.AddUsers != null)
+                    {
+                        for (int i = 0; i < project.AddUsers.Count; i++)
+                        {
+                            User selectedUser = new User();
+                            selectedUser.ID = project.AddUsers[i];
+
+                            await AddorRmove("Add", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+                        }
+                    }
+
+                    // Removing users from project
+                    if (project.RemoveUsers != null)
+                    {
+                        for (int i = 0; i < project.RemoveUsers.Count; i++)
+                        {
+                            User selectedUser = new User();
+                            selectedUser.ID = project.RemoveUsers[i];
+
+                            await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+
+                        }
+                    }
+                }
+                else
                 {
                     foreach (var selectedUser in project.Users)
                     {
@@ -564,6 +490,16 @@ namespace Bug_Tracker.Controllers
 
                     }
                 }
+                //// Remove all users from project before deleting the project 
+                //if (project.DeleteProject == true)
+                //{
+                //    foreach (var selectedUser in project.Users)
+                //    {
+                //        User User = await _userRepository.GetUser(selectedUser);
+                //        await AddorRmove("Remove", "Project", User, project, null, Auth0ManagementAPI_AccessToken);
+
+                //    }
+                //}
 
             }
 
@@ -571,12 +507,75 @@ namespace Bug_Tracker.Controllers
         }
 
 
+        // DELETE
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
+        {
+            List<Project> ProjectList = new List<Project>();
 
 
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                var project = await _projectRepository.GetProject(projectSelected);
+                project.DeleteProject = true;
+                if (project.Users != null)
+                {
+                    await UpdateProjectAssignment(project);
+                }
+                ProjectList.Add(project);
+            }
 
 
+            var result = await _projectRepository.Delete(ProjectList);
 
-        // add param for issue or project
+            if (result)
+            {
+                TempData["Message"] = "User Deleted Successfully";
+            }
+            else
+            {
+                TempData["Message"] = "Error While Deleting the User";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> DeleteProjects()
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            model.ProjectList = await _projectRepository.GetAllProjects();
+
+
+            return View("DeleteProjects", model);
+        }
+
+
+        public async Task<ActionResult> DeleteProjects([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            List<Project> ProjectList = new List<Project>();
+
+
+            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            {
+                ProjectList.Add(await _projectRepository.GetProject(projectSelected));
+            }
+
+            model = projectManagementViewModel;
+            model.ProjectList = ProjectList;
+
+            return View("DeleteConfirmation", model);
+        }
+
+        
+        
+        /////////////////////// ADD OR REMOVE ///////////////////////
+
+
         public async Task<ActionResult> AddorRmove(string AddorRemove, string use, User selectedUser, Project selectedProject, Issue selectedIssue, string Auth0ManagementAPI_AccessToken)
         {
             // split into two sections - project and issue
@@ -774,65 +773,7 @@ namespace Bug_Tracker.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
-        {
-            List<Project> ProjectList = new List<Project>();
-
-
-            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
-            {
-                var project = await _projectRepository.GetProject(projectSelected);
-                project.DeleteProject = true;
-                await UpdateProjectAssignment(project);
-
-                ProjectList.Add(project);
-            }
-
-
-            var result = await _projectRepository.Delete(ProjectList);
-
-            if (result)
-            {
-                TempData["Message"] = "User Deleted Successfully";
-            }
-            else
-            {
-                TempData["Message"] = "Error While Deleting the User";
-            }
-
-            return RedirectToAction("Index");
-        }
-
-
-        [HttpGet]
-        public async Task<ActionResult> DeleteProjects()
-        {
-            ProjectManagementViewModel model = new ProjectManagementViewModel();
-            model.ProjectList = await _projectRepository.GetAllProjects();
-
-
-            return View("DeleteProjects", model);
-        }
-
-
-        public async Task<ActionResult> DeleteProjects([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
-        {
-            ProjectManagementViewModel model = new ProjectManagementViewModel();
-            List<Project> ProjectList = new List<Project>();
-
-
-            foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
-            {
-                ProjectList.Add(await _projectRepository.GetProject(projectSelected));
-            }
-
-            model = projectManagementViewModel;
-            model.ProjectList = ProjectList;
-
-            return View("DeleteConfirmation", projectManagementViewModel);
-        }
+      
 
 
 
@@ -840,10 +781,6 @@ namespace Bug_Tracker.Controllers
 
 
 
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
 
         public IActionResult Profile()
         {
