@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BugTrackerDataAccess.Repositories
@@ -47,7 +48,13 @@ namespace BugTrackerDataAccess.Repositories
 
         public async Task<bool> Delete(List<Issue> issue)
         {
-            var filter = new BsonDocument("issue_id", new BsonDocument("$in", new BsonArray(issue)));
+            //var filter = new BsonDocument("issue_id", new BsonDocument("$in", new BsonArray(issue)));
+
+
+            var ids = issue.Select(d => d.Id);
+
+            var filter = Builders<Issue>.Filter.In(d => d.Id, ids);
+
 
             DeleteResult deleteResult = await _context.Issues.DeleteManyAsync(filter);
 

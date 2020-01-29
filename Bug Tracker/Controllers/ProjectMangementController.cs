@@ -600,12 +600,12 @@ namespace Bug_Tracker.Controllers
                 foreach (var issueInProject in project.Issues)
                 {
                     Issue issue = await _issueRepository.GetIssue(issueInProject.Split(':')[0].Replace("\"", ""));
-                    issue.RemoveUsers = issue.Users;
-                    issue.DeleteIssue = true;
-                    await _issueRepository.Update(issue);
-                    await UpdateIssue(issue);
+                    //issue.RemoveUsers = issue.Users;
+                    //issue.DeleteIssue = true;
+                    //await _issueRepository.Update(issue);
+                    //await UpdateIssue(issue);
 
-                    //IssueList.Add(issue);
+                    IssueList.Add(issue);
                 }
 
 
