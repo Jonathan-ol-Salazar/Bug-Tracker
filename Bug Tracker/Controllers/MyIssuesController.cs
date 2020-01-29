@@ -161,7 +161,155 @@ namespace Bug_Tracker.Controllers
             return View("ViewIssue", issueFromDb);
         }
 
+        // UPDATE
 
+        [HttpGet]
+        public async Task<ActionResult> UpdateIssue(string IDCode, string ProjectIDCode)
+        {
+            MyIssuesViewModel model = new MyIssuesViewModel();
+            Issue issue = await _issueRepository.GetIssue(IDCode);
+            List<User> UsersNotAssignedList = new List<User>();
+            List<User> UsersAssignedList = new List<User>();
+            var allUsers = await _userRepository.GetAllUsers();
+            List<string> AssignedUsersID = new List<string>();
+            //Issue issueFromDb = new Issue();
+
+            //foreach (var issue in await _issueRepository.GetAllIssues())
+            //{
+            //    //if (issue.IDCode.Split(':')[0].Replace("\"", "") == issue.IDCode)
+            //    //{
+            //    //    issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            //    //}
+            //    if (issue.ProjectIDCode == ProjectIDCode)
+            //    {
+            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+
+            //    }
+            //}
+
+
+
+
+
+            // Loop through all the current users assigned and add there user objects to 'UsersAssignedList' 
+            foreach (var user in issue.Users)
+            {
+                string ID = user.Split(':')[0];
+                UsersAssignedList.Add(await _userRepository.GetUser(ID));
+                AssignedUsersID.Add(ID);
+            }
+
+
+
+            // Loop through all the user objects, if they are not in the 'UsersAssignedList', then add them to 'UsersNotAssignedList'
+            foreach (var user in allUsers)
+            {
+                if (!AssignedUsersID.Contains(user.ID))
+                {
+                    UsersNotAssignedList.Add(user);
+                }
+            }
+
+
+
+            model.UsersAssignedList = UsersAssignedList;
+            model.UsersNotAssignedList = UsersNotAssignedList;
+            model.Issue = issue;
+            return View("UpdateIssue", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers, Users")] Issue issue)
+        {
+            var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
+
+            //foreach(var issueInProject in projectFromDb.Issues)
+            //{
+            //    if(issueInProject.Split(':')[0].Replace("\"", "") == issue.IDCode)
+            //    {
+            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            //    }
+            //}
+
+            if (ModelState.IsValid)
+            {
+                // Updating 'Issue' collection
+                if (projectFromDb == null || issueFromDb == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                issue.Id = issueFromDb.Id;
+                issue.Created = issueFromDb.Created;
+                issue.Updated = DateTime.UtcNow.ToString();
+
+                if (issue.Users == null)
+                {
+                    issue.Users = new List<string>();
+                }
+
+                //if (issueFromDb.DeleteIssue == false)
+                //{
+                // Adding Users 
+                if (issue.AddUsers != null && issue.DeleteIssue == false)
+                {
+                    foreach (var user in issue.AddUsers)
+                    {
+                        var User = await _userRepository.GetUser(user);
+                        //issue.Users.Add((user + ": " + User.UserName));
+                        //await _issueRepository.Update(issue);
+
+                        await _projectManagementController.AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+                    }
+                }
+
+                // Remove Users
+                if (issue.RemoveUsers != null || issue.DeleteIssue == true)
+                {
+                    foreach (var user in issue.RemoveUsers)
+                    {
+                        var User = await _userRepository.GetUser(user);
+                        //issue.Users.Remove(user + ": " + User.UserName);
+                        await _projectManagementController.AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+                    }
+
+                }
+                //}
+                //else
+                //{
+                //    //if (issue.Users != null)
+                //    //{
+                //    List<string> usersDelete = issue.Users;
+                //        foreach (var user in issue.Users)
+                //        {
+                //            var User = await _userRepository.GetUser(user);
+                //            //issue.Users.Remove(user + ": " + User.UserName);
+                //            await AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+                //        }
+                //    //}
+                //}
+
+                await _issueRepository.Update(issue);
+                //await AddorRmove("Update", "Issue", issue, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+
+
+
+
+
+
+            }
+
+
+
+
+            return RedirectToAction("Index");
+        }
 
 
 
