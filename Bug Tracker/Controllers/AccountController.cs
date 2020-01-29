@@ -70,6 +70,20 @@ namespace Bug_Tracker.Controllers
             // GETTING AUTH0 USER DETAILS OF CURRENT SIGNED IN USER
             string userID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var currentUser = await _userRepository.GetUser(userID);
+            
+            if (currentUser.AccountImage == null)
+            {
+                var client = new RestClient("https://wussubininja.au.auth0.com/api/v2/users/" + userID);
+                var request = new RestRequest(Method.GET);
+                request.AddHeader("authorization", "Bearer " + GetAuthorizationToken());
+                IRestResponse response = client.Execute(request);
+
+
+                var response2dict = JObject.Parse(response.Content);
+                currentUser.AccountImage = response2dict.SelectToken("picture").ToString();
+
+            }
+
 
             AccountViewModel model = new AccountViewModel();
 
