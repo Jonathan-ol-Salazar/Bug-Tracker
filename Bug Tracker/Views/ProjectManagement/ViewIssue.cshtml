@@ -101,7 +101,12 @@
                     </div>
 
                     <div>
-                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
+                        @*<a asp-action="Index" class="btn btn-sm btn-secondary">Back</a>*@
+                        
+                         <a href="@Url.Action("Index", "ProjectManagement", new {  ProjectIDCode = Model.ProjectIDCode })" class="btn btn-sm btn-secondary">
+                            Back
+                        </a>
+                        |
                         <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {  IDCode = Model.IDCode })" class="btn btn btn-primary">
                             Update
                         </a>

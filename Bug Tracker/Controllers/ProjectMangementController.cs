@@ -50,7 +50,7 @@ namespace Bug_Tracker.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index(Project Project = null)
+        public async Task<IActionResult> Index(Project Project = null, string ProjectIDCode = null)
         {
             // Sorting users assigned to selected project
             List<User> UsersAssignedList = new List<User>();
@@ -61,9 +61,15 @@ namespace Bug_Tracker.Controllers
             ProjectManagementViewModel model = new ProjectManagementViewModel();
 
 
-            // Reset MongoDB 'Users' collection            
-            Project = await _projectRepository.GetProject(Project.IDCode);
+            if (ProjectIDCode != null)
+            {
+                Project = await _projectRepository.GetProject(ProjectIDCode);
 
+            }
+            else
+            {
+                Project = await _projectRepository.GetProject(Project.IDCode);
+            }
 
             if (Project == null)
             {

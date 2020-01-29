@@ -278,11 +278,19 @@
                                                 <td>@item.Created</td>
                                                 <td>@item.Updated</td>
                                                 @*<td>@item.NumUsers</td>*@
-                                                <td>
-                                                    @Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
-                                                    @*@Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })*@
-                                                    @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })
-                                                </td>
+                                            <td>
+                                                @*@Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
+                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })*@
+
+                                                <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
+                                                    Update
+                                                </a>
+                                                <a href="@Url.Action("ViewIssue", "ProjectManagement", new {IDCode = item.IDCode})" class="btn btn-sm btn-secondary">
+                                                    View
+                                                </a>
+
+                                            </td>
                                             </tr>
                                         }
                                     </tbody>
