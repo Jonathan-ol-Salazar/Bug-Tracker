@@ -173,7 +173,7 @@ namespace Bug_Tracker.Controllers
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
-
+                issue.DeleteIssue = false;
                 await _issueRepository.AddIssue(issue);
 
                 var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
@@ -182,11 +182,14 @@ namespace Bug_Tracker.Controllers
 
                 await _projectRepository.Update(selectedProject);
 
-                foreach (var user in issue.AddUsers)
+                if (issue.AddUsers != null)
                 {
-                    var User = await _userRepository.GetUser(user);
-                    await AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
+                    foreach (var user in issue.AddUsers)
+                    {
+                        var User = await _userRepository.GetUser(user);
+                        await AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
+                    }
                 }
             }
 
@@ -197,7 +200,7 @@ namespace Bug_Tracker.Controllers
         // UPDATE
 
         [HttpGet]
-        public async Task<ActionResult> UpdateIssue(string IDCode)
+        public async Task<ActionResult> UpdateIssue(string IDCode, string ProjectIDCode)
         {
             ProjectManagementViewModel model = new ProjectManagementViewModel();
             Issue issue = await _issueRepository.GetIssue(IDCode);
@@ -205,6 +208,23 @@ namespace Bug_Tracker.Controllers
             List<User> UsersAssignedList = new List<User>();
             var allUsers = await _userRepository.GetAllUsers();
             List<string> AssignedUsersID = new List<string>();
+            //Issue issueFromDb = new Issue();
+
+            //foreach (var issue in await _issueRepository.GetAllIssues())
+            //{
+            //    //if (issue.IDCode.Split(':')[0].Replace("\"", "") == issue.IDCode)
+            //    //{
+            //    //    issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            //    //}
+            //    if (issue.ProjectIDCode == ProjectIDCode)
+            //    {
+            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+
+            //    }
+            //}
+
+
+
 
 
             // Loop through all the current users assigned and add there user objects to 'UsersAssignedList' 
@@ -241,6 +261,14 @@ namespace Bug_Tracker.Controllers
             var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
             var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
 
+            //foreach(var issueInProject in projectFromDb.Issues)
+            //{
+            //    if(issueInProject.Split(':')[0].Replace("\"", "") == issue.IDCode)
+            //    {
+            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            //    }
+            //}
+
             if (ModelState.IsValid)
             {
                 // Updating 'Issue' collection
@@ -258,31 +286,47 @@ namespace Bug_Tracker.Controllers
                     issue.Users = new List<string>();
                 }
 
-                // Adding Users 
-                if (issue.AddUsers != null)
+                if (issueFromDb.DeleteIssue == false)
                 {
-                    foreach (var user in issue.AddUsers)
+                    // Adding Users 
+                    if (issue.AddUsers != null)
                     {
-                        var User = await _userRepository.GetUser(user);
-                        //issue.Users.Add((user + ": " + User.UserName));
-                        //await _issueRepository.Update(issue);
+                        foreach (var user in issue.AddUsers)
+                        {
+                            var User = await _userRepository.GetUser(user);
+                            //issue.Users.Add((user + ": " + User.UserName));
+                            //await _issueRepository.Update(issue);
 
-                        await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+                            await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+                        }
+                    }
+
+                    // Remove Users
+                    if (issue.RemoveUsers != null)
+                    {
+                        foreach (var user in issue.RemoveUsers)
+                        {
+                            var User = await _userRepository.GetUser(user);
+                            //issue.Users.Remove(user + ": " + User.UserName);
+                            await AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+                        }
 
                     }
                 }
-
-                // Remove Users
-                if (issue.RemoveUsers != null)
+                else
                 {
-                    foreach (var user in issue.RemoveUsers)
+                    if (issue.Users != null)
                     {
-                        var User = await _userRepository.GetUser(user);
-                        //issue.Users.Remove(user + ": " + User.UserName);
-                        await AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+                        foreach (var user in issue.Users)
+                        {
+                            var User = await _userRepository.GetUser(user);
+                            //issue.Users.Remove(user + ": " + User.UserName);
+                            await AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
+                        }
                     }
-
                 }
 
                 await _issueRepository.Update(issue);
@@ -363,7 +407,7 @@ namespace Bug_Tracker.Controllers
                 project.Created = DateTime.UtcNow.ToString();
                 project.Issues = new List<string>();
                 project.Updated = project.Created;
-
+                project.DeleteProject = false;
 
 
                 await _projectRepository.AddProject(project);
@@ -487,6 +531,7 @@ namespace Bug_Tracker.Controllers
                     {
                         User User = await _userRepository.GetUser(selectedUser);
                         await AddorRmove("Remove", "Project", User, project, null, Auth0ManagementAPI_AccessToken);
+                        //await AddorRmove("Remove", "Issue", User, project, null, Auth0ManagementAPI_AccessToken);
 
                     }
                 }
@@ -514,6 +559,7 @@ namespace Bug_Tracker.Controllers
         public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
         {
             List<Project> ProjectList = new List<Project>();
+            List<Issue> IssueList = new List<Issue>();
 
 
             foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
@@ -524,9 +570,28 @@ namespace Bug_Tracker.Controllers
                 {
                     await UpdateProjectAssignment(project);
                 }
+
+                foreach (var issueInProject in project.Issues)
+                {
+                    Issue issue = await _issueRepository.GetIssue(issueInProject.Split(':')[0].Replace("\"", ""));
+                    if (issue.ProjectIDCode == projectSelected)
+                    {
+                        issue.DeleteIssue = true;
+                        await UpdateIssue(issue);
+
+                        IssueList.Add(issue);
+                    }
+                    
+                }
+
+
                 ProjectList.Add(project);
+
+
             }
 
+
+            await _issueRepository.Delete(IssueList);
 
             var result = await _projectRepository.Delete(ProjectList);
 

@@ -52,6 +52,9 @@ namespace BugTrackerDataAccess.Models
         [BsonElement]
         public string ProjectIDCode { get; set; }
 
+        [BsonElement]
+        public bool DeleteIssue { get; set; }
+
 
         // ADD IMAGE
         //[BsonElement]
