@@ -97,15 +97,30 @@
 
                                     @*SELECTIONS THAT THE USER CAN CHANGE*@
                                     @*<div class="form-group">
-                                        <label asp-for="Issue.Title" class="control-label"></label>
-                                        <input asp-for="Issue.Title" class="form-control" />
-                                        <span asp-validation-for="Issue.Title" class="text-danger"></span>
-                                    </div>*@
+            <label asp-for="Issue.Title" class="control-label"></label>
+            <input asp-for="Issue.Title" class="form-control" />
+            <span asp-validation-for="Issue.Title" class="text-danger"></span>
+        </div>*@
                                     <div class="form-group">
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                            <label asp-for="Issue.Status" class="btn btn-success">
+                                                <input value="OPEN" type="radio" asp-for="Issue.Status"> OPEN
+                                            </label>
+                                            <label asp-for="Issue.Status" class="btn btn-warning">
+                                                <input value="DEVELOPMENT" type="radio" asp-for="Issue.Status"> DEVELOPMENT
+                                            </label>
+                                            <label asp-for="Issue.Status" class="btn btn-danger">
+                                                <input value="CLOSED" type="radio" asp-for="Issue.Status"> CLOSED
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+                                    @*<div class="form-group">
                                         <label asp-for="Issue.Status" class="control-label"></label>
                                         <input asp-for="Issue.Status" class="form-control" />
                                         <span asp-validation-for="Issue.Status" class="text-danger"></span>
-                                    </div>
+                                    </div>*@
                                     <div class="form-group">
                                         <label asp-for="Issue.Description" class="control-label"></label>
                                         <input asp-for="Issue.Description" class="form-control" />
@@ -129,7 +144,7 @@
                                                 <option value="@item.ID">@item.UserName</option>
                                             }
                                         </select>
-                                    </div>                                 
+                                    </div>
 
                                     <div class="form-group">
                                         <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
