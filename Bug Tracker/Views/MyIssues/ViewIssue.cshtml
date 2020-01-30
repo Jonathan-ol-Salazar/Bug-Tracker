@@ -100,11 +100,15 @@
                     </div>
 
                     <div>
-                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
-                        <a href="@Url.Action("UpdateIssue", "MyIssues", new {  IDCode = Model.IDCode })" class="btn btn btn-primary">
-                            Update
-                        </a>
-                    </div>
+                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a>
+                        @if (!User.IsInRole("Submitter"))
+                        {
+                             
+                            <a href="@Url.Action("UpdateIssue", "MyIssues", new { IDCode = Model.IDCode })" class="btn btn btn-primary">
+                               Update
+                            </a>
+                        }
+                        </div>
                 </div>
             </div>
         </div>

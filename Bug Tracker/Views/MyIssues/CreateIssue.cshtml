@@ -71,7 +71,7 @@
                                 <form asp-action="CreateIssue">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     @*PRE-SELECTED ATTRIBUTES *@
-                                    <div class="form-group">                                        
+                                    <div class="form-group">
                                         <select id="Status" asp-for="@Model.Issue.Status">
                                             <option value="OPEN" selected="selected"></option>
                                         </select>
@@ -95,10 +95,10 @@
                                         <span asp-validation-for="@Model.Issue.Title" class="text-danger"></span>
                                     </div>
                                     @*<div class="form-group">
-                                        <label asp-for="@Model.Issue.Status" class="control-label"></label>
-                                        <input asp-for="@Model.Issue.Status" class="form-control" />
-                                        <span asp-validation-for="@Model.Issue.Status" class="text-danger"></span>
-                                    </div>*@
+            <label asp-for="@Model.Issue.Status" class="control-label"></label>
+            <input asp-for="@Model.Issue.Status" class="form-control" />
+            <span asp-validation-for="@Model.Issue.Status" class="text-danger"></span>
+        </div>*@
 
                                     <div class="form-group">
                                         <label asp-for="@Model.Issue.Description" class="control-label"></label>
@@ -106,43 +106,47 @@
                                         <span asp-validation-for="@Model.Issue.Description" class="text-danger"></span>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label asp-for="@Model.Issue.AddUsers" class="control-label">Assign Users To Issue</label>
-                                        <select asp-for="@Model.Issue.AddUsers" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.UserList)
-                                            {
-                                                <option value="@item.ID">@item.UserName</option>
-                                            }
-                                        </select>
-                                    </div>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                    {
+                                        <div class="form-group">
+                                            <label asp-for="@Model.Issue.AddUsers" class="control-label">Assign Users To Issue</label>
+                                            <select asp-for="@Model.Issue.AddUsers" multiple class="form-control" style="width: 100%;">
+                                                @foreach (var item in Model.UserList)
+                                                {
+                                                    <option value="@item.ID">@item.UserName</option>
+                                                }
+                                            </select>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label asp-for="@Model.Issue.ProjectIDCode" class="control-label">Assign Users To Issue</label>
-                                        <select asp-for="@Model.Issue.ProjectIDCode" class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.ProjectList)
-                                            {
-                                                <option value="@item.IDCode">@item.IDCode</option>
+                                        <div class="form-group">
+                                            <label asp-for="@Model.Issue.ProjectIDCode" class="control-label">Assign Users To Issue</label>
+                                            <select asp-for="@Model.Issue.ProjectIDCode" class="form-control" style="width: 100%;">
+                                                @foreach (var item in Model.ProjectList)
+                                                {
+                                                    <option value="@item.IDCode">@item.IDCode</option>
 
-                                            }
-                                        </select>
-                                    </div>
-
+                                                }
+                                            </select>
 
 
-                                    <div class="form-group">
-                                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
-                                        <input type="submit" value="Save" class="btn btn-primary" />
-                                    </div>
+                                        </div>
+                                    }
 
-                                    @*<div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
-        </div>
 
-        <div>
-            <a asp-action="Index" class="btn btn-sm btn-secondary">Back to List</a>
-        </div>*@
+                                        <div class="form-group">
+                                            <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
+                                            <input type="submit" value="Save" class="btn btn-primary" />
+                                        </div>
 
-                                </form>
+                                        @*<div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+
+            <div>
+                <a asp-action="Index" class="btn btn-sm btn-secondary">Back to List</a>
+            </div>*@
+
+                                    </form>
                             </div>
                         </div>
                     </div>

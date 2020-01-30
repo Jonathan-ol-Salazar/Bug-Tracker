@@ -129,7 +129,7 @@
 
                                     <div class="form-group">
 
-                                        <label asp-for="Issue.AddUsers" class="control-label">Assign Users To Project</label>
+                                        <label asp-for="Issue.AddUsers" class="control-label">Assign Users To Issue</label>
                                         <select asp-for="Issue.AddUsers" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UsersNotAssignedList)
                                             {
@@ -137,7 +137,7 @@
                                             }
                                         </select>
                                         <br />
-                                        <label asp-for="Issue.RemoveUsers" class="control-label">Remove Users From Project</label>
+                                        <label asp-for="Issue.RemoveUsers" class="control-label">Remove Users From Issue</label>
                                         <select asp-for="Issue.RemoveUsers" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UsersAssignedList)
                                             {

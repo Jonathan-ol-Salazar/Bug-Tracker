@@ -109,10 +109,12 @@
                                                 <td>@item.Created</td>
                                                 <td>@item.Updated</td>
                                                 <td>
+                                                    @if (!User.IsInRole("Submitter"))
+                                                    {
                                                     <a href="@Url.Action("UpdateIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
                                                         Update
                                                     </a>
-                                                    
+                                                    }
                                                     <a href="@Url.Action("ViewIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-secondary">
                                                         View
                                                     </a>
