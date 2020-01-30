@@ -118,7 +118,7 @@
                                             }
                                         </select>
                                         <br />
-                                        <button type="submit" class="btn btn-success btn-block">Select</button>
+                                        <button type="submit" class="btn btn-secondary btn-block">Select</button>
                                         @*@Html.ActionLink("Add Issue", "CreateIssue", new { ProjectIDCode = Model.Project.IDCode })*@
                                         @*@Html.ActionLink("Add Project", "CreateProject", new { })*@
                                         @*@Html.ActionLink("Edit Project Details", "UpdateProjectDetails", new { IDCode = Model.Project.IDCode })*@
@@ -126,7 +126,7 @@
 
                                     </div>
                                 </form>
-                                @if (User.IsInRole("Admin"))
+                                @*@if (User.IsInRole("Admin"))
                                 {
                                     <div class="text-center mt-5 mb-3">
 
@@ -138,11 +138,28 @@
                                         </a>
 
                                     </div>
+                                }*@
+                            </div>
+
+                            <div class="card-footer">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="text-center">
+
+                                        <a href="@Url.Action("CreateProject", "ProjectManagement", new { })" class="btn btn-sm btn-primary">
+                                            Add New Project
+                                        </a>
+                                        <a href="@Url.Action("DeleteProjects", "ProjectManagement", new { })" class="btn btn-sm btn-danger">
+                                            Delete Project
+                                        </a>
+
+                                    </div>
                                 }
                             </div>
+
                         </div>
 
-                        <div class="card card-primary">
+                        <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Project Details</h3>
                                 <div class="card-tools">
@@ -178,7 +195,7 @@
                                     </p>
                                 </div>
 
-                                <div class="text-center mt-5 mb-3">
+                                @*<div class="text-center mt-5 mb-3">
 
 
                                     @if (User.IsInRole("Admin"))
@@ -192,15 +209,33 @@
                                         Add New Issue
                                     </a>
 
+                                </div>*@
+                            </div>
+                            <div class="card-footer">
+                                
+                                <div class="text-center">
+
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="@Url.Action("UpdateProjectDetails", "ProjectManagement", new { IDCode = Model.Project.IDCode })" class="btn btn-sm btn-primary">
+                                            Update Project Details
+                                        </a>
+                                    }
+
+                                    <a href="@Url.Action("CreateIssue", "ProjectManagement", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-warning">
+                                        Add New Issue
+                                    </a>
+
                                 </div>
+                                
                             </div>
                         </div>
 
                         @if (User.IsInRole("Admin"))
                         {
-                            <div class="card card-info">
+                            <div class="card card-secondary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Edit Assignment</h3>
+                                    <h3 class="card-title">Edit Project Assignment</h3>
                                     <div class="card-tools">
                                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                             <i class="fas fa-minus"></i>
@@ -237,7 +272,7 @@
                                                 }
                                             </select>
                                             <br />
-                                            <button type="submit" class="btn btn-danger btn-block">Submit</button>
+                                            <button type="submit" class="btn btn-primary btn-block">Submit</button>
                                         </div>
                                     </form>
                                 </div>
@@ -308,7 +343,7 @@
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
-                        <div class="card card-success">
+                        <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Assigned Users</h3>
                                 <div class="card-tools">

@@ -92,11 +92,10 @@
             <div class="container-fluid">
                 <!-- /.row -->
                 <div class="row">
-                    <div class="col-4">
-             
+                    <div class="col-4">          
                   
 
-                        <div class="card card-primary">
+                        <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Project Details</h3>
                                 <div class="card-tools">
@@ -131,16 +130,12 @@
                                         <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.Updated)</b>
                                     </p>
                                 </div>
+                    
+                                
+                            </div>
 
-                                <div class="text-center mt-5 mb-3">
-
-
-                                    @*@if (User.IsInRole("Admin"))
-                                    {
-                                        <a href="@Url.Action("UpdateProjectDetails", "ProjectManagement", new { IDCode = Model.Project.IDCode })" class="btn btn-sm btn-primary">
-                                            Update Project Details
-                                        </a>
-                                    }*@
+                            <div class="card-footer">
+                                <div class="text-center">
 
                                     <a href="@Url.Action("CreateIssue", "MyIssues", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-warning">
                                         Add New Issue
@@ -214,7 +209,7 @@
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
-                        <div class="card card-success">
+                        <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Assigned Users</h3>
                                 <div class="card-tools">
