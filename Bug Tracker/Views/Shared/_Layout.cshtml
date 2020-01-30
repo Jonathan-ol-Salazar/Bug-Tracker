@@ -180,22 +180,25 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index", "UserManagement", new {})" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    User Management
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index", "ProjectManagement", new {})" class="nav-link">
-                                <i class="nav-icon fas fa-sitemap"></i>
-                                <p>
-                                    Project Management
-                                </p>
-                            </a>
-                        </li>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index", "UserManagement", new {})" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        User Management
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index", "ProjectManagement", new {})" class="nav-link">
+                                    <i class="nav-icon fas fa-sitemap"></i>
+                                    <p>
+                                        Project Management
+                                    </p>
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a href="@Url.Action("Index", "MyProjects", new {})" class="nav-link">
                                 <i class="nav-icon fas fa-clipboard-list"></i>
@@ -213,10 +216,10 @@
                             </a>
                         </li>
                         @*@Html.ActionLink("Account", "Index", "Account")
-                        @Html.ActionLink("User Management", "Index", "UserManagement")
-                        @Html.ActionLink("Project Management", "Index", "ProjectManagement")
-                        @Html.ActionLink("My Projects", "Index", "MyProjects")
-                        @Html.ActionLink("My Issues", "Index", "MyIssues")*@
+        @Html.ActionLink("User Management", "Index", "UserManagement")
+        @Html.ActionLink("Project Management", "Index", "ProjectManagement")
+        @Html.ActionLink("My Projects", "Index", "MyProjects")
+        @Html.ActionLink("My Issues", "Index", "MyIssues")*@
 
                         <li class="nav-header">MANAGEMENT</li>
 
