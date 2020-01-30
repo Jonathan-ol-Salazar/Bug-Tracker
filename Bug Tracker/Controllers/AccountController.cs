@@ -47,7 +47,7 @@ namespace Bug_Tracker.Controllers
                 // Indicate here where Auth0 should redirect the user after a logout.
                 // Note that the resulting absolute Uri must be whitelisted in the
                 // **Allowed Logout URLs** settings for the app.
-                RedirectUri = Url.Action("Index", "Home")
+                RedirectUri = Url.Action("SignIn", "Home")
             });
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }

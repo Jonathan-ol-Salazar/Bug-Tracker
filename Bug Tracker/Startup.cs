@@ -176,7 +176,7 @@ namespace Bug_Tracker
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Account}/{action=Index}/{id?}");
+                    pattern: "{controller=MyProjects}/{action=Index}/{id?}");
             });
         }
     }
