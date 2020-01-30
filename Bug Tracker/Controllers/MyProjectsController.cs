@@ -155,6 +155,101 @@ namespace Bug_Tracker.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> ViewProject(Project Project = null, string ProjectIDCode = null)
+        {
+            // Sorting users assigned to selected project
+            List<User> UsersAssignedList = new List<User>();
+            List<User> UsersNotAssignedList = new List<User>();
+            List<Issue> IssueList = new List<Issue>();
+
+            // Model for view
+            MyProjectsViewModel model = new MyProjectsViewModel();
+
+
+            if (ProjectIDCode != null)
+            {
+                Project = await _projectRepository.GetProject(ProjectIDCode);
+
+            }
+            else
+            {
+                Project = await _projectRepository.GetProject(Project.IDCode);
+            }
+
+            if (Project == null)
+            {
+                Project = new Project();
+                //Project.Issues = IssueList;
+            }
+
+
+            var AllUsers = await _userRepository.GetAllUsers();
+            List<User> ProjectManagerList = new List<User>();
+
+
+            if (Project.IDCode != null)
+            {
+
+                if (Project.Users == null)
+                {
+                    Project.Users = new List<string>();
+                }
+
+
+                foreach (var user in Project.Users)
+                {
+                    UsersAssignedList.Add(await _userRepository.GetUser(user));
+                }
+
+                List<User> AllUsersList = AllUsers.ToList();
+                AllUsersList.RemoveAll(x => UsersAssignedList.Any(y => y.ID == x.ID));
+                UsersNotAssignedList = AllUsersList;
+
+                foreach (var issue in Project.Issues)
+                {
+                    //var x = issue.Split(':')[0];
+                    //x.Replace("\"", "");
+                    IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", "")));
+                }
+
+            }
+
+
+            model.ProjectList = await _projectRepository.GetAllProjects();
+            model.UsersAssignedList = UsersAssignedList;
+            model.UsersNotAssignedList = UsersNotAssignedList;
+            model.IssueList = IssueList;
+
+
+            model.Project = Project;
+            return View(model);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }

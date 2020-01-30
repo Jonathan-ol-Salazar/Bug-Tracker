@@ -118,14 +118,19 @@
                                                 @*<td>@item.NumIssues</td>*@
                                                 <td>@item.Created</td>
                                                 <td>@item.Updated</td>
-                                                <td>
-                                                    @*<a href="@Url.Action("UpdateProject", "MyProjects", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
-                                                        Update
-                                                    </a>*@
-
-                                                    <a href="@Url.Action("Index", "ProjectManagement", new {IDCode = item.IDCode})" class="btn btn-sm btn-secondary">
+                                                <td>    
+                                                    @if (User.IsInRole("Developer") || User.IsInRole("Submitter"))
+                                                    {
+                                                    <a href="@Url.Action("ViewProject", "MyProjects", new { IDCode = item.IDCode })" class="btn btn-sm btn-secondary">
                                                         View
                                                     </a>
+                                                    }
+                                                    else
+                                                    {
+                                                    <a href="@Url.Action("Index", "ProjectManagement", new { IDCode = item.IDCode })" class="btn btn-sm btn-secondary">
+                                                        View
+                                                    </a>
+                                                    }
                                                 </td>
                                             </tr>
                                         }
