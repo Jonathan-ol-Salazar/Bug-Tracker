@@ -327,7 +327,7 @@
                                                 @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
                                                 @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })*@
 
-                                                <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
+                                                <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {IDCode = item.IDCode, ProjectIDCode = item.ProjectIDCode})" class="btn btn-sm btn-primary">
                                                     Update
                                                 </a>
                                                 <a href="@Url.Action("ViewIssue", "ProjectManagement", new {IDCode = item.IDCode})" class="btn btn-sm btn-secondary">

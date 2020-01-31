@@ -109,6 +109,8 @@ namespace Bug_Tracker.Controllers
 
             }
 
+
+
             
             model.ProjectList = await _projectRepository.GetAllProjects();
             model.UsersAssignedList = UsersAssignedList;
@@ -157,14 +159,23 @@ namespace Bug_Tracker.Controllers
         {
             ProjectManagementViewModel model = new ProjectManagementViewModel();
             Issue issue = new Issue();
-
+            List<User> UserList = new List<User>();
             issue.ProjectIDCode = ProjectIDCode;
+
+
+            // Getting users assigned to project 
+            Project project = await _projectRepository.GetProject(ProjectIDCode);
+            foreach (var user in project.Users)
+            {
+                UserList.Add(await _userRepository.GetUser(user));
+            }
+
 
             // Store Issue
             model.Issue = issue;
             // Initialize and store all users
             model.UserList = new List<User>();
-            model.UserList = await _userRepository.GetAllUsers();
+            model.UserList = UserList;
 
 
             return View("CreateIssue", model);
@@ -210,10 +221,16 @@ namespace Bug_Tracker.Controllers
         {
             ProjectManagementViewModel model = new ProjectManagementViewModel();
             Issue issue = await _issueRepository.GetIssue(IDCode);
+
             List<User> UsersNotAssignedList = new List<User>();
             List<User> UsersAssignedList = new List<User>();
+
             var allUsers = await _userRepository.GetAllUsers();
             List<string> AssignedUsersID = new List<string>();
+
+            var allUsersInProject = new List<User>();
+
+
             //Issue issueFromDb = new Issue();
 
             //foreach (var issue in await _issueRepository.GetAllIssues())
@@ -241,16 +258,28 @@ namespace Bug_Tracker.Controllers
                 AssignedUsersID.Add(ID);
             }
 
+            // Getting users assigned to project 
+            Project project = await _projectRepository.GetProject(ProjectIDCode);
+            foreach (var user in project.Users)
+            {
+                //allUsersInProject.Add(await _userRepository.GetUser(user));
+                User User = await _userRepository.GetUser(user);
 
+                if (!AssignedUsersID.Contains(User.ID))
+                {
+                    UsersNotAssignedList.Add(User);
+                }
+
+            }
 
             // Loop through all the user objects, if they are not in the 'UsersAssignedList', then add them to 'UsersNotAssignedList'
-            foreach (var user in allUsers)
-            {
-                if (!AssignedUsersID.Contains(user.ID))
-                {
-                    UsersNotAssignedList.Add(user);
-                }
-            }
+            //foreach (var user in allUsersInProject)
+            //{
+            //    if (!AssignedUsersID.Contains(user.ID))
+            //    {
+            //        UsersNotAssignedList.Add(user);
+            //    }
+            //}
 
 
 
