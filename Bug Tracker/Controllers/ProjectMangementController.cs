@@ -845,7 +845,7 @@ namespace Bug_Tracker.Controllers
                 }
 
 
-                string issueIDName = selectedIssue.IDCode + ": " + selectedIssue.Title;
+                string issueIDName = selectedIssue.ProjectIDCode + " - " + selectedIssue.IDCode + " : " + selectedIssue.Title;
                 // Auth0 format
                 //string selectedIssueJSON = "\"" + selectedIssue.IDCode + "\": \"" + selectedIssue.Title + "\"";
 
