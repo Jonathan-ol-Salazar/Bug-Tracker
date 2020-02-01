@@ -623,66 +623,111 @@ namespace Bug_Tracker.Controllers
             //}
 
 
+            //foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
+            //{
+            //    var project = await _projectRepository.GetProject(projectSelected);
+            //    project.DeleteProject = true;
+            //    if (project.Users != null)
+            //    {
+            //        await UpdateProjectAssignment(project);
+            //    }
+
+            //    foreach (var issueInProject in project.Issues)
+            //    {
+            //        Issue issue = await _issueRepository.GetIssue(issueInProject.Split(':')[0].Replace("\"", ""));
+            //        //issue.RemoveUsers = issue.Users;
+            //        //issue.DeleteIssue = true;
+            //        //await _issueRepository.Update(issue);
+            //        //await UpdateIssue(issue);
+
+            //        IssueList.Add(issue);
+            //    }
+
+
+
+
+
+
+            //    //foreach (var issueInProject in project.Issues)
+            //    //{
+            //    //    Issue issue = await _issueRepository.GetIssue(issueInProject.Split(':')[0].Replace("\"", ""));
+
+            //    //    //issue.RemoveUsers = issue.Users;
+            //    //    //await _issueRepository.Update(issue);
+            //    //    //await UpdateIssue(issue);
+
+
+            //    //    if (issue.ProjectIDCode == projectSelected)
+            //    //    {
+            //    //        issue.DeleteIssue = true;
+            //    //        issue.RemoveUsers = issue.Users;
+            //    //        await _issueRepository.Update(issue);
+            //    //        await UpdateIssue(issue);
+
+            //    //        //IssueList.Add(issue);
+            //    //    }
+
+            //    //    //List<string> userString = issue.RemoveUsers;
+            //    //    //foreach (var user in userString)
+            //    //    //{
+            //    //    //    var User = await _userRepository.GetUser(user);
+            //    //    //    //issue.Users.Remove(user + ": " + User.UserName);
+            //    //    //    await AddorRmove("Remove", "Issue", User, project, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+            //    //    //}
+
+            //    //}
+
+
+
+
+
+
+
+
+            //    ProjectList.Add(project);
+
+
+            //}
+
+
+
+
             foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
             {
                 var project = await _projectRepository.GetProject(projectSelected);
-                project.DeleteProject = true;
-                if (project.Users != null)
-                {
-                    await UpdateProjectAssignment(project);
-                }
-
-                foreach (var issueInProject in project.Issues)
-                {
-                    Issue issue = await _issueRepository.GetIssue(issueInProject.Split(':')[0].Replace("\"", ""));
-                    //issue.RemoveUsers = issue.Users;
-                    //issue.DeleteIssue = true;
-                    //await _issueRepository.Update(issue);
-                    //await UpdateIssue(issue);
-
-                    IssueList.Add(issue);
-                }
-
-
-                //foreach (var issueInProject in project.Issues)
+                //project.DeleteProject = true;
+                //if (project.Users != null)
                 //{
-                //    Issue issue = await _issueRepository.GetIssue(issueInProject.Split(':')[0].Replace("\"", ""));
-
-                //    //issue.RemoveUsers = issue.Users;
-                //    //await _issueRepository.Update(issue);
-                //    //await UpdateIssue(issue);
-
-
-                //    if (issue.ProjectIDCode == projectSelected)
-                //    {
-                //        issue.DeleteIssue = true;
-                //        issue.RemoveUsers = issue.Users;
-                //        await _issueRepository.Update(issue);
-                //        await UpdateIssue(issue);
-
-                //        //IssueList.Add(issue);
-                //    }
-
-                //    //List<string> userString = issue.RemoveUsers;
-                //    //foreach (var user in userString)
-                //    //{
-                //    //    var User = await _userRepository.GetUser(user);
-                //    //    //issue.Users.Remove(user + ": " + User.UserName);
-                //    //    await AddorRmove("Remove", "Issue", User, project, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
-                //    //}
-
+                //    await UpdateProjectAssignment(project);
                 //}
 
+                if (project.Users != null)
+                {
+                    foreach (var user in project.Users)
+                    {
+                        User User = await _userRepository.GetUser(user);
+                        
+                        if(User.Issues != null)
+                        {
+                            List<string> newIssueList = new List<string>();
+
+                            foreach (var issue in User.Issues)
+                            {
+                                if (!issue.Contains(project.IDCode))
+                                {
+                                    newIssueList.Add(issue);
+                                }
+                            }
+                            User.Issues = newIssueList;
 
 
-
-
-
-
+                        }
+                        await _userRepository.Update(User);
+                    }
+                }
 
                 ProjectList.Add(project);
-
 
             }
 
