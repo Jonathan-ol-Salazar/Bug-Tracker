@@ -721,7 +721,7 @@ namespace Bug_Tracker.Controllers
                                 else
                                 {
                                     //Issue issue = await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", ""));
-                                    IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", "")));
+                                    IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", "").Split('-')[1]));
                                 }
                             }
                             User.Issues = newIssueList;
@@ -837,7 +837,7 @@ namespace Bug_Tracker.Controllers
                 }
 
 
-                string projectIDName = projectFromDb.IDCode + ": " + projectFromDb.Name;
+                string projectIDName = projectFromDb.IDCode + ":" + projectFromDb.Name;
                 // AUTH0 FORMAT
                 //string projectIDName = "\"" + projectFromDb.IDCode + "\": \"" + projectFromDb.Title + "\"";
 
@@ -895,7 +895,7 @@ namespace Bug_Tracker.Controllers
                 }
 
 
-                string issueIDName = selectedIssue.ProjectIDCode + " - " + selectedIssue.IDCode + " : " + selectedIssue.Title;
+                string issueIDName = selectedIssue.ProjectIDCode + "-" + selectedIssue.IDCode + ":" + selectedIssue.Title;
                 // Auth0 format
                 //string selectedIssueJSON = "\"" + selectedIssue.IDCode + "\": \"" + selectedIssue.Title + "\"";
 
