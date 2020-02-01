@@ -696,11 +696,11 @@ namespace Bug_Tracker.Controllers
             foreach (var projectSelected in projectManagementViewModel.ProjectsSelected)
             {
                 var project = await _projectRepository.GetProject(projectSelected);
-                //project.DeleteProject = true;
-                //if (project.Users != null)
-                //{
-                //    await UpdateProjectAssignment(project);
-                //}
+                project.DeleteProject = true;
+                if (project.Users != null)
+                {
+                    await UpdateProjectAssignment(project);
+                }
 
                 if (project.Users != null)
                 {
@@ -717,6 +717,11 @@ namespace Bug_Tracker.Controllers
                                 if (!issue.Contains(project.IDCode))
                                 {
                                     newIssueList.Add(issue);
+                                }
+                                else
+                                {
+                                    //Issue issue = await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", ""));
+                                    IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", "")));
                                 }
                             }
                             User.Issues = newIssueList;

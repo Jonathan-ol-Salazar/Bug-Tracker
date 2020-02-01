@@ -73,7 +73,7 @@
                                     @*PRE-SELECTED ATTRIBUTES TO SELECT CURRENT USER*@
                                     <div class="form-group">
                                         <select id="Submitter" asp-for="Issue.Submitter">
-                                            <option value="@User.Identity.Name" selected="selected">@Model.Issue.Submitter</option>
+                                            <option value="@Model.Issue.Submitter" selected="selected">@Model.Issue.Submitter</option>
                                         </select>
                                         <select id="Project" asp-for="Issue.ProjectIDCode">
                                             <option value="@Model.Issue.ProjectIDCode" selected="selected">@Model.Issue.ProjectIDCode</option>
