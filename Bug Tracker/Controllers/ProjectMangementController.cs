@@ -235,7 +235,7 @@ namespace Bug_Tracker.Controllers
 
                 Project.Issues = projectIssues;
 
-                await _projectRepository.Update(Project);
+                //await _projectRepository.Update(Project);
 
 
                 // Delete issues from users
@@ -252,7 +252,7 @@ namespace Bug_Tracker.Controllers
 
                             foreach (var issue in User.Issues)
                             {
-                                if (!issue.Contains(Issue.ProjectIDCode))
+                                if (!issue.Contains(Issue.ProjectIDCode + "-" + issueSelected))
                                 {
                                     newIssueList.Add(issue);
                                 }
