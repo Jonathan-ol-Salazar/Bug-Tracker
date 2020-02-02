@@ -71,14 +71,21 @@ namespace Bug_Tracker.Controllers
             var x = User.Claims.ToList();
 
 
-            foreach (var project in currentUser.Projects)
+            if (currentUser.Projects != null)
             {
-                string projectIDCode = project.Split(':')[0].Replace("\"", "");
-                //projectIDCode = projectIDCode.Replace("\"", "");
+                foreach (var project in currentUser.Projects)
+                {
+                    string projectIDCode = project.Split(':')[0].Replace("\"", "");
+                    //projectIDCode = projectIDCode.Replace("\"", "");
 
-                ProjectList.Add(await _projectRepository.GetProject(projectIDCode));
+                    ProjectList.Add(await _projectRepository.GetProject(projectIDCode));
 
 
+                }
+            }
+            else
+            {
+                currentUser.Projects = new List<string>();
             }
 
 

@@ -234,10 +234,21 @@ namespace Bug_Tracker.Controllers
 
                 UserList.Add(user);
 
+                // Deleting user from Auth0
+
+                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userSelected;
+                var client = new RestClient(baseURL);
+                var request = new RestRequest(Method.DELETE);
+                request.AddHeader("authorization", "Bearer " +  GetAuthorizationToken());
+                IRestResponse response = client.Execute(request);
             }
 
 
             var result = await _userRepository.Delete(UserList);
+
+
+
+
 
             if (result)
             {
