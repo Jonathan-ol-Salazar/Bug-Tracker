@@ -216,12 +216,71 @@ namespace Bug_Tracker.Controllers
 
         // DELETE 
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> DeleteIssueConfirmation([Bind(include: "selectedIssueDelete")] ProjectManagementController projectManagementController)
-        //{
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteIssuesConfirmation([Bind(include: "selectedIssuesDelete")] ProjectManagementViewModel projectManagementViewModel)
+        {
+            List<string> projectIssues = new List<string>();
+            List<Issue> IssueList = new List<Issue>();
 
-        //}
+            foreach (var issueSelected in projectManagementViewModel.selectedIssuesDelete)
+            {
+                Issue Issue = await _issueRepository.GetIssue(issueSelected);
+
+                // Delete issue from project 
+
+                Project Project = await _projectRepository.GetProject(Issue.ProjectIDCode);
+                projectIssues = Project.Issues;
+                projectIssues.Remove(Issue.IDCode + ":" + Issue.Title);
+
+                Project.Issues = projectIssues;
+
+                //await _projectRepository.Update(Project);
+
+
+                // Delete issues from users
+
+                if (Issue.Users != null)
+                {
+                    foreach (var user in Issue.Users)
+                    {
+                        User User = await _userRepository.GetUser(user);
+
+                        if (User.Issues != null)
+                        {
+                            List<string> newIssueList = new List<string>();
+
+                            foreach (var issue in User.Issues)
+                            {
+                                if (!issue.Contains(Issue.ProjectIDCode))
+                                {
+                                    newIssueList.Add(issue);
+                                }
+                                else
+                                {
+                                    IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0].Replace("\"", "").Split('-')[1]));
+                                }
+                            }
+                            User.Issues = newIssueList;
+                        }
+                        await _userRepository.Update(User);
+                    }
+                }
+                
+
+            }
+
+            await _issueRepository.Delete(IssueList);
+
+
+
+            return RedirectToAction("Index");
+
+
+        }
+
+
+
 
         [HttpGet]
         public async Task<ActionResult> DeleteIssues(string ProjectIDCode)
@@ -244,52 +303,24 @@ namespace Bug_Tracker.Controllers
 
         public async Task<ActionResult> DeleteIssues([Bind(include: "selectedIssuesDelete, ProjectIDCode")] ProjectManagementViewModel projectManagementViewModel)
         {
-            Project Project = await _projectRepository.GetProject(projectManagementViewModel.ProjectIDCode);
-            List<string> projectIssues = new List<string>();
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+            List<Issue> IssueList = new List<Issue>();
 
 
-
-            foreach (var issue in projectManagementViewModel.selectedIssuesDelete)
+            foreach (var issueSelected in projectManagementViewModel.selectedIssuesDelete)
             {
-                Issue Issue = await _issueRepository.GetIssue(issue);
+                var issue = await _issueRepository.GetIssue(issueSelected);
 
-                // Delete issue from project 
-                projectIssues = Project.Issues;
-                projectIssues.Remove(Issue.IDCode + ":" + Issue.Title);
-
-                Project.Issues = projectIssues;
-
-                await _projectRepository.Update(Project);
-
-
-
-
-                // Delete issues from users
-                Issue.RemoveUsers = Issue.Users;
-                await _issueRepository.Update(Issue);
-
-                await UpdateIssue(Issue);
-
-
-
-
-                //foreach(var user in Issue.Users)
-                //{
-                //}
-
-
-
+                IssueList.Add(issue);
             }
 
-
-            //var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
-
-            //selectedProject.Issues.Add(issue.IDCode + ":" + issue.Title);
-
-            //await _projectRepository.Update(selectedProject);
+            model = projectManagementViewModel;
+            model.IssueList = IssueList;
 
 
-            return RedirectToAction("Index", Project);
+
+
+                return View("DeleteIssuesConfirmation", model);
 
 
         }
@@ -774,7 +805,7 @@ namespace Bug_Tracker.Controllers
             model = projectManagementViewModel;
             model.ProjectList = ProjectList;
 
-            return View("DeleteConfirmation", model);
+            return View("DeleteProjectsConfirmation", model);
         }
 
         
