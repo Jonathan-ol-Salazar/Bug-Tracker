@@ -1,6 +1,6 @@
-﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
+﻿@model BugTrackerDataAccess.ViewModel.UserManagementViewModel
 @{
-    ViewData["Title"] = "Delete Projects Confirmation";
+    ViewData["Title"] = "Delete Users Confirmation";
 }
 
 
@@ -23,7 +23,7 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
-        
+
 
     <!-- DataTables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
@@ -49,14 +49,14 @@
                 <div class="row mb-2">
                     <div class="col-sm-6">
 
-                        <h1>Delete Projects Confirmation</h1>
+                        <h1>Delete Users Confirmation</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Project Management</li>
-                            <li class="breadcrumb-item active">Delete Projects</li>
-                            <li class="breadcrumb-item active">Delete Projects Confirmation</li>
+                            <li class="breadcrumb-item active">User Management</li>
+                            <li class="breadcrumb-item active">Delete Users</li>
+                            <li class="breadcrumb-item active">Delete Users Confirmation</li>
 
                         </ol>
                     </div>
@@ -71,7 +71,7 @@
                     <div class="col-12">
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Projects To Be Deleted</h3>
+                                <h3 class="card-title">Users To Be Deleted</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                         <i class="fas fa-minus"></i>
@@ -83,47 +83,37 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <table id="ProjectsTable" class="table table-hover">
+                                <table id="UserDatabase" class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>IDCode</th>
-                                            <th>Name</th>
-                                            <th>Description</th>
-                                            <th>Project Manager</th>
-                                            @*<th>Num. Users</th>*@
-                                            @*<th>Num. Issues</th>*@
-                                            <th>Created</th>
-                                            <th>Updated</th>
+                                            <th>User ID</th>
+                                            <th>User Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Num. Projects</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach (var item in Model.ProjectList)
+                                    <tbody id="myTable">
+                                        @foreach (var item in Model.UserList)
                                         {
                                             <tr>
-                                                <td>@item.IDCode</td>
-                                                <td>@item.Name</td>
-                                                <td>@item.Description</td>
-                                                <td>
-                                                    @item.ProjectManagerUserName
-                                                    @item.ProjectManagerUserID
-                                                </td>
-                                                @*<td>@item.NumUsers<td>*@
-                                                @*<td>@item.NumIssues</td>*@
-                                                <td>@item.Created</td>
-                                                <td>@item.Updated</td>
+                                                <td>@item.ID</td>
+                                                <td>@item.UserName</td>
+                                                <td>@item.Email</td>
+                                                <td>@item.Role</td>
+                                                <td>@item.NumProjects</td>
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
 
-
-                                @*PRE-SELECTED PROJECTS TO DELETE FROM PREVIOUS PAGE 'DeleteProjects'*@
-                                <form asp-action="ConfirmDeleteProject">
-                                    <div class="form-group">                                       
-                                        <select id="SelectedProject" asp-for="@Model.ProjectsSelected" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.ProjectList)
+                                @*PRE-SELECTED PROJECTS TO DELETE FROM PREVIOUS PAGE 'DeleteUsers'*@
+                                <form asp-action="DeleteConfirmation">
+                                    <div class="form-group">
+                                        <select id="SelectedUser" asp-for="@Model.selectedUsersDelete" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.UserList)
                                             {
-                                                <option value="@item.IDCode" selected></option>
+                                                <option value="@item.ID" selected></option>
                                             }
                                         </select>
                                     </div>
@@ -136,7 +126,7 @@
 
 
 
-                            </div>
+                        </div>
                             <!-- /.card-body -->
                         </div>
 
@@ -153,10 +143,10 @@
     <script>
         $(document).ready(function () {
 
-            $("#ProjectsTable").DataTable();
+            $("#UserDatabase").DataTable();
 
-            var SelectedProject = document.getElementById("SelectedProject");
-            SelectedProject.style.display = "none";
+            var SelectedUser = document.getElementById("SelectedUser");
+            SelectedUser.style.display = "none";
 
         });
 

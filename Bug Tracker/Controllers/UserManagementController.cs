@@ -18,12 +18,18 @@ namespace Bug_Tracker.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IProjectRepository _projectRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IIssueRepository _issueRepository;
+        private readonly ProjectManagementController _projectManagementController;
 
-        public UserManagementController(IUserRepository userRepository, IProjectRepository projectRepository, IRoleRepository roleRepository)
+
+        public UserManagementController(IUserRepository userRepository, IProjectRepository projectRepository, IRoleRepository roleRepository, IIssueRepository issueRepository, ProjectManagementController projectManagementController)
         {
             _userRepository = userRepository;
             _projectRepository = projectRepository;
             _roleRepository = roleRepository;
+            _issueRepository = issueRepository;
+            _projectManagementController = projectManagementController;
+
         }
 
         public string GetAuthorizationToken()
@@ -176,7 +182,74 @@ namespace Bug_Tracker.Controllers
 
         }
 
+        // DELETE
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmation([Bind(include: "selectedUsersDelete")] UserManagementViewModel userManagementViewModel)
+        {
+            List<User> UserList = new List<User>();
+            List<Issue> IssueList = new List<Issue>();
+
+            foreach (var userSelected in userManagementViewModel.selectedUsersDelete)
+            {
+                var user = await _userRepository.GetUser(userSelected);
+                         
+
+                if (user.Projects != null)
+                {
+
+                    foreach (var project in user.Projects)
+                    {
+
+                        // REMOVING USER FROM PROJECT 
+                        Project Project = await _projectRepository.GetProject(project.Split(':')[0]);
+
+                        Project.RemoveUsers = new List<string>();
+                        Project.RemoveUsers.Add(userSelected);
+                        Project.AddUsers = null;
+
+                        await _projectRepository.Update(Project);
+
+                        await _projectManagementController.UpdateProjectAssignment(Project);
+
+                        // REMOVING USER FROM ASSOCIATED ISSUES FROM PROJECT
+
+                        if (user.Issues != null)
+                        {
+                            foreach (var issue in user.Issues)
+                            {
+                                Issue Issue = await _issueRepository.GetIssue(issue);
+                                Issue.RemoveUsers = new List<string>();
+                                Issue.RemoveUsers.Add(userSelected);
+
+                                await _issueRepository.Update(Issue);
+
+                                await _projectManagementController.UpdateIssue(Issue);
+                            }
+                        }
+       
+                    }
+                }
+
+                UserList.Add(user);
+
+            }
+
+
+            var result = await _userRepository.Delete(UserList);
+
+            if (result)
+            {
+                TempData["Message"] = "User Deleted Successfully";
+            }
+            else
+            {
+                TempData["Message"] = "Error While Deleting the User";
+            }
+
+            return RedirectToAction("Index");
+        }
 
         [HttpGet]
         public async Task<ActionResult> DeleteUsers()
