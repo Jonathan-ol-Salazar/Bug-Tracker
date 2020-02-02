@@ -220,6 +220,7 @@ namespace Bug_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteIssuesConfirmation([Bind(include: "selectedIssuesDelete")] ProjectManagementViewModel projectManagementViewModel)
         {
+            Project Project = new Project();
             List<string> projectIssues = new List<string>();
             List<Issue> IssueList = new List<Issue>();
 
@@ -229,7 +230,7 @@ namespace Bug_Tracker.Controllers
 
                 // Delete issue from project 
 
-                Project Project = await _projectRepository.GetProject(Issue.ProjectIDCode);
+                Project = await _projectRepository.GetProject(Issue.ProjectIDCode);
                 projectIssues = Project.Issues;
                 projectIssues.Remove(Issue.IDCode + ":" + Issue.Title);
 
@@ -274,7 +275,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index" , Project );
 
 
         }
