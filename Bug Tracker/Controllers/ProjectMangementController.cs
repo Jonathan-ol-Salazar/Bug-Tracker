@@ -214,6 +214,82 @@ namespace Bug_Tracker.Controllers
         }
 
 
+        // DELETE 
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> DeleteIssueConfirmation([Bind(include: "selectedIssueDelete")] ProjectManagementController projectManagementController)
+        //{
+
+        //}
+
+        [HttpGet]
+        public async Task<ActionResult> DeleteIssues(string ProjectIDCode)
+        {
+            ProjectManagementViewModel model = new ProjectManagementViewModel();
+
+            Project Project = await _projectRepository.GetProject(ProjectIDCode);
+            List<Issue> IssueList = new List<Issue>();
+
+            foreach (var issue in Project.Issues)
+            {
+                IssueList.Add(await _issueRepository.GetIssue(issue.Split(':')[0]));
+            }
+
+            model.IssueList = IssueList;
+            model.ProjectIDCode = ProjectIDCode;
+
+            return View("DeleteIssues", model);
+        }
+
+        public async Task<ActionResult> DeleteIssues([Bind(include: "selectedIssuesDelete, ProjectIDCode")] ProjectManagementViewModel projectManagementViewModel)
+        {
+            Project Project = await _projectRepository.GetProject(projectManagementViewModel.ProjectIDCode);
+
+            foreach (var issue in projectManagementViewModel.selectedIssuesDelete)
+            {
+                Issue Issue = await _issueRepository.GetIssue(issue);
+
+                // Delete issue from project 
+                Project.Issues.Remove(Issue.IDCode + ":" + Issue.Title);
+
+                await _projectRepository.Update(Project);
+
+
+
+                // Delete issues from users
+                Issue.RemoveUsers = Issue.Users;
+                await _issueRepository.Update(Issue);
+
+                await UpdateIssue(Issue);
+
+
+
+
+                //foreach(var user in Issue.Users)
+                //{
+                //}
+
+
+
+            }
+
+
+            //var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
+
+            //selectedProject.Issues.Add(issue.IDCode + ":" + issue.Title);
+
+            //await _projectRepository.Update(selectedProject);
+
+
+            return RedirectToAction("Index", Project);
+
+
+        }
+
+
+
+
         // UPDATE
 
         [HttpGet]
