@@ -195,7 +195,7 @@ namespace Bug_Tracker.Controllers
 
                 var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
                 
-                selectedProject.Issues.Add(issue.IDCode + ": " + issue.Title);
+                selectedProject.Issues.Add(issue.IDCode + ":" + issue.Title);
 
                 await _projectRepository.Update(selectedProject);
 

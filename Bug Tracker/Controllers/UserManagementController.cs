@@ -219,10 +219,10 @@ namespace Bug_Tracker.Controllers
                         {
                             foreach (var issue in user.Issues)
                             {
-                                Issue Issue = await _issueRepository.GetIssue(issue);
+                                Issue Issue = await _issueRepository.GetIssue(issue.Split('-')[1].Split(':')[0]);
                                 Issue.RemoveUsers = new List<string>();
                                 Issue.RemoveUsers.Add(userSelected);
-
+                                Issue.AddUsers = null;
                                 await _issueRepository.Update(Issue);
 
                                 await _projectManagementController.UpdateIssue(Issue);
