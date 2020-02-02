@@ -223,14 +223,16 @@ namespace Bug_Tracker.Controllers
             Project Project = new Project();
             List<string> projectIssues = new List<string>();
             List<Issue> IssueList = new List<Issue>();
+            string ProjectIDCode = "";
+
 
             foreach (var issueSelected in projectManagementViewModel.selectedIssuesDelete)
             {
                 Issue Issue = await _issueRepository.GetIssue(issueSelected);
-
+                ProjectIDCode = Issue.ProjectIDCode;
                 // Delete issue from project 
 
-                Project = await _projectRepository.GetProject(Issue.ProjectIDCode);
+                Project = await _projectRepository.GetProject(ProjectIDCode);
                 projectIssues = Project.Issues;
                 projectIssues.Remove(Issue.IDCode + ":" + Issue.Title);
 
@@ -253,7 +255,7 @@ namespace Bug_Tracker.Controllers
 
                             foreach (var issue in User.Issues)
                             {
-                                if (!issue.Contains(Issue.ProjectIDCode + "-" + issueSelected))
+                                if (!(Issue.ProjectIDCode + "-" + issueSelected).Equals(issue.Split(':')[0]))
                                 {
                                     newIssueList.Add(issue);
                                 }
@@ -275,7 +277,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-            return RedirectToAction("Index" , Project );
+            return RedirectToAction("Index" , await _projectRepository.GetProject(ProjectIDCode));
 
 
         }
