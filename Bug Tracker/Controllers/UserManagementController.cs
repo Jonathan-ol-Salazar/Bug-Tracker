@@ -74,12 +74,12 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Update([Bind(include: "selectedUsers, selectedRole")] UserManagementViewModel model)
+        public async Task<ActionResult> Update([Bind(include: "selectedUsersUpdate, selectedRole")] UserManagementViewModel model)
         {
             if (ModelState.IsValid)
             {
 
-                foreach (var user in model.selectedUsers)
+                foreach (var user in model.selectedUsersUpdate)
                 {
                     // Updating MongoDB
 
@@ -175,6 +175,43 @@ namespace Bug_Tracker.Controllers
 
 
         }
+
+
+
+        [HttpGet]
+        public async Task<ActionResult> DeleteUsers()
+        {
+            UserManagementViewModel model = new UserManagementViewModel();
+            model.UserList = await _userRepository.GetAllUsers();
+
+
+            return View("DeleteUsers", model);
+        }
+
+
+        public async Task<ActionResult> DeleteUsers([Bind(include: "selectedUsersDelete")] UserManagementViewModel userManagementViewModel)
+        {
+            UserManagementViewModel model = new UserManagementViewModel();
+            List<User> UserList = new List<User>();
+
+
+            foreach (var userSelected in userManagementViewModel.selectedUsersDelete)
+            {
+                var user = await _userRepository.GetUser(userSelected);
+
+
+                UserList.Add(user);
+            }
+
+            model = userManagementViewModel;
+            model.UserList = UserList;
+
+            return View("DeleteConfirmation", model);
+        }
+
+
+
+
 
 
 

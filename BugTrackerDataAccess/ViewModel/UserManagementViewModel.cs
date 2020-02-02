@@ -18,9 +18,16 @@ namespace BugTrackerDataAccess.ViewModel
 
         public User User { get; set; }
 
-        public List<string> selectedUsers { get; set; }
+        public List<string> selectedUsersUpdate { get; set; }
 
         public string selectedRole { get; set; }
+
+
+
+        public List<string> selectedUsersDelete { get; set; }
+
+
+
 
 
     }
