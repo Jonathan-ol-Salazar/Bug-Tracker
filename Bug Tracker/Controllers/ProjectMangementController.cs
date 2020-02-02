@@ -235,7 +235,7 @@ namespace Bug_Tracker.Controllers
 
                 Project.Issues = projectIssues;
 
-                //await _projectRepository.Update(Project);
+                await _projectRepository.Update(Project);
 
 
                 // Delete issues from users
