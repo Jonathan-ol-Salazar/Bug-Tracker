@@ -107,6 +107,16 @@
                             </div>
                             <div class="card-body">
                                 <form asp-action="DeleteIssues">
+                                    
+                                    @*PRE-SELECTED PROJECTIDCODE*@
+                                    <div class="form-group">
+                                        <select id="SelectedProject" asp-for="@Model.ProjectIDCode">
+                                            <option value="@Model.ProjectIDCode" selected="selected">@Model.ProjectIDCode</option>
+                                        </select>
+                                    </div>
+
+
+
                                     <div class="form-group">
 
                                         <label asp-for="@Model.selectedIssuesDelete" class="control-label">Select Issues To Be Deleted</label>
@@ -196,6 +206,8 @@
         $(document).ready(function () {
             $("#IssuesTable").DataTable();
 
+            var SelectedProject = document.getElementById("SelectedProject");
+            SelectedProject.style.display = "none";
 
         });
 

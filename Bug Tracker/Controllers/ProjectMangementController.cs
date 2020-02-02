@@ -245,15 +245,22 @@ namespace Bug_Tracker.Controllers
         public async Task<ActionResult> DeleteIssues([Bind(include: "selectedIssuesDelete, ProjectIDCode")] ProjectManagementViewModel projectManagementViewModel)
         {
             Project Project = await _projectRepository.GetProject(projectManagementViewModel.ProjectIDCode);
+            List<string> projectIssues = new List<string>();
+
+
 
             foreach (var issue in projectManagementViewModel.selectedIssuesDelete)
             {
                 Issue Issue = await _issueRepository.GetIssue(issue);
 
                 // Delete issue from project 
-                Project.Issues.Remove(Issue.IDCode + ":" + Issue.Title);
+                projectIssues = Project.Issues;
+                projectIssues.Remove(Issue.IDCode + ":" + Issue.Title);
+
+                Project.Issues = projectIssues;
 
                 await _projectRepository.Update(Project);
+
 
 
 
