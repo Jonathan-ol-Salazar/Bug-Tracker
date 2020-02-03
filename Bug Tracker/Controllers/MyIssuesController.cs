@@ -74,7 +74,7 @@ namespace Bug_Tracker.Controllers
 
             foreach (var issue in currentUser.Issues)
             {
-                string issueIDCode = issue.Split(':')[0].Replace("\"", "");
+                string issueIDCode = issue.Split(':')[0].Split('-')[1];
                 IssueList.Add(await _issueRepository.GetIssue(issueIDCode));
 
 
