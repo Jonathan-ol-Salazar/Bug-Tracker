@@ -1,66 +1,52 @@
-# Project Title
+### Status 
+The project has currently stopped development, but still provides the basic functionality of a tradition issue tracking system. For a full breakdown on the remaining feature requests to be implmented, please refer to **Remaining Features Requests**.
 
-One Paragraph of project description goes here
+# Bug Tracker
+
+This project functions as a traditional issue tracking system in which bugs and feature requests can be tracked throughout a software product development phase. The project is a web application and was created using an MVC design pattern and MongoDB as its main database program.
+
+## Motivation 
+
+The motivation behind the creation of this project was to develop my first full-stack web application. At the time, I had very little experience with C# so I figured, completing such a large project associated with aspects and knowledge I lacked would give me an enormous learning advantage as it would force me to not only learn new concepts but also implement them into practice.
+
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+### Prerequisites and Installation
 
-What things you need to install the software and how to install them
+Software that needs to be installed prior to using application.
 
-```
-Give examples
-```
+- IDE, that supports MVC and ASP.NET Core development (Visual Studio preferred)
+- ASP.NET Core, framework used to build the web application
+- Web browser (Google Chrome preferred)
+- MongoDB Atlas cluster, this is where most of the data will stored
+- Auth0 account and tenant, this is a third party web service to handle authentication and authorization
 
-### Installing
+Installation guides for prerequisite software
 
-A step by step series of examples that tell you how to get a development env running
+- [Visual Studio](https://visualstudio.microsoft.com/downloads/), any version is compatible
+- [ASP.NET](https://dotnet.microsoft.com/download), install the latest .NET Core version
+- [Google Chrome](https://support.google.com/chrome/answer/95346?co=GENIE.Platform%3DDesktop&hl=en), follow guide for you specific platform
+- [MongoDB Atlas](https://docs.atlas.mongodb.com/getting-started/)
+- [Auth0 Account](https://auth0.com/signup?&signUpData=%7B%22category%22%3A%22docs%22%7D)
+- [Auth0 Tenant](https://auth0.com/docs/getting-started/create-tenant)
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+This project currently has no automated tests.
 
-### Break down into end to end tests
 
-Explain what these tests test and why
+## Screenshots
 
-```
-Give an example
-```
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+At this stage the project is not deployable and only able to run though the IDE
 
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ## Contributing
 
@@ -68,20 +54,18 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+ [Git](https://github.com/) and [GitHub](https://git-scm.com/) is used for versioning.
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Jonathan Salazar** - *Initial work* - [Jonathan-ol-Salazar](https://github.com/Jonathan-ol-Salazar)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/graphs/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is not licensed.
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Kaushik Roy Chowdhury - Generated a tutorial on how to MVC with MongoDB, this was the foundation of the entire project
