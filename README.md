@@ -24,7 +24,7 @@ Software that needs to be installed prior to using application.
 - MongoDB Atlas cluster, this is where most of the data will stored
 - Auth0 account and tenant, this is a third party web service to handle authentication and authorization
 
-Installation guides for prerequisite software
+Installation guides for prerequisite software.
 
 - [Visual Studio](https://visualstudio.microsoft.com/downloads/), any version is compatible
 - [ASP.NET](https://dotnet.microsoft.com/download), install the latest .NET Core version
@@ -41,18 +41,24 @@ This project currently has no automated tests.
 
 ## Screenshots
 
-Below are screenshots of the 5 main pages of the application.
+Below are screenshots of the 5 main pages of the application. Click on image to be redirected to the repo page for a better view.
 
 - Account
+![Image of Account page](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/blob/master/Demo%20Pictures/Account.JPG)
 - User Management
-- Project Management 
+![Image of User Management page](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/blob/master/Demo%20Pictures/User%20Management.JPG)
+- Project Management
+![Image of Project Management - 1 page](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/blob/master/Demo%20Pictures/Project%20Management%20-%201.JPG)
+![Image of Project Management - 2 page](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/blob/master/Demo%20Pictures/Project%20Management%20-%202.JPG)
 - My Projects
+![Image of My Projects page](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/blob/master/Demo%20Pictures/My%20Projects.JPG)
 - My Issues
+![Image of My Issues page](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/blob/master/Demo%20Pictures/My%20Issues.JPG)
 
 
 ## Deployment
 
-At this stage the project is not deployable and only able to run though the IDE
+At this stage the project is not deployable and only able to run though the IDE.
 
 
 ## Contributing
