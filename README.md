@@ -41,6 +41,13 @@ This project currently has no automated tests.
 
 ## Screenshots
 
+Below are screenshots of the 5 main pages of the application.
+
+- Account
+- User Management
+- Project Management 
+- My Projects
+- My Issues
 
 
 ## Deployment
