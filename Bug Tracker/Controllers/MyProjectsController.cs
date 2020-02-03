@@ -51,13 +51,18 @@ namespace Bug_Tracker.Controllers
             return Auth0ManagementAPI_AccessToken;
         }
 
+
+
+
+
         //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Index(Project Project = null)
         {
 
             // GETTING AUTH0 USER DETAILS OF CURRENT SIGNED IN USER
-            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            string UserID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
 
 
             List<Project> ProjectList = new List<Project>();
@@ -66,8 +71,43 @@ namespace Bug_Tracker.Controllers
             MyProjectsViewModel model = new MyProjectsViewModel();
 
 
-            var currentUser = await _userRepository.GetUser(userId);
-            string[] rolesArray;
+            var currentUser = await _userRepository.GetUser(UserID);
+
+            // If UserID does not exist in MongoDB, then call Auth0 API get to new users details
+            if(currentUser == null)
+            {
+                // Call Auth0 API to get user details to fill out User class
+                var client = new RestClient("https://wussubininja.au.auth0.com/api/v2/users/" + UserID);
+                var request = new RestRequest(Method.GET);
+                request.AddHeader("authorization", "Bearer " + GetAuthorizationToken());
+                request.AddHeader("content-type", "application/json");
+                IRestResponse response = client.Execute(request);
+
+                var userJson = JObject.Parse(response.Content);
+
+                User newUser = new User();
+
+                newUser.ID = UserID;
+                newUser.UserName = userJson.SelectToken("name").ToString();
+                newUser.Email = userJson.SelectToken("email").ToString();
+                newUser.Role = "";
+                newUser.Projects = new List<string>();
+                newUser.Issues = new List<string>();
+                newUser.NumProjects = 0;
+                newUser.DOB = "";
+                newUser.About = "";
+                newUser.Location = "";
+                newUser.Skills = "";
+                newUser.Education = "";
+                newUser.AccountImage = userJson.SelectToken("picture").ToString();;
+
+                currentUser = newUser;
+                // Create User
+                await _userRepository.Create(newUser);
+            }
+
+
+
             var x = User.Claims.ToList();
 
 
@@ -76,7 +116,6 @@ namespace Bug_Tracker.Controllers
                 foreach (var project in currentUser.Projects)
                 {
                     string projectIDCode = project.Split(':')[0].Replace("\"", "");
-                    //projectIDCode = projectIDCode.Replace("\"", "");
 
                     ProjectList.Add(await _projectRepository.GetProject(projectIDCode));
 
