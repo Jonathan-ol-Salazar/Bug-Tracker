@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Collections;
 using BugTrackerDataAccess.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bug_Tracker.Controllers
 {
@@ -262,6 +263,7 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> DeleteUsers()
         {
