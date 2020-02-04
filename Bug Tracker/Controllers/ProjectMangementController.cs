@@ -668,14 +668,42 @@ namespace Bug_Tracker.Controllers
                     // Removing users from project
                     if (project.RemoveUsers != null)
                     {
-                        for (int i = 0; i < project.RemoveUsers.Count; i++)
+                        foreach(var user in project.RemoveUsers)
                         {
-                            User selectedUser = new User();
-                            selectedUser.ID = project.RemoveUsers[i];
+                            User selectedUser = await _userRepository.GetUser(user);
 
                             await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
 
+                            foreach (var issue in selectedUser.Issues)
+                            {
+                                if (issue.Contains(project.IDCode))
+                                {
+                                    Issue Issue = await _issueRepository.GetIssue(issue.Split(':')[0].Split('-')[1]);
+                                    //issueRemove.Add(Issue);
+                                    Issue.RemoveUsers = new List<string>();
+                                    Issue.RemoveUsers.Add(selectedUser.ID);
+                                    Issue.AddUsers = null;
+
+                                    await UpdateIssue(Issue);
+                                    //await AddorRmove("Remove", "Issue", selectedUser, null, Issue, Auth0ManagementAPI_AccessToken);
+
+                                }
+
+                            }
+
                         }
+
+
+
+
+                        //for (int i = 0; i < project.RemoveUsers.Count; i++)
+                        //{
+                        //    User selectedUser = new User();
+                        //    selectedUser.ID = project.RemoveUsers[i];
+                        //    await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);                            
+
+                        //}
+
                     }
                 }
                 else
