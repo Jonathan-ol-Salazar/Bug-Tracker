@@ -133,16 +133,19 @@
 
                                 </div>
                                 <!-- /.card-body -->
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="card-footer">
+                                        <div class="text-center">
 
-                                <div class="card-footer">
-                                    <div class="text-center">
+                                            <a href="@Url.Action("DeleteUsers", "UserManagement", new { })" class="btn btn-sm btn-danger">
+                                                Delete Users
+                                            </a>
 
-                                        <a href="@Url.Action("DeleteUsers", "UserManagement", new { })" class="btn btn-sm btn-danger">
-                                            Delete Users
-                                        </a>
-
+                                        </div>
                                     </div>
-                                </div>
+                                }
+
 
                             </form>
                         </div>

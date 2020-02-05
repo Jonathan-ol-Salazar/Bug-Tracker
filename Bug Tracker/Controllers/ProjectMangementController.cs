@@ -12,6 +12,7 @@ using BugTrackerDataAccess.ViewModel;
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bug_Tracker.Controllers
 {
@@ -48,7 +49,7 @@ namespace Bug_Tracker.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin, Project Manager" )]
         [HttpGet]
         public async Task<IActionResult> Index(Project Project = null, string ProjectIDCode = null)
         {
@@ -121,13 +122,6 @@ namespace Bug_Tracker.Controllers
             model.Project = Project;
             return View(model);
         }
-
-
-
-
-
-
-
 
 
 
@@ -284,7 +278,7 @@ namespace Bug_Tracker.Controllers
 
 
 
-
+        [Authorize(Roles = "Admin, Project Manager")]
         [HttpGet]
         public async Task<ActionResult> DeleteIssues(string ProjectIDCode)
         {
@@ -303,7 +297,8 @@ namespace Bug_Tracker.Controllers
 
             return View("DeleteIssues", model);
         }
-
+        
+        [Authorize(Roles = "Admin, Project Manager")]
         public async Task<ActionResult> DeleteIssues([Bind(include: "selectedIssuesDelete, ProjectIDCode")] ProjectManagementViewModel projectManagementViewModel)
         {
             ProjectManagementViewModel model = new ProjectManagementViewModel();
@@ -518,7 +513,7 @@ namespace Bug_Tracker.Controllers
 
 
         // CREATE
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> CreateProject()
         {
@@ -545,7 +540,8 @@ namespace Bug_Tracker.Controllers
             return View("CreateProject", model);
 
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID, AddUsers")] Project project)
@@ -575,9 +571,9 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index", project);
         }
 
-        
-        // UPDATE 
 
+        // UPDATE 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> UpdateProjectDetails(string IDCode)
         {
@@ -601,6 +597,7 @@ namespace Bug_Tracker.Controllers
             return View("UpdateProjectDetails", model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateProjectDetails([Bind(include: "IDCode, Name, Description, ProjectManagerUserID")] Project project)
@@ -632,6 +629,7 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index", project);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateProjectAssignment([Bind(include: "AddUsers, RemoveUsers, IDCode")] Project project)
@@ -734,7 +732,7 @@ namespace Bug_Tracker.Controllers
 
 
         // DELETE
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ConfirmDeleteProject([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
@@ -802,7 +800,7 @@ namespace Bug_Tracker.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> DeleteProjects()
         {
@@ -813,7 +811,7 @@ namespace Bug_Tracker.Controllers
             return View("DeleteProjects", model);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteProjects([Bind(include: "ProjectsSelected")] ProjectManagementViewModel projectManagementViewModel)
         {
             ProjectManagementViewModel model = new ProjectManagementViewModel();
@@ -974,37 +972,15 @@ namespace Bug_Tracker.Controllers
 
 
 
-      
-
-
-
-
-
-
-
             }
 
 
-
-         
-
-
-
-
-
             return await GetProjectById(selectedProject);
-
-
+            
         }
 
 
       
-
-
-
-
-
-
 
 
         public IActionResult Profile()

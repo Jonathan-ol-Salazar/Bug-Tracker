@@ -73,10 +73,6 @@ namespace Bug_Tracker.Controllers
 
 
 
-
-      
-
-
    
 
         [HttpPost]
@@ -96,8 +92,7 @@ namespace Bug_Tracker.Controllers
 
                     await _userRepository.Update(userFromDb);
 
-
-
+                    
                     // Updating Auth0
 
                     string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user;
@@ -107,81 +102,16 @@ namespace Bug_Tracker.Controllers
                     var request = new RestRequest(Method.PATCH);
                     request.AddHeader("authorization", authorizationValue);
                     request.AddHeader("content-type", "application/json");
-                    //request.AddParameter("application/json", "{\"user_metadata\": {\"addresses\": {\"home\": \"123 Main Street, Anytown, ST 12345\"}}}", ParameterType.RequestBody);
                     request.AddParameter("application/json", "{\"app_metadata\": " + newRole, ParameterType.RequestBody);
                     IRestResponse response = client.Execute(request);
 
 
-
-
-
-
-
-                }
-
-
-
-
-
-                //for (int i = 0; i < user.IDArray.Count; i++)  //foreach (var selectedUserID in selectedUsers.)
-                //{
-                //    User selectedUser = new User();
-                //    selectedUser.ID = user.IDArray[i];
-                //    selectedUser.Projects = user.Projects;
-                //    selectedUser.RoleID = user.RoleID;
-
-
-
-
-                //    var userFromDb = await _userRepository.GetUser(selectedUser.ID);
-                //    if (userFromDb == null)
-                //    {
-                //        return new NotFoundResult();
-                //    }
-                //    selectedUser.Id = userFromDb.Id;
-
-                //    //await _userRepository.Update(selectedUser);
-
-
-                //    string baseURL = "";
-                //    string authorizationValue = "Bearer " + GetAuthorizationToken();
-                //    if (selectedUser.RoleID != null)
-                //    {
-                //Use Auth0 API to remove all users ROLES
-                //baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + selectedUser.ID + "/roles";
-                ////object oldRole = "{ \"roles\": [ \"" + userFromDb.RoleID + "\"] }";
-                //var client = new RestClient(baseURL);
-
-
-                //var request = new RestRequest(Method.DELETE);
-                //request.AddHeader("content-type", "application/json");
-                //request.AddHeader("authorization", authorizationValue);
-                //request.AddHeader("cache-control", "no-cache");
-                //request.AddParameter("application/json", oldRole, ParameterType.RequestBody);
-                //IRestResponse response = client.Execute(request);
-
-                //// Use Auth0 API to add ROLE to user
-                //object newRole = "{ \"roles\": [ \"" + selectedUser.RoleID + "\"] }";
-                //var request = new RestRequest(Method.POST);
-                //request.AddHeader("content-type", "application/json");
-                //request.AddHeader("authorization", authorizationValue);
-                //request.AddHeader("cache-control", "no-cache");
-                //request.AddParameter("application/json", newRole, ParameterType.RequestBody);
-                //IRestResponse response = client.Execute(request);
-                //    }
-
-
-
-                //}
-
+                }             
             }
 
-
             return RedirectToAction("Index");
-
-
-
         }
+
 
         // DELETE
 
@@ -236,7 +166,6 @@ namespace Bug_Tracker.Controllers
                 UserList.Add(user);
 
                 // Deleting user from Auth0
-
                 string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + userSelected;
                 var client = new RestClient(baseURL);
                 var request = new RestRequest(Method.DELETE);
@@ -246,9 +175,6 @@ namespace Bug_Tracker.Controllers
 
 
             var result = await _userRepository.Delete(UserList);
-
-
-
 
 
             if (result)
@@ -262,6 +188,7 @@ namespace Bug_Tracker.Controllers
 
             return RedirectToAction("Index");
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpGet]

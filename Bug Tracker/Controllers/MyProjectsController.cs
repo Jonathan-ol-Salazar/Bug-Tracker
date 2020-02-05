@@ -140,7 +140,7 @@ namespace Bug_Tracker.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> CreateProject()
         {
@@ -170,7 +170,7 @@ namespace Bug_Tracker.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateProject([Bind(include: "IDCode, Name, Description, ProjectManagerUserID, AddUsers")] Project project)
@@ -271,29 +271,6 @@ namespace Bug_Tracker.Controllers
             model.Project = Project;
             return View(model);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
