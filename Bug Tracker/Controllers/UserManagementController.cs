@@ -56,17 +56,33 @@ namespace Bug_Tracker.Controllers
         {
             // Model for view
             UserManagementViewModel model = new UserManagementViewModel();
+            List<Role> Roles = new List<Role>();
+            List<User> Users = new List<User>();
 
-
-
-            var allRoles = await _roleRepository.GetAllRoles();
+            var allRoles = await _roleRepository.GetAllRoles();            
             var allUsers = await _userRepository.GetAllUsers();
-            //var allProjects = await _projectRepository.GetAllProjects();
+
+            foreach (var role in allRoles)
+            {
+                if(role.Name != "Admin" && role.Name != "Project Manager")
+                {
+                    Roles.Add(role);
+                }
+            }
+
+            foreach (var user in allUsers)
+            {
+                if (user.Role != "Admin" && user.Role != "Project Manager")
+                {
+                    Users.Add(user);
+                }
+            }
+
 
             // Assigning items to model
-            model.UserList = allUsers;
-            model.RoleList = allRoles;
-            //model.ProjectList = allProjects;
+            model.RoleList = Roles;
+            model.UserList = Users;
+
 
             return View(model);
         }
