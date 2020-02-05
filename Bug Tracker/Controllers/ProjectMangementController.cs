@@ -636,17 +636,7 @@ namespace Bug_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                // ACCESS TOKEN FOR AUTH0 MANAGEMENT API
-                var client = new RestClient("https://wussubininja.au.auth0.com/oauth/token");
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/x-www-form-urlencoded");
-                request.AddParameter("application/x-www-form-urlencoded", "grant_type=client_credentials&client_id=LZ1ZnJCpRTSZB4b2iET97KhOajNiPyLk&client_secret=6Actr7Xa1tNRC6370iM6rzD68Wbpq8UCurK3QbtBiRRAUZqheOwFzDspQkZ2-7QJ&audience=https://wussubininja.au.auth0.com/api/v2/", ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
 
-                // Parsing into JSON 
-                var response2dict = JObject.Parse(response.Content);
-                // Retrieving Access Token
-                var Auth0ManagementAPI_AccessToken = response2dict.First.First.ToString();
 
                 // Remove all users from project before deleting the project 
                 if (project.DeleteProject != true)
@@ -659,7 +649,7 @@ namespace Bug_Tracker.Controllers
                             User selectedUser = new User();
                             selectedUser.ID = project.AddUsers[i];
 
-                            await AddorRmove("Add", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+                            await AddorRmove("Add", "Project", selectedUser, project, null, GetAuthorizationToken());
                         }
                     }
 
@@ -670,7 +660,7 @@ namespace Bug_Tracker.Controllers
                         {
                             User selectedUser = await _userRepository.GetUser(user);
 
-                            await AddorRmove("Remove", "Project", selectedUser, project, null, Auth0ManagementAPI_AccessToken);
+                            await AddorRmove("Remove", "Project", selectedUser, project, null, GetAuthorizationToken());
 
                             foreach (var issue in selectedUser.Issues)
                             {
@@ -709,7 +699,7 @@ namespace Bug_Tracker.Controllers
                     foreach (var selectedUser in project.Users)
                     {
                         User User = await _userRepository.GetUser(selectedUser);
-                        await AddorRmove("Remove", "Project", User, project, null, Auth0ManagementAPI_AccessToken);
+                        await AddorRmove("Remove", "Project", User, project, null, GetAuthorizationToken());
                         //await AddorRmove("Remove", "Issue", User, project, null, Auth0ManagementAPI_AccessToken);
 
                     }
@@ -903,6 +893,7 @@ namespace Bug_Tracker.Controllers
 
                 projectFromDb.Users = projectUsers;
                 userFromDb.Projects = userProjects;
+                userFromDb.NumProjects = userProjects.Count();
 
                 await _projectRepository.Update(projectFromDb);
                 await _userRepository.Update(userFromDb);
