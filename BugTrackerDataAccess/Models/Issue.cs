@@ -57,8 +57,11 @@ namespace BugTrackerDataAccess.Models
 
 
         // ADD IMAGE
-        //[BsonElement]
-        //public string Tickets { get; set; }
+        [BsonElement]
+        public byte[] ScreenshotArray { get; set; }
+
+        [BsonElement]
+        public string ScreenshotString { get; set; }
 
 
         // ADD MORE STUFF

@@ -13,6 +13,8 @@ using System;
 using Newtonsoft.Json;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
+
 
 namespace Bug_Tracker.Controllers
 {
@@ -177,14 +179,35 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers")] Issue issue)
+        //public async Task<ActionResult> CreateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, Screenshot")] Issue issue)
+        public async Task<ActionResult> CreateIssue(ProjectManagementViewModel projectManagementViewModel)
         {
             if (ModelState.IsValid)
             {
+                Issue issue = projectManagementViewModel.Issue;
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
                 issue.DeleteIssue = false;
+
+                foreach (var image in projectManagementViewModel.IssueImages)
+                {
+                    if (image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            image.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string fileString = Convert.ToBase64String(fileBytes);
+
+                            // act on the Base64 data
+                            issue.ScreenshotArray = fileBytes;
+                            issue.ScreenshotString = fileString;
+                        }
+                    }
+                }
+
+
                 await _issueRepository.AddIssue(issue);
 
                 var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
@@ -204,7 +227,9 @@ namespace Bug_Tracker.Controllers
                 }
             }
 
-            return RedirectToAction("Index", await _projectRepository.GetProject(issue.ProjectIDCode));
+            //return RedirectToAction("Index", await _projectRepository.GetProject(issue.ProjectIDCode));
+            return RedirectToAction("Index", await _projectRepository.GetProject(projectManagementViewModel.ProjectIDCode));
+
         }
 
 

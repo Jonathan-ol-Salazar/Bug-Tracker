@@ -1,4 +1,5 @@
 ﻿using BugTrackerDataAccess.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,7 +38,7 @@ namespace BugTrackerDataAccess.ViewModel
 
         public List<string> selectedIssuesDelete { get; set; }
 
-
+        public List<IFormFile> IssueImages { get; set; }
 
     }
 }
