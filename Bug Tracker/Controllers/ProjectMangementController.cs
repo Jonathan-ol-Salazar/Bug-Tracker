@@ -368,23 +368,6 @@ namespace Bug_Tracker.Controllers
             var allUsersInProject = new List<User>();
 
 
-            //Issue issueFromDb = new Issue();
-
-            //foreach (var issue in await _issueRepository.GetAllIssues())
-            //{
-            //    //if (issue.IDCode.Split(':')[0].Replace("\"", "") == issue.IDCode)
-            //    //{
-            //    //    issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
-            //    //}
-            //    if (issue.ProjectIDCode == ProjectIDCode)
-            //    {
-            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
-
-            //    }
-            //}
-
-
-
 
 
             // Loop through all the current users assigned and add there user objects to 'UsersAssignedList' 
@@ -428,18 +411,17 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers, Users")] Issue issue)
+        public async Task<ActionResult> UpdateIssue(Issue issue = null, ProjectManagementViewModel projectManagementViewModel = null)
         {
+            if (issue == null)
+            {
+                issue = projectManagementViewModel.Issue;
+
+            }
+
             var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
             var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
-            
-            //foreach(var issueInProject in projectFromDb.Issues)
-            //{
-            //    if(issueInProject.Split(':')[0].Replace("\"", "") == issue.IDCode)
-            //    {
-            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
-            //    }
-            //}
+
 
             if (ModelState.IsValid)
             {
@@ -453,6 +435,24 @@ namespace Bug_Tracker.Controllers
                 issue.Created = issueFromDb.Created;
                 issue.Updated = DateTime.UtcNow.ToString();
 
+                foreach (var image in projectManagementViewModel.IssueImages)
+                {
+                    if (image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            image.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string fileString = Convert.ToBase64String(fileBytes);
+
+                            // act on the Base64 data
+                            issue.ScreenshotArray = fileBytes;
+                            issue.ScreenshotString = fileString;
+                        }
+                    }
+                }
+
+
                 if (issue.Users == null)
                 {
                     issue.Users = new List<string>();
@@ -465,9 +465,7 @@ namespace Bug_Tracker.Controllers
                     {
                         foreach (var user in issue.AddUsers)
                         {
-                            var User = await _userRepository.GetUser(user);
-                            //issue.Users.Add((user + ": " + User.UserName));
-                            //await _issueRepository.Update(issue);
+                            var User = await _userRepository.GetUser(user);      
 
                             await AddorRmove("Add", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
