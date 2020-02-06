@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using Nancy.Json;
+using System.IO;
 
 namespace Bug_Tracker.Controllers
 {
@@ -120,14 +121,32 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers")] Issue issue)
+        public async Task<ActionResult> CreateIssue(MyIssuesViewModel myIssuesViewModel)
         {
             if (ModelState.IsValid)
             {
+                Issue issue = myIssuesViewModel.Issue;
 
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
+
+                foreach (var image in myIssuesViewModel.IssueImages)
+                {
+                    if (image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            image.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string fileString = Convert.ToBase64String(fileBytes);
+
+                            // act on the Base64 data
+                            issue.ScreenshotArray = fileBytes;
+                            issue.ScreenshotString = fileString;
+                        }
+                    }
+                }
 
                 await _issueRepository.AddIssue(issue);
 
@@ -220,8 +239,10 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers, Users")] Issue issue)
+        public async Task<ActionResult> UpdateIssue(MyIssuesViewModel myIssuesViewModel)
         {
+            Issue issue = myIssuesViewModel.Issue;
+
             var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
             var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
 
@@ -244,6 +265,28 @@ namespace Bug_Tracker.Controllers
                 issue.Id = issueFromDb.Id;
                 issue.Created = issueFromDb.Created;
                 issue.Updated = DateTime.UtcNow.ToString();
+
+                foreach (var image in myIssuesViewModel.IssueImages)
+                {
+                    if (image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            image.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string fileString = Convert.ToBase64String(fileBytes);
+
+                            // act on the Base64 data
+                            issue.ScreenshotArray = fileBytes;
+                            issue.ScreenshotString = fileString;
+                        }
+                    }
+                }
+
+
+
+
+
 
                 if (issue.Users == null)
                 {

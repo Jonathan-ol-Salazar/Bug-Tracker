@@ -103,13 +103,38 @@
                         <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a>
                         @if (!User.IsInRole("Submitter"))
                         {
-                             
+
                             <a href="@Url.Action("UpdateIssue", "MyIssues", new { IDCode = Model.IDCode })" class="btn btn btn-primary">
-                               Update
+                                Update
                             </a>
                         }
-                        </div>
+                    </div>
                 </div>
+
+
+                <div class="col-md-8">
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h3 class="card-title">Attachments</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <img src="data:image;base64,@System.Convert.ToBase64String(Model.ScreenshotArray)" width="500" height="400" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
             </div>
         </div>
     </section>

@@ -185,6 +185,7 @@ namespace Bug_Tracker.Controllers
             if (ModelState.IsValid)
             {
                 Issue issue = projectManagementViewModel.Issue;
+
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
