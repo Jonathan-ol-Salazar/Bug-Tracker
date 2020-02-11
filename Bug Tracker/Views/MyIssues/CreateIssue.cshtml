@@ -117,21 +117,20 @@
                                                 }
                                             </select>
                                         </div>
-
-                                        <div class="form-group">
-                                            <label asp-for="@Model.Issue.ProjectIDCode" class="control-label">Assign Users To Issue</label>
-                                            <select asp-for="@Model.Issue.ProjectIDCode" class="form-control" style="width: 100%;">
-                                                @foreach (var item in Model.ProjectList)
-                                                {
-                                                    <option value="@item.IDCode">@item.IDCode</option>
-
-                                                }
-                                            </select>
-
-
-                                        </div>
                                     }
 
+                                    <div class="form-group">
+                                        <label asp-for="@Model.Issue.ProjectIDCode" class="control-label">Assign Users To Project</label>
+                                        <select asp-for="@Model.Issue.ProjectIDCode" class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.ProjectList)
+                                            {
+                                                <option value="@item">@item</option>
+
+                                            }
+                                        </select>
+
+
+                                    </div>
 
                                     <div class="form-group">
                                         <div class="custom-file">

@@ -90,7 +90,7 @@ namespace Bug_Tracker.Controllers
                 newUser.ID = UserID;
                 newUser.UserName = userJson.SelectToken("name").ToString();
                 newUser.Email = userJson.SelectToken("email").ToString();
-                newUser.Role = "";
+                newUser.Role = "Submitter";
                 newUser.Projects = new List<string>();
                 newUser.Issues = new List<string>();
                 newUser.NumProjects = 0;

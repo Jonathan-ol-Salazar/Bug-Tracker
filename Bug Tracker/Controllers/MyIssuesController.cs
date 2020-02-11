@@ -81,7 +81,10 @@ namespace Bug_Tracker.Controllers
 
             }
 
-
+            if (currentUser.Projects != null)
+            {
+                model.UserHasProjects = true;
+            }
 
 
             if (model.IssueList == null)
@@ -111,8 +114,23 @@ namespace Bug_Tracker.Controllers
             model.UserList = new List<User>();
             model.UserList = await _userRepository.GetAllUsers();
             // Initialize and store all projects
-            model.ProjectList = new List<Project>();
-            model.ProjectList = await _projectRepository.GetAllProjects();
+            model.ProjectList = new List<string>();
+
+
+            string UserID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+            User user = await _userRepository.GetUser(UserID);
+
+            if (user.Projects != null)
+            {
+                foreach (var project in user.Projects)
+                {
+                    model.ProjectList.Add(project);
+                }
+            }
+
+
+            //model.ProjectList = await _projectRepository.GetAllProjects();
 
             return View("CreateIssue", model);
         }
@@ -152,15 +170,18 @@ namespace Bug_Tracker.Controllers
 
                 var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
 
-                selectedProject.Issues.Add(issue.IDCode + ": " + issue.Title);
+                selectedProject.Issues.Add(issue.IDCode + ":" + issue.Title);
 
                 await _projectRepository.Update(selectedProject);
 
-                foreach (var user in issue.AddUsers)
+                if (issue.AddUsers != null)
                 {
-                    var User = await _userRepository.GetUser(user);
-                    await _projectManagementController.AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
+                    foreach (var user in issue.AddUsers)
+                    {
+                        var User = await _userRepository.GetUser(user);
+                        await _projectManagementController.AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
+                    }
                 }
             }
 

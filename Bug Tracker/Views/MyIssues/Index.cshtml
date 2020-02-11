@@ -45,14 +45,18 @@
                 <div class="row">
                     <div class="col-12">
                         @*Button for new issue*@
-                        <div>
-                            <a href="@Url.Action("CreateIssue", "MyIssues", new { })" class="btn btn-sm btn-danger">
-                                Create New Issue
-                            </a>
-                        </div>
+                        @if (@Model.UserHasProjects == true)
+                        {
+                            <div>
+                                <a href="@Url.Action("CreateIssue", "MyIssues", new { })" class="btn btn-sm btn-danger">
+                                    Create New Issue
+                                </a>
+                            </div>
+                        }
+
 
                         <br />
-                        
+
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Details</h3>
@@ -111,9 +115,9 @@
                                                 <td>
                                                     @if (!User.IsInRole("Submitter"))
                                                     {
-                                                    <a href="@Url.Action("UpdateIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
-                                                        Update
-                                                    </a>
+                                                        <a href="@Url.Action("UpdateIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
+                                                            Update
+                                                        </a>
                                                     }
                                                     <a href="@Url.Action("ViewIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-secondary">
                                                         View
