@@ -74,9 +74,6 @@ namespace BugTrackerDataAccess.Models
         //     [Required]
         public string Education { get; set; }
 
-        [BsonElement]
-
-        public string AccountImage { get; set; }
 
         [BsonElement]
 
@@ -84,7 +81,18 @@ namespace BugTrackerDataAccess.Models
 
         [BsonElement]
 
-        public byte[] AccountPicture { get; set; }
+        public string AccountImageDefault { get; set; }
+
+
+        [BsonElement]
+
+        public string AccountImageString { get; set; }
+
+        [BsonElement]
+
+        public byte[] AccountImageArray { get; set; }
+
+
 
 
 

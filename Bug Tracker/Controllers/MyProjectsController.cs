@@ -99,7 +99,7 @@ namespace Bug_Tracker.Controllers
                 newUser.Location = "";
                 newUser.Skills = "";
                 newUser.Education = "";
-                newUser.AccountImage = userJson.SelectToken("picture").ToString();;
+                newUser.AccountImageDefault = userJson.SelectToken("picture").ToString();;
 
                 currentUser = newUser;
                 // Create User

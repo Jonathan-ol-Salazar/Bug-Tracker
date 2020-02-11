@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BugTrackerDataAccess.Models;
@@ -70,19 +72,20 @@ namespace Bug_Tracker.Controllers
             // GETTING AUTH0 USER DETAILS OF CURRENT SIGNED IN USER
             string userID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             var currentUser = await _userRepository.GetUser(userID);
-            
-            if (currentUser.AccountImage == null)
-            {
-                var client = new RestClient("https://wussubininja.au.auth0.com/api/v2/users/" + userID);
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("authorization", "Bearer " + GetAuthorizationToken());
-                IRestResponse response = client.Execute(request);
+
+            //if (currentUser.AccountImageString == null && currentUser.AccountImageArray == null)
+            //{
+            var client = new RestClient("https://wussubininja.au.auth0.com/api/v2/users/" + userID);
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("authorization", "Bearer " + GetAuthorizationToken());
+            IRestResponse response = client.Execute(request);
 
 
-                var response2dict = JObject.Parse(response.Content);
-                currentUser.AccountImage = response2dict.SelectToken("picture").ToString();
+            var response2dict = JObject.Parse(response.Content);
+            currentUser.AccountImageDefault = response2dict.SelectToken("picture").ToString();
 
-            }
+            await _userRepository.Update(currentUser);
+            //}
 
 
             AccountViewModel model = new AccountViewModel();
@@ -117,14 +120,21 @@ namespace Bug_Tracker.Controllers
 
             User user = await _userRepository.GetUser(ID);
 
-            return View("UpdateAccount", user);
+            AccountViewModel model = new AccountViewModel();
+
+            model.User = user;
+
+            return View("UpdateAccount", model);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateAccount([Bind(include: "ID, Email, AccountImage, About, Skills, Education, Location, DOB")] User user)
+        public async Task<ActionResult> UpdateAccount(AccountViewModel accountViewModel)
         {
+
+            User user = accountViewModel.User;
+
             if (ModelState.IsValid)
             {
                 
@@ -140,14 +150,23 @@ namespace Bug_Tracker.Controllers
                     return new NotFoundResult();
                 }
 
-                // Updating Auth0
-                string data = "";
-                data += "\"DOB\": \"" + user.DOB + "\",";
-                data += "\"about\": \"" + user.About + "\",";
-                data += "\"location\": \"" + user.Location + "\",";
-                data += "\"skills\": \"" + user.Skills + "\",";
-                data += "\"education\": \"" + user.Education + "\"";
+                foreach (var image in accountViewModel.AccountImages)
+                {
+                    if (image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            image.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string fileString = Convert.ToBase64String(fileBytes);
 
+                            // act on the Base64 data
+                            user.AccountImageArray = fileBytes;
+                            user.AccountImageString = fileString;
+                            
+                        }
+                    }
+                }
 
                 user.Id = userFromDb.Id;
                 user.UserName = userFromDb.UserName;
@@ -155,37 +174,14 @@ namespace Bug_Tracker.Controllers
                 user.RoleID = userFromDb.RoleID;
                 user.Projects = userFromDb.Projects;
                 user.Issues = userFromDb.Issues;
-                user.NumProjects = userFromDb.NumProjects;               
-                
+                user.NumProjects = userFromDb.NumProjects;
+                user.AccountImageDefault = userFromDb.AccountImageDefault;
 
-                await _userRepository.Update(user);
-
-                //// Updating Auth0
-                //string data; 
-                //foreach (var item in )
-
-
-                // Use Auth0 API to add Issue to user metadata
-                string authorizationValue = "Bearer " + GetAuthorizationToken();
-                string baseURL = "https://wussubininja.au.auth0.com/api/v2/users/" + user.ID;
-                var client = new RestClient(baseURL);
-                var request = new RestRequest(Method.PATCH);
-                request.AddHeader("authorization", authorizationValue);
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", "{\"user_metadata\": {" + data + "}}", ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
-
-
+                await _userRepository.Update(user);                            
 
             }
             return RedirectToAction("Index");
-
-
         }
-
-
-
-
 
 
 
