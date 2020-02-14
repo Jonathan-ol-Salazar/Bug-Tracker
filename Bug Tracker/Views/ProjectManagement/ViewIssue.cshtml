@@ -135,7 +135,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <img src="data:image;base64,@System.Convert.ToBase64String(Model.ScreenshotArray)" width="500" height="400" />
+                            @if (@Model.ScreenshotArray != null)
+                            {
+                                <img src="data:image;base64,@System.Convert.ToBase64String(Model.ScreenshotArray)" width="500" height="400" />
+                            }
                         </div>
                     </div>
                 </div>
