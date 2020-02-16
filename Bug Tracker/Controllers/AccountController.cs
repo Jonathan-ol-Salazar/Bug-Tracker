@@ -150,20 +150,23 @@ namespace Bug_Tracker.Controllers
                     return new NotFoundResult();
                 }
 
-                foreach (var image in accountViewModel.AccountImages)
+                if (accountViewModel.AccountImages != null)
                 {
-                    if (image.Length > 0)
+                    foreach (var image in accountViewModel.AccountImages)
                     {
-                        using (var ms = new MemoryStream())
+                        if (image.Length > 0)
                         {
-                            image.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-                            string fileString = Convert.ToBase64String(fileBytes);
+                            using (var ms = new MemoryStream())
+                            {
+                                image.CopyTo(ms);
+                                var fileBytes = ms.ToArray();
+                                string fileString = Convert.ToBase64String(fileBytes);
 
-                            // act on the Base64 data
-                            user.AccountImageArray = fileBytes;
-                            user.AccountImageString = fileString;
-                            
+                                // act on the Base64 data
+                                user.AccountImageArray = fileBytes;
+                                user.AccountImageString = fileString;
+
+                            }
                         }
                     }
                 }

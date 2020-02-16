@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Collections;
 using BugTrackerDataAccess.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using System.Security.Claims;
 
 namespace Bug_Tracker.Controllers
 {
@@ -62,11 +64,27 @@ namespace Bug_Tracker.Controllers
             var allRoles = await _roleRepository.GetAllRoles();            
             var allUsers = await _userRepository.GetAllUsers();
 
+            string UserID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _userRepository.GetUser(UserID);
+
+
+
             foreach (var role in allRoles)
-            {
-                if(role.Name != "Admin" && role.Name != "Project Manager")
+            {              
+                switch (currentUser.Role)
                 {
-                    Roles.Add(role);
+                    case "Admin":
+
+                        Roles.Add(role);
+                        break;
+
+                    case "Project Manager":
+
+                        if (role.Name != "Admin" && role.Name != "Project Manager")
+                        {
+                            Roles.Add(role);
+                        }
+                        break;
                 }
             }
 

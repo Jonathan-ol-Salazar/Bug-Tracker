@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿    using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BugTrackerDataAccess.Models;
@@ -436,19 +436,22 @@ namespace Bug_Tracker.Controllers
                 issue.Created = issueFromDb.Created;
                 issue.Updated = DateTime.UtcNow.ToString();
 
-                foreach (var image in projectManagementViewModel.IssueImages)
+                if (projectManagementViewModel.IssueImages != null)
                 {
-                    if (image.Length > 0)
+                    foreach (var image in projectManagementViewModel.IssueImages)
                     {
-                        using (var ms = new MemoryStream())
+                        if (image.Length > 0)
                         {
-                            image.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-                            string fileString = Convert.ToBase64String(fileBytes);
+                            using (var ms = new MemoryStream())
+                            {
+                                image.CopyTo(ms);
+                                var fileBytes = ms.ToArray();
+                                string fileString = Convert.ToBase64String(fileBytes);
 
-                            // act on the Base64 data
-                            issue.ScreenshotArray = fileBytes;
-                            issue.ScreenshotString = fileString;
+                                // act on the Base64 data
+                                issue.ScreenshotArray = fileBytes;
+                                issue.ScreenshotString = fileString;
+                            }
                         }
                     }
                 }

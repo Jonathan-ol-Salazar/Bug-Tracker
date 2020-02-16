@@ -81,7 +81,12 @@ namespace Bug_Tracker.Controllers
 
             }
 
-            if (currentUser.Projects != null)
+            if (currentUser.Projects == null || currentUser.Projects.Count == 0)
+            {
+                model.UserHasProjects = false;
+
+            }
+            else
             {
                 model.UserHasProjects = true;
             }
@@ -149,26 +154,29 @@ namespace Bug_Tracker.Controllers
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
 
-                foreach (var image in myIssuesViewModel.IssueImages)
+                if (myIssuesViewModel.IssueImages != null)
                 {
-                    if (image.Length > 0)
+                    foreach (var image in myIssuesViewModel.IssueImages)
                     {
-                        using (var ms = new MemoryStream())
+                        if (image.Length > 0)
                         {
-                            image.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-                            string fileString = Convert.ToBase64String(fileBytes);
+                            using (var ms = new MemoryStream())
+                            {
+                                image.CopyTo(ms);
+                                var fileBytes = ms.ToArray();
+                                string fileString = Convert.ToBase64String(fileBytes);
 
-                            // act on the Base64 data
-                            issue.ScreenshotArray = fileBytes;
-                            issue.ScreenshotString = fileString;
+                                // act on the Base64 data
+                                issue.ScreenshotArray = fileBytes;
+                                issue.ScreenshotString = fileString;
+                            }
                         }
                     }
                 }
 
                 await _issueRepository.AddIssue(issue);
 
-                var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
+                var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode.Split(':')[0]);
 
                 selectedProject.Issues.Add(issue.IDCode + ":" + issue.Title);
 
