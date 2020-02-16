@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using Nancy.Json;
+using System.IO;
 
 namespace Bug_Tracker.Controllers
 {
@@ -74,13 +75,16 @@ namespace Bug_Tracker.Controllers
 
             foreach (var issue in currentUser.Issues)
             {
-                string issueIDCode = issue.Split(':')[0].Replace("\"", "");
+                string issueIDCode = issue.Split(':')[0].Split('-')[1];
                 IssueList.Add(await _issueRepository.GetIssue(issueIDCode));
 
 
             }
 
-
+            if (currentUser.Projects != null)
+            {
+                model.UserHasProjects = true;
+            }
 
 
             if (model.IssueList == null)
@@ -110,8 +114,23 @@ namespace Bug_Tracker.Controllers
             model.UserList = new List<User>();
             model.UserList = await _userRepository.GetAllUsers();
             // Initialize and store all projects
-            model.ProjectList = new List<Project>();
-            model.ProjectList = await _projectRepository.GetAllProjects();
+            model.ProjectList = new List<string>();
+
+
+            string UserID = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+            User user = await _userRepository.GetUser(UserID);
+
+            if (user.Projects != null)
+            {
+                foreach (var project in user.Projects)
+                {
+                    model.ProjectList.Add(project);
+                }
+            }
+
+
+            //model.ProjectList = await _projectRepository.GetAllProjects();
 
             return View("CreateIssue", model);
         }
@@ -120,36 +139,72 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers")] Issue issue)
+        public async Task<ActionResult> CreateIssue(MyIssuesViewModel myIssuesViewModel)
         {
             if (ModelState.IsValid)
             {
+                Issue issue = myIssuesViewModel.Issue;
+
                 issue.Created = DateTime.UtcNow.ToString();
                 issue.Updated = issue.Created;
                 issue.Users = new List<string>();
 
+                foreach (var image in myIssuesViewModel.IssueImages)
+                {
+                    if (image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            image.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string fileString = Convert.ToBase64String(fileBytes);
+
+                            // act on the Base64 data
+                            issue.ScreenshotArray = fileBytes;
+                            issue.ScreenshotString = fileString;
+                        }
+                    }
+                }
+
                 await _issueRepository.AddIssue(issue);
 
+                var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
 
-                TempData["Message"] = "User Createed Successfully";
-            }
+                selectedProject.Issues.Add(issue.IDCode + ":" + issue.Title);
 
-            var selectedProject = await _projectRepository.GetProject(issue.ProjectIDCode);
+                await _projectRepository.Update(selectedProject);
 
+                if (issue.AddUsers != null)
+                {
+                    foreach (var user in issue.AddUsers)
+                    {
+                        var User = await _userRepository.GetUser(user);
+                        await _projectManagementController.AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
 
-
-            foreach (var user in issue.AddUsers)
-            {
-                var User = await _userRepository.GetUser(user);
-                await _projectManagementController.AddorRmove("Add", "Issue", User, selectedProject, issue, GetAuthorizationToken()); // add param to say its adding for issue
-
+                    }
+                }
             }
 
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public async Task<ActionResult> UpdateIssue(string IDCode)
+        //[ActionName("Get")]
+        public async Task<ActionResult> ViewIssue(string IDCode)
+        {
+            var issueFromDb = await _issueRepository.GetIssue(IDCode);
+
+            if (issueFromDb == null)
+            {
+                return new NotFoundResult();
+            }
+            return View("ViewIssue", issueFromDb);
+        }
+
+        // UPDATE
+
+        [HttpGet]
+        public async Task<ActionResult> UpdateIssue(string IDCode, string ProjectIDCode)
         {
             MyIssuesViewModel model = new MyIssuesViewModel();
             Issue issue = await _issueRepository.GetIssue(IDCode);
@@ -157,6 +212,23 @@ namespace Bug_Tracker.Controllers
             List<User> UsersAssignedList = new List<User>();
             var allUsers = await _userRepository.GetAllUsers();
             List<string> AssignedUsersID = new List<string>();
+            //Issue issueFromDb = new Issue();
+
+            //foreach (var issue in await _issueRepository.GetAllIssues())
+            //{
+            //    //if (issue.IDCode.Split(':')[0].Replace("\"", "") == issue.IDCode)
+            //    //{
+            //    //    issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            //    //}
+            //    if (issue.ProjectIDCode == ProjectIDCode)
+            //    {
+            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+
+            //    }
+            //}
+
+
+
 
 
             // Loop through all the current users assigned and add there user objects to 'UsersAssignedList' 
@@ -178,7 +250,7 @@ namespace Bug_Tracker.Controllers
                 }
             }
 
-            
+
 
             model.UsersAssignedList = UsersAssignedList;
             model.UsersNotAssignedList = UsersNotAssignedList;
@@ -188,10 +260,20 @@ namespace Bug_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateIssue([Bind(include: "IDCode, Title, Description, ProjectIDCode, Status, Submitter, AddUsers, RemoveUsers, Users")] Issue issue)
+        public async Task<ActionResult> UpdateIssue(MyIssuesViewModel myIssuesViewModel)
         {
+            Issue issue = myIssuesViewModel.Issue;
+
             var issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
             var projectFromDb = await _projectRepository.GetProject(issueFromDb.ProjectIDCode);
+
+            //foreach(var issueInProject in projectFromDb.Issues)
+            //{
+            //    if(issueInProject.Split(':')[0].Replace("\"", "") == issue.IDCode)
+            //    {
+            //        issueFromDb = await _issueRepository.GetIssue(issue.IDCode);
+            //    }
+            //}
 
             if (ModelState.IsValid)
             {
@@ -205,15 +287,39 @@ namespace Bug_Tracker.Controllers
                 issue.Created = issueFromDb.Created;
                 issue.Updated = DateTime.UtcNow.ToString();
 
-                if(issue.Users == null)
+                foreach (var image in myIssuesViewModel.IssueImages)
+                {
+                    if (image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            image.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            string fileString = Convert.ToBase64String(fileBytes);
+
+                            // act on the Base64 data
+                            issue.ScreenshotArray = fileBytes;
+                            issue.ScreenshotString = fileString;
+                        }
+                    }
+                }
+
+
+
+
+
+
+                if (issue.Users == null)
                 {
                     issue.Users = new List<string>();
                 }
 
+                //if (issueFromDb.DeleteIssue == false)
+                //{
                 // Adding Users 
-                if (issue.AddUsers != null)
+                if (issue.AddUsers != null && issue.DeleteIssue == false)
                 {
-                    foreach(var user in issue.AddUsers)
+                    foreach (var user in issue.AddUsers)
                     {
                         var User = await _userRepository.GetUser(user);
                         //issue.Users.Add((user + ": " + User.UserName));
@@ -225,7 +331,7 @@ namespace Bug_Tracker.Controllers
                 }
 
                 // Remove Users
-                if(issue.RemoveUsers != null)
+                if (issue.RemoveUsers != null || issue.DeleteIssue == true)
                 {
                     foreach (var user in issue.RemoveUsers)
                     {
@@ -236,6 +342,21 @@ namespace Bug_Tracker.Controllers
                     }
 
                 }
+                //}
+                //else
+                //{
+                //    //if (issue.Users != null)
+                //    //{
+                //    List<string> usersDelete = issue.Users;
+                //        foreach (var user in issue.Users)
+                //        {
+                //            var User = await _userRepository.GetUser(user);
+                //            //issue.Users.Remove(user + ": " + User.UserName);
+                //            await AddorRmove("Remove", "Issue", User, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
+
+                //        }
+                //    //}
+                //}
 
                 await _issueRepository.Update(issue);
                 //await AddorRmove("Update", "Issue", issue, projectFromDb, issue, GetAuthorizationToken()); // add param to say its adding for issue
@@ -246,45 +367,12 @@ namespace Bug_Tracker.Controllers
 
 
 
-                TempData["Message"] = "User Createed Successfully";
-
             }
 
 
-            // UPDATING 'Projects' collection
-            Issue issueOld = null;
-            int indexUpdate = -1;
-            foreach (var issueExisting in projectFromDb.Issues)
-            {
-                if (issueExisting.Id == issue.Id)
-                {
-                    issueOld = issueExisting;
-                    indexUpdate = projectFromDb.Issues.IndexOf(issueExisting);
-                    break;
-                }
-            }
-            if (indexUpdate != -1)
-            {
-                projectFromDb.Issues[indexUpdate] = issue;
-                await _projectRepository.Update(projectFromDb);
 
-            }
 
             return RedirectToAction("Index");
-        }
-
-
-        [HttpGet]
-        //[ActionName("Get")]
-        public async Task<ActionResult> ViewIssue(string IDCode)
-        {
-            var issueFromDb = await _issueRepository.GetIssue(IDCode);
-
-            if (issueFromDb == null)
-            {
-                return new NotFoundResult();
-            }
-            return View("ViewIssue", issueFromDb);
         }
 
 

@@ -57,6 +57,11 @@ namespace Bug_Tracker
             // Issues
             services.AddTransient<IIssueContext, Context>();
             services.AddTransient<IIssueRepository, IssueRepository>();
+            // Roles
+            services.AddTransient<IRoleContext, Context>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+
+
 
             // ProjectManagement Controller to be injected
             services.AddTransient<ProjectManagementController>();
@@ -83,7 +88,7 @@ namespace Bug_Tracker
 
                 // Configure the Auth0 Client ID and Client Secret
                 options.ClientId = Configuration["Auth0:ClientId"];
-                        options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                 // Set response type to code
                 options.ResponseType = OpenIdConnectResponseType.Code;
@@ -154,6 +159,10 @@ namespace Bug_Tracker
             }
             else
             {
+                // For page errors like 404
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+                //app.UseStatusCodePagesWithRedirects("/Error/{0}");
+
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -162,16 +171,20 @@ namespace Bug_Tracker
             app.UseStaticFiles();
             //app.UseCookiePolicy();
             
+
+
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
+
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=MyProjects}/{action=Index}/{id?}");
             });
         }
     }

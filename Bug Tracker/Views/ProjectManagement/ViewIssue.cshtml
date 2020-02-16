@@ -47,70 +47,113 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.IDCode)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.IDCode)
-                            </dd>
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.Title)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.Title)
-                            </dd>
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.Status)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.Status)
-                            </dd>
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.Submitter)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.Submitter)
-                            </dd>
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.Description)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.Description)
-                            </dd>
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.Created)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.Created)
-                            </dd>
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.Updated)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.Updated)
-                            </dd>
-                            <dt class="col-sm-10">
-                                @Html.DisplayNameFor(model => model.ProjectIDCode)
-                            </dt>
-                            <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.ProjectIDCode)
-                            </dd>
+                            <dl>
+
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.IDCode)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.IDCode)
+                                </dd>
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.Title)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.Title)
+                                </dd>
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.Status)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.Status)
+                                </dd>
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.Submitter)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.Submitter)
+                                </dd>
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.Description)
+                                </dd>
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.Created)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.Created)
+                                </dd>
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.Updated)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.Updated)
+                                </dd>
+                                <dt class="col-sm-10">
+                                    @Html.DisplayNameFor(model => model.ProjectIDCode)
+                                </dt>
+                                <dd class="col-sm-10">
+                                    @Html.DisplayFor(model => model.ProjectIDCode)
+                                </dd>
+
                             </dl>
+
+
+
                         </div>
 
                     </div>
 
                     <div>
-                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
-                        <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {  IDCode = Model.IDCode })" class="btn btn btn-primary">
+                        @*<a asp-action="Index" class="btn btn-sm btn-secondary">Back</a>*@
+
+                        <a href="@Url.Action("Index", "ProjectManagement", new {  ProjectIDCode = Model.ProjectIDCode })" class="btn btn-sm btn-secondary">
+                            Back
+                        </a>
+                        |
+                        <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {  IDCode = Model.IDCode, ProjectIDCode = Model.ProjectIDCode })" class="btn btn btn-primary">
                             Update
                         </a>
                         @*@Html.ActionLink("Edit", "UpdateIssue", new { IDCode = Model.IDCode }) |*@
 
                     </div>
                 </div>
+
+                <div class="col-md-8">
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h3 class="card-title">Attachments</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (@Model.ScreenshotArray != null)
+                            {
+                                <img src="data:image;base64,@System.Convert.ToBase64String(Model.ScreenshotArray)" width="500" height="400" />
+                            }
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
+
+
+            
+
+
+
+
         </div>
+
     </section>
     <!-- /.content -->
 </div>

@@ -1,4 +1,5 @@
 ﻿using BugTrackerDataAccess.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,13 +12,16 @@ namespace BugTrackerDataAccess.ViewModel
 
         public IEnumerable<Issue> IssueList { get; set; }
 
-        public IEnumerable<Project> ProjectList { get; set; }
+        public List<string> ProjectList { get; set; }
 
         public Issue Issue { get; set; }
 
         public IEnumerable<User> UsersNotAssignedList { get; set; }
         public IEnumerable<User> UsersAssignedList { get; set; }
 
+        public List<IFormFile> IssueImages { get; set; }
+
+        public bool UserHasProjects { get; set; }
 
     }
 }

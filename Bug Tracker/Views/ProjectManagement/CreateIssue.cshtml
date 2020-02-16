@@ -69,9 +69,14 @@
                             </div>
                             <div class="card-body">
 
-                                <form asp-action="CreateIssue">
+                                <form asp-action="CreateIssue" enctype="multipart/form-data">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+                                    @*PRE-SELECTED ATTRIBUTES *@
+                                    <div class="form-group">
+                                        <select id="Status" asp-for="@Model.Issue.Status">
+                                            <option value="OPEN" selected="selected"></option>
+                                        </select>
+                                    </div>
                                     <div class="form-group">
                                         <select id="Submitter" asp-for="@Model.Issue.Submitter">
                                             <option value="@User.Identity.Name" selected="selected">@Model.Issue.Submitter</option>
@@ -91,11 +96,11 @@
                                         <input asp-for="@Model.Issue.Title" class="form-control" />
                                         <span asp-validation-for="@Model.Issue.Title" class="text-danger"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <label asp-for="@Model.Issue.Status" class="control-label"></label>
-                                        <input asp-for="@Model.Issue.Status" class="form-control" />
-                                        <span asp-validation-for="@Model.Issue.Status" class="text-danger"></span>
-                                    </div>
+                                    @*<div class="form-group">
+            <label asp-for="@Model.Issue.Status" class="control-label"></label>
+            <input asp-for="@Model.Issue.Status" class="form-control" />
+            <span asp-validation-for="@Model.Issue.Status" class="text-danger"></span>
+        </div>*@
 
                                     <div class="form-group">
                                         <label asp-for="@Model.Issue.Description" class="control-label"></label>
@@ -108,9 +113,16 @@
                                         <select asp-for="@Model.Issue.AddUsers" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.UserList)
                                             {
-                                                <option value="@item.ID">@item.UserName</option>
+                                                <option value="@item.ID">@item.ID | @item.UserName</option>
                                             }
                                         </select>
+                                    </div>
+
+                                    <div class="form-group" >               
+                                        <div class="custom-file">
+                                            <input asp-for="@Model.IssueImages" class="form-control custom-file-input">
+                                            <label asp-for="@Model.IssueImages" class=" custom-file-label">Choose file</label>
+                                        </div>
                                     </div>
 
                                     <div class="form-group">
@@ -145,6 +157,15 @@
 
             var Project = document.getElementById("Project");
             Project.style.display = "none";
+
+            var Status = document.getElementById("Status");
+            Status.style.display = "none";
+
+             $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+             });
+
         });
 
 

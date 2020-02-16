@@ -118,7 +118,7 @@
                                             }
                                         </select>
                                         <br />
-                                        <button type="submit" class="btn btn-success btn-block">Select</button>
+                                        <button type="submit" class="btn btn-secondary btn-block">Select</button>
                                         @*@Html.ActionLink("Add Issue", "CreateIssue", new { ProjectIDCode = Model.Project.IDCode })*@
                                         @*@Html.ActionLink("Add Project", "CreateProject", new { })*@
                                         @*@Html.ActionLink("Edit Project Details", "UpdateProjectDetails", new { IDCode = Model.Project.IDCode })*@
@@ -126,20 +126,40 @@
 
                                     </div>
                                 </form>
-                                <div class="text-center mt-5 mb-3">
+                                @*@if (User.IsInRole("Admin"))
+                                {
+                                    <div class="text-center mt-5 mb-3">
 
-                                    <a href="@Url.Action("CreateProject", "ProjectManagement", new { })" class="btn btn-sm btn-primary">
-                                        Add New Project
-                                    </a>
-                                    <a href="@Url.Action("DeleteProjects", "ProjectManagement", new { })" class="btn btn-sm btn-danger">
-                                        Delete Project
-                                    </a>
+                                        <a href="@Url.Action("CreateProject", "ProjectManagement", new { })" class="btn btn-sm btn-primary">
+                                            Add New Project
+                                        </a>
+                                        <a href="@Url.Action("DeleteProjects", "ProjectManagement", new { })" class="btn btn-sm btn-danger">
+                                            Delete Project
+                                        </a>
 
-                                </div>
+                                    </div>
+                                }*@
                             </div>
-                        </div> 
 
-                        <div class="card card-primary">
+                            <div class="card-footer">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="text-center">
+
+                                        <a href="@Url.Action("CreateProject", "ProjectManagement", new { })" class="btn btn-sm btn-primary">
+                                            Add New Project
+                                        </a>
+                                        <a href="@Url.Action("DeleteProjects", "ProjectManagement", new { })" class="btn btn-sm btn-danger">
+                                            Delete Project
+                                        </a>
+
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+
+                        <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Project Details</h3>
                                 <div class="card-tools">
@@ -159,7 +179,7 @@
                                 <div class="text-muted">
                                     <p class="text-sm">
                                         Project Manager
-                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.ProjectManager.UserName)</b>
+                                        <b class="d-block">@Html.DisplayFor(modelItem => Model.Project.ProjectManagerUserName)</b>
                                     </p>
                                 </div>
                                 <div class="text-muted">
@@ -175,68 +195,96 @@
                                     </p>
                                 </div>
 
-                                <div class="text-center mt-5 mb-3">
+                                @*<div class="text-center mt-5 mb-3">
 
-                                
 
-                                    <a href="@Url.Action("UpdateProjectDetails", "ProjectManagement", new {  IDCode = Model.Project.IDCode })" class="btn btn-sm btn-primary">
-                                        Update Project Details
-                                    </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="@Url.Action("UpdateProjectDetails", "ProjectManagement", new { IDCode = Model.Project.IDCode })" class="btn btn-sm btn-primary">
+                                            Update Project Details
+                                        </a>
+                                    }
 
                                     <a href="@Url.Action("CreateIssue", "ProjectManagement", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-warning">
                                         Add New Issue
                                     </a>
 
+                                </div>*@
+                            </div>
+                            <div class="card-footer">
+                                
+                                <div class="text-center">
+
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="@Url.Action("UpdateProjectDetails", "ProjectManagement", new { IDCode = Model.Project.IDCode })" class="btn btn-sm btn-primary">
+                                            Update Project Details
+                                        </a>
+                                    }
+
+                                    <a href="@Url.Action("CreateIssue", "ProjectManagement", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-warning">
+                                        Add New Issue
+                                    </a>
+
+                                    <a href="@Url.Action("DeleteIssues", "ProjectManagement", new {   ProjectIDCode = Model.Project.IDCode })" class="btn btn-sm btn-danger">
+                                        Delete Issue
+                                    </a>
+
                                 </div>
+                                
                             </div>
                         </div>
 
-                        <div class="card card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">Edit Assignment</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <!-- form start -->
-                                <form asp-action="UpdateProjectAssignment">
-
-                                    <div class="form-group">
-                                        @*SET SELECTED PROJECT FOR THIS FORM*@
-                                        <select id="selectedProject" asp-for="Project.IDCode">
-                                            <option value="@Model.Project.IDCode" selected></option>
-                                        </select>
-
-                                        <label asp-for="Project.AddUsers" class="control-label">Assign Users To Project</label>
-                                        <select asp-for="Project.AddUsers" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.UsersNotAssignedList)
-                                            {
-                                                <option value="@item.ID">@item.UserName</option>
-                                            }
-                                        </select>
-                                        <br />
-                                        <label asp-for="Project.RemoveUsers" class="control-label">Remove Users From Project</label>
-                                        <select asp-for="Project.RemoveUsers" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.UsersAssignedList)
-                                            {
-                                                <option value="@item.ID">@item.UserName</option>
-                                            }
-                                        </select>
-                                        <br />
-                                        <button type="submit" class="btn btn-danger btn-block">Submit</button>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="card card-secondary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Edit Project Assignment</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
-                                </form>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <!-- form start -->
+                                    <form asp-action="UpdateProjectAssignment">
+
+                                        <div class="form-group">
+                                            @*SET SELECTED PROJECT FOR THIS FORM*@
+                                            <select id="selectedProject" asp-for="Project.IDCode">
+                                                <option value="@Model.Project.IDCode" selected></option>
+                                            </select>
+
+                                            <label asp-for="Project.AddUsers" class="control-label">Assign Users To Project</label>
+                                            <select asp-for="Project.AddUsers" multiple class="form-control" style="width: 100%;">
+                                                @foreach (var item in Model.UsersNotAssignedList)
+                                                {
+                                                    <option value="@item.ID">@item.UserName</option>
+                                                }
+                                            </select>
+                                            <br />
+                                            <label asp-for="Project.RemoveUsers" class="control-label">Remove Users From Project</label>
+                                            <select asp-for="Project.RemoveUsers" multiple class="form-control" style="width: 100%;">
+                                                @foreach (var item in Model.UsersAssignedList)
+                                                {
+                                                    <option value="@item.ID">@item.ID | @item.UserName</option>
+                                                }
+                                            </select>
+                                            <br />
+                                            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
+                            <!-- /.card -->
+                        }
+
                         </div>
-                        <!-- /.card -->
-                    </div>
 
                     <div class="col-8">
                         <div class="card card-danger">
@@ -268,7 +316,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.Project.Issues)
+                                        @foreach (var item in Model.IssueList)
                                         {
                                             <tr>
                                                 <td>@item.IDCode</td>
@@ -278,11 +326,19 @@
                                                 <td>@item.Created</td>
                                                 <td>@item.Updated</td>
                                                 @*<td>@item.NumUsers</td>*@
-                                                <td>
-                                                    @Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
-                                                    @*@Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })*@
-                                                    @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })
-                                                </td>
+                                            <td>
+                                                @*@Html.ActionLink("Update", "UpdateIssue", new { IDCode = item.IDCode })
+                                                @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
+                                                @Html.ActionLink("Details", "ViewIssue", new { IDCode = item.IDCode })*@
+
+                                                <a href="@Url.Action("UpdateIssue", "ProjectManagement", new {IDCode = item.IDCode, ProjectIDCode = item.ProjectIDCode})" class="btn btn-sm btn-primary">
+                                                    Update
+                                                </a>
+                                                <a href="@Url.Action("ViewIssue", "ProjectManagement", new {IDCode = item.IDCode})" class="btn btn-sm btn-secondary">
+                                                    View
+                                                </a>
+
+                                            </td>
                                             </tr>
                                         }
                                     </tbody>
@@ -291,7 +347,7 @@
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
-                        <div class="card card-success">
+                        <div class="card card-dark">
                             <div class="card-header">
                                 <h3 class="card-title">Assigned Users</h3>
                                 <div class="card-tools">

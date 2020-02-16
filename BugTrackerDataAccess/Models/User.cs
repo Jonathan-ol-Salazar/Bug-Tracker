@@ -1,12 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 
 
@@ -80,9 +74,6 @@ namespace BugTrackerDataAccess.Models
         //     [Required]
         public string Education { get; set; }
 
-        [BsonElement]
-
-        public string AccountImage { get; set; }
 
         [BsonElement]
 
@@ -90,7 +81,18 @@ namespace BugTrackerDataAccess.Models
 
         [BsonElement]
 
-        public byte[] AccountPicture { get; set; }
+        public string AccountImageDefault { get; set; }
+
+
+        [BsonElement]
+
+        public string AccountImageString { get; set; }
+
+        [BsonElement]
+
+        public byte[] AccountImageArray { get; set; }
+
+
 
 
 

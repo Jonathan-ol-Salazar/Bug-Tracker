@@ -1,4 +1,4 @@
-﻿@model BugTrackerDataAccess.Models.Project
+﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 
 @{
     ViewData["Title"] = "Update Project Details";
@@ -33,13 +33,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Update Project Details: @Model.IDCode | @Model.Name</h1>
+                        <h1>Update Project Details: @Model.Project.IDCode | @Model.Project.Name</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active">Project Manager</li>
-                            <li class="breadcrumb-item active">@Model.IDCode</li>
+                            <li class="breadcrumb-item active">@Model.Project.IDCode</li>
                             <li class="breadcrumb-item active">Update</li>
                         </ol>
                     </div>
@@ -70,27 +70,27 @@
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                                     <div class="form-group">
-                                        <select id="IDCode" asp-for="IDCode">
-                                            <option value="@Model.IDCode" selected="selected">@Model.IDCode</option>
+                                        <select id="IDCode" asp-for="@Model.Project.IDCode">
+                                            <option value="@Model.Project.IDCode" selected="selected">@Model.Project.IDCode</option>
                                         </select>
-                                        <select id="Name" asp-for="Name">
-                                            <option value="@Model.Name" selected="selected">@Model.Name</option>
+                                        <select id="Name" asp-for="@Model.Project.Name">
+                                            <option value="@Model.Project.Name" selected="selected">@Model.Project.Name</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label asp-for="Description" class="control-label"></label>
-                                        <input asp-for="Description" class="form-control" />
-                                        <span asp-validation-for="Description" class="text-danger"></span>
+                                        <label asp-for="@Model.Project.Description" class="control-label"></label>
+                                        <input asp-for="@Model.Project.Description" class="form-control" />
+                                        <span asp-validation-for="@Model.Project.Description" class="text-danger"></span>
                                     </div>
 
 
                                     <div class="form-group">
-                                        <label asp-for="ProjectManagerUserID" class="control-label">Add a Project Manager</label>
-                                        <select asp-for="ProjectManagerUserID" multiple class="form-control" style="width: 100%;">
+                                        <label asp-for="@Model.Project.ProjectManagerUserID" class="control-label">Add a Project Manager</label>
+                                        <select asp-for="@Model.Project.ProjectManagerUserID" multiple class="form-control" style="width: 100%;">
                                             @foreach (var item in Model.ProjectManagerList)
                                             {
-                                                <option value="@item.ID">@item.UserName, @item.ID</option>
+                                                <option value="@item.ID">@item.ID | @item.UserName</option>
                                             }
                                         </select>
                                     </div>

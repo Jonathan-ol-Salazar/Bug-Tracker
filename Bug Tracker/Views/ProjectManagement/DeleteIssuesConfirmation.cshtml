@@ -1,7 +1,10 @@
-﻿@model BugTrackerDataAccess.ViewModel.MyIssuesViewModel
+﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 @{
-    ViewData["Title"] = "My Issues";
+    ViewData["Title"] = "Delete Issues Confirmation";
 }
+
+
+
 
 <html>
 <head>
@@ -11,12 +14,29 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script> 
+    @*<script src="~/AdminLTE_theme/plugins/jquery/jquery.min.js"></script>*@
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
+
 
     <!-- DataTables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js" defer></script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous" defer></script>
+
+
+
+
 
 </head>
 <body class="hold-transition sidebar-mini">
@@ -28,12 +48,16 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>My Issues</h1>
+
+                        <h1>Delete Issues Confirmation</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">My Issues</li>
+                            <li class="breadcrumb-item active">Project Management</li>
+                            <li class="breadcrumb-item active">Delete Issues</li>
+                            <li class="breadcrumb-item active">Delete Issues Confirmation</li>
+
                         </ol>
                     </div>
                 </div>
@@ -42,39 +66,12 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+                <!-- /.row -->
                 <div class="row">
                     <div class="col-12">
-                        @*Button for new issue*@
-                        @if (@Model.UserHasProjects == true)
-                        {
-                            <div>
-                                <a href="@Url.Action("CreateIssue", "MyIssues", new { })" class="btn btn-sm btn-danger">
-                                    Create New Issue
-                                </a>
-                            </div>
-                        }
-
-
-                        <br />
-
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Details</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- /.card-header -->
-                        </div>
-                        <!-- /.card -->
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Assigned Issues</h3>
+                                <h3 class="card-title">Issues To Be Deleted</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                         <i class="fas fa-minus"></i>
@@ -92,12 +89,11 @@
                                             <th>IDCode</th>
                                             <th>Title</th>
                                             <th>Status</th>
-                                            <th>Description</th>
                                             <th>Submitter</th>
-                                            <th>Project</th>
+                                            <th>Description</th>
+                                            @*<th>Users</th>*@
                                             <th>Created</th>
                                             <th>Updated</th>
-                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -107,32 +103,43 @@
                                                 <td>@item.IDCode</td>
                                                 <td>@item.Title</td>
                                                 <td>@item.Status</td>
-                                                <td>@item.Description</td>
                                                 <td>@item.Submitter</td>
-                                                <td>@item.ProjectIDCode</td>
+                                                <td>@item.Description</td>
+                                                @*<td>@item.NumberofUsers</td>*@
+                                                @*<td>@item.NumIssues</td>*@
                                                 <td>@item.Created</td>
                                                 <td>@item.Updated</td>
-                                                <td>
-                                                    @if (!User.IsInRole("Submitter"))
-                                                    {
-                                                        <a href="@Url.Action("UpdateIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-primary">
-                                                            Update
-                                                        </a>
-                                                    }
-                                                    <a href="@Url.Action("ViewIssue", "MyIssues", new {IDCode = item.IDCode})" class="btn btn-sm btn-secondary">
-                                                        View
-                                                    </a>
-                                                </td>
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
+
+
+                                @*PRE-SELECTED PROJECTS TO DELETE FROM PREVIOUS PAGE 'DeleteProjects'*@
+                                <form asp-action="DeleteIssuesConfirmation">
+                                    <div class="form-group">
+                                        <select id="SelectedIssue" asp-for="@Model.selectedIssuesDelete" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.IssueList)
+                                            {
+                                                <option value="@item.IDCode" selected></option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
+                                        <input type="submit" value="Save" class="btn btn-danger" />
+                                    </div>
+                                </form>
+
+
+
                             </div>
                             <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
 
-                    </div>                
+                    </div>
+
                 </div>
                 <!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -143,10 +150,16 @@
     <!-- page script -->
     <script>
         $(document).ready(function () {
+
             $("#IssuesTable").DataTable();
+
+            var SelectedIssue = document.getElementById("SelectedIssue");
+            SelectedIssue.style.display = "none";
+
         });
 
 
     </script>
 </body>
 </html>
+

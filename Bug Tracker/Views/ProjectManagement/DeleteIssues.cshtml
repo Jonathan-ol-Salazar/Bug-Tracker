@@ -1,7 +1,11 @@
-﻿@model BugTrackerDataAccess.ViewModel.UserManagementViewModel
+﻿@model BugTrackerDataAccess.ViewModel.ProjectManagementViewModel
 @{
-    ViewData["Title"] = "User Management";
+    ViewData["Title"] = "Delete Issues";
 }
+
+
+
+
 <html>
 <head>
     <meta charset="utf-8">
@@ -70,12 +74,14 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>User Management</h1>
+
+                        <h1>Delete Issues</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">User Management</li>
+                            <li class="breadcrumb-item active">Project Management</li>
+                            <li class="breadcrumb-item active">Delete Projects</li>
                         </ol>
                     </div>
                 </div>
@@ -89,7 +95,7 @@
                     <div class="col-4">
                         <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">Edit Users</h3>
+                                <h3 class="card-title">Select Issues</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                         <i class="fas fa-minus"></i>
@@ -99,63 +105,48 @@
                                     </button>
                                 </div>
                             </div>
+                            <div class="card-body">
+                                <form asp-action="DeleteIssues">
+                                    
+                                    @*PRE-SELECTED PROJECTIDCODE*@
+                                    <div class="form-group">
+                                        <select id="SelectedProject" asp-for="@Model.ProjectIDCode">
+                                            <option value="@Model.ProjectIDCode" selected="selected">@Model.ProjectIDCode</option>
+                                        </select>
+                                    </div>
+
+
+
+                                    <div class="form-group">
+
+                                        <label asp-for="@Model.selectedIssuesDelete" class="control-label">Select Issues To Be Deleted</label>
+                                        <select asp-for="@Model.selectedIssuesDelete" multiple class="form-control" style="width: 100%;">
+                                            @foreach (var item in Model.IssueList)
+                                            {
+                                                <option value="@item.IDCode">@item.IDCode</option>
+                                            }
+                                        </select>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <a asp-action="Index" class="btn btn-sm btn-secondary">Back</a> |
+                                        <input type="submit" value="Select" class="btn btn-danger" />
+                                    </div>
+
+
+                                </form>
+
+                            </div>
                             <!-- /.card-header -->
-                            <!-- form start -->
-                            <form asp-action="Update">
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label asp-for="@Model.selectedUsersUpdate" class="control-label">User Name</label>
-                                        @*<select class="form-control select2" data-placeholder="Select a State" style="width: 100%;">*@
-                                        <select asp-for="@Model.selectedUsersUpdate" multiple class="form-control" style="width: 100%;">
-                                            @foreach (var item in Model.UserList)
-                                            {
-                                                <option value="@item.ID">@item.UserName</option>
-                                            }
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label asp-for="@Model.selectedRole" class="control-label">Role</label>
-                                        <select asp-for="@Model.selectedRole" class="form-control" style="width: 100%;">
-                                            @*<option selected="selected">Select a Role</option>*@
-                                            <option value="" disabled selected>Please Select A Role</option>
-                                            @foreach (var item in Model.RoleList)
-                                            {
-                                                <option value="@item.IDCode">@item.Name</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <br />
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
-                                    </div>
-
-
-                                </div>
-                                <!-- /.card-body -->
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <div class="card-footer">
-                                        <div class="text-center">
-
-                                            <a href="@Url.Action("DeleteUsers", "UserManagement", new { })" class="btn btn-sm btn-danger">
-                                                Delete Users
-                                            </a>
-
-                                        </div>
-                                    </div>
-                                }
-
-
-                            </form>
                         </div>
-                        <!-- /.card -->
                     </div>
 
+
                     <div class="col-8">
-                        <div class="card card-secondary">
+                        <div class="card card-dark">
                             <div class="card-header">
-                                <h3 class="card-title">User Database</h3>
+                                <h3 class="card-title">Issues for @Model.ProjectIDCode</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                         <i class="fas fa-minus"></i>
@@ -167,30 +158,32 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <table id="UserDatabase" class="table table-hover">
+                                <table id="IssuesTable" class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>User ID</th>
-                                            <th>User Name</th>
-                                            <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Num. Projects</th>
+                                            <th>IDCode</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                            <th>Submitter</th>
+                                            <th>Description</th>
+                                            @*<th>Users</th>*@
+                                            <th>Created</th>
+                                            <th>Updated</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="myTable">
-                                        @foreach (var item in Model.UserList)
+                                    <tbody>
+                                        @foreach (var item in Model.IssueList)
                                         {
                                             <tr>
-                                                <td>@item.ID</td>
-                                                <td>@item.UserName</td>
-                                                <td>@item.Email</td>
-                                                <td>@item.Role</td>
-                                                <td>@item.NumProjects</td>
-                                                @*<td>
-                                                        @Html.ActionLink("Update", "Update", new { id = item.UserID })
-                                                        @Html.ActionLink("Delete", "ConfirmDelete", new { id = item.UserID })
-                                                        @Html.ActionLink("Details", "GetUserById", new { id = item.UserID })
-                                                    </td>*@
+                                                <td>@item.IDCode</td>
+                                                <td>@item.Title</td>
+                                                <td>@item.Status</td>
+                                                <td>@item.Submitter</td>
+                                                <td>@item.Description</td>
+                                                @*<td>@item.NumberofUsers</td>*@
+                                                @*<td>@item.NumIssues</td>*@
+                                                <td>@item.Created</td>
+                                                <td>@item.Updated</td>
                                             </tr>
                                         }
                                     </tbody>
@@ -198,8 +191,9 @@
                             </div>
                             <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
+
                     </div>
+
                 </div>
                 <!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -207,31 +201,13 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-
-
-
-
     <!-- page script -->
     <script>
         $(document).ready(function () {
-            $("#UserDatabase").DataTable();
+            $("#IssuesTable").DataTable();
 
-
-            ////Initialize Select2 Elements
-            //$('.select2').select2();
-            //$("#select2").select2();
-
-
-            //Initialize Select2 Elements
-            //$('.select2').select2()
-
-
-            //x = ("#select2").select2().val();
-            //console.log(x)
-
-            //Bootstrap Duallistbox
-            $('.duallistbox').bootstrapDualListbox()
-
+            var SelectedProject = document.getElementById("SelectedProject");
+            SelectedProject.style.display = "none";
 
         });
 

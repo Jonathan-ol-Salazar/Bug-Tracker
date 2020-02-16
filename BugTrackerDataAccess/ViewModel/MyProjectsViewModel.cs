@@ -14,10 +14,14 @@ namespace BugTrackerDataAccess.ViewModel
 
         //public IEnumerable<User> ProjectMangerList { get; set; }
 
+        public List<User> ProjectManagerList { get; set; }
 
 
         public Project Project { get; set; }
 
 
+        public IEnumerable<User> UsersNotAssignedList { get; set; }
+        public IEnumerable<User> UsersAssignedList { get; set; }
+        public IEnumerable<Issue> IssueList { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BugTrackerDataAccess.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,7 @@ namespace BugTrackerDataAccess.ViewModel
 
         public User User { get; set; }
 
+        public List<IFormFile> AccountImages { get; set; }
 
 
     }

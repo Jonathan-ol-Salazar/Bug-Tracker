@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace BugTrackerDataAccess
 {
-    public class Context : IUserContext, IProjectContext, IIssueContext
+    public class Context : IUserContext, IProjectContext, IIssueContext, IRoleContext
     {
         private readonly IMongoDatabase mongoDatabase;
 
@@ -18,6 +18,7 @@ namespace BugTrackerDataAccess
         public IMongoCollection<User> Users => mongoDatabase.GetCollection<User>("Users");
         public IMongoCollection<Project> Projects => mongoDatabase.GetCollection<Project>("Projects");
         public IMongoCollection<Issue> Issues => mongoDatabase.GetCollection<Issue>("Issues");
+        public IMongoCollection<Role> Roles => mongoDatabase.GetCollection<Role>("Roles");
 
 
     }
@@ -37,4 +38,8 @@ namespace BugTrackerDataAccess
         IMongoCollection<Issue> Issues { get; }
     }
 
+    public interface IRoleContext
+    {
+        IMongoCollection<Role> Roles { get; }
+    }
 }

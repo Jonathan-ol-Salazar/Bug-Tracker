@@ -22,7 +22,10 @@ namespace BugTrackerDataAccess.Models
         public List<User> AssignedUsers { get; set; }
 
         [BsonElement]
-        public List<Issue> Issues { get; set; }
+        public List<string> Users { get; set; }
+
+        [BsonElement]
+        public List<string> Issues { get; set; }
 
         [BsonElement]
         public List<string> AddUsers { get; set; }
@@ -31,7 +34,7 @@ namespace BugTrackerDataAccess.Models
         public List<string> RemoveUsers { get; set; }
 
         [BsonElement]
-        public User ProjectManager { get; set; }
+        public string ProjectManagerUserName { get; set; }
 
         [BsonElement]
         public string ProjectManagerUserID { get; set; }
