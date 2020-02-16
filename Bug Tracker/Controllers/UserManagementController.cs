@@ -70,33 +70,7 @@ namespace Bug_Tracker.Controllers
 
 
             foreach (var role in allRoles)
-            {
-
-                //if(role.Name != "Admin" && role.Name != "Project Manager" && currentUser.Role == "Project Manager")
-                //{
-                //    Roles.Add(role);
-                //}
-                //else
-                //{
-                //    Roles.Add(role);
-
-                //}
-
-                //if (currentUser.Role == "Project Manager" && role.Name != "Admin" || role.Name != "Project Manager")
-                //{
-                //    Roles.Add(role);
-                //}
-                //else
-                //{
-                //    Roles.Add(role);
-                //}
-
-                //if (currentUser.Role == "Admin")
-                //{
-                //    Roles.Add(role);
-                //}
-
-
+            {              
                 switch (currentUser.Role)
                 {
                     case "Admin":
@@ -112,9 +86,6 @@ namespace Bug_Tracker.Controllers
                         }
                         break;
                 }
-
-
-
             }
 
             foreach (var user in allUsers)
