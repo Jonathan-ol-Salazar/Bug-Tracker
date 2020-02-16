@@ -58,12 +58,7 @@ Below are screenshots of the 5 main pages of the application. Click on image to 
 
 ## Deployment
 
-At this stage the project is not deployable and only able to run though the IDE.
-
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+This project is deployed through Microsoft Azure at: https://jonathan-ol-salazar--bugtracker.azurewebsites.net/
 
 ## Versioning
 
@@ -81,4 +76,5 @@ This project is not licensed.
 
 ## Acknowledgments
 
-* Kaushik Roy Chowdhury - Generated a tutorial on how to MVC with MongoDB, this was the foundation of the entire project
+* Kaushik Roy Chowdhury - Generated a tutorial on how to use MVC with MongoDB
+* Code Foundry - Inspiration for this project
