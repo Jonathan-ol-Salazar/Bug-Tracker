@@ -1,5 +1,5 @@
 ### Status 
-The project has currently stopped development, but still provides the basic functionality of a tradition issue tracking system. For a full breakdown on the remaining feature requests to be implmented, please refer to **Remaining Features Requests**.
+The project has currently stopped development, but still provides the basic functionality of a tradition issue tracking system.
 
 # Bug Tracker
 
@@ -55,10 +55,6 @@ Below are screenshots of the 5 main pages of the application. Click on image to 
 - My Issues
 ![Image of My Issues page](https://github.com/Jonathan-ol-Salazar/Bug-Tracker/blob/master/Demo%20Pictures/My%20Issues.JPG)
 
-
-## Deployment
-
-This project is deployed through Microsoft Azure at: https://jonathan-ol-salazar--bugtracker.azurewebsites.net/
 
 ## Versioning
 
